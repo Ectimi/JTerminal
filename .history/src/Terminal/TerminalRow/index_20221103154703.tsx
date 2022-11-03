@@ -51,12 +51,7 @@ function TerminalRow(
       case 'commandInput':
         return <RowInput parseCommand={parseCommand} />;
       case 'command':
-        return (
-          <Group>
-            <div>[root]# </div>
-            <div>{text}</div>
-          </Group>
-        );
+        return text;
       case 'component':
         return component;
     }

@@ -1,10 +1,9 @@
 import { PropsWithChildren, useRef } from 'react';
-import { useEventListener, useKeyPress } from 'ahooks';
+import { useEventListener } from 'ahooks';
 import { Group } from '@mantine/core';
 import './index.less';
 
-const RowInput = (props: { parseCommand: (value: any) => void }) => {
-  const { parseCommand } = props;
+const RowInput = (props: { excuteCommand: (value: any) => void }) => {
   const ref = useRef<HTMLInputElement>(null);
 
   useEventListener(
@@ -13,18 +12,6 @@ const RowInput = (props: { parseCommand: (value: any) => void }) => {
       ref.current?.focus();
     },
     { target: ref }
-  );
-
-  useKeyPress(
-    'enter',
-    (event: any) => {
-      const { value } = event.target;
-      parseCommand(value);
-    },
-    {
-      target: ref,
-      exactMatch: true,
-    }
   );
 
   return (
@@ -37,10 +24,10 @@ const RowInput = (props: { parseCommand: (value: any) => void }) => {
 
 function TerminalRow(
   props: PropsWithChildren<
-    JTerminal.OutputType & { parseCommand: (value: any) => void }
+    JTerminal.OutputType & { excuteCommand: (value: any) => void }
   >
 ) {
-  const { component, collapsible, type = 'text', text, parseCommand } = props;
+  const { component, collapsible, type = 'text', text, excuteCommand } = props;
 
   const RowContent = () => {
     switch (type) {
@@ -49,14 +36,9 @@ function TerminalRow(
       case 'text':
         return text;
       case 'commandInput':
-        return <RowInput parseCommand={parseCommand} />;
+        return <RowInput excuteCommand={excuteCommand} />;
       case 'command':
-        return (
-          <Group>
-            <div>[root]# </div>
-            <div>{text}</div>
-          </Group>
-        );
+        return text;
       case 'component':
         return component;
     }

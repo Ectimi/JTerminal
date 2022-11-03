@@ -24,7 +24,6 @@ declare namespace JTerminal {
 
   type CommandInputOutputType = OutputType & {
     type: 'commandInput';
-    alwaysFocus: boolean;
   };
 
   type TextOutputType = OutputType & {
@@ -44,8 +43,6 @@ declare namespace JTerminal {
 
     focusInput: () => void;
 
-    parseCommand:(command:string) => void;
-
-    excuteCommand: (command:string) => void;
+    excuteCommand: () => void;
   };
 }

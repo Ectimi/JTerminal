@@ -44,8 +44,6 @@ declare namespace JTerminal {
 
     focusInput: () => void;
 
-    parseCommand:(command:string) => void;
-
-    excuteCommand: (command:string) => void;
+    excuteCommand: () => void;
   };
 }

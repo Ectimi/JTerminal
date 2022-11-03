@@ -2,12 +2,10 @@ import { useState, useEffect, Fragment } from 'react';
 import { useDynamicList } from 'ahooks';
 import getopts from 'getopts';
 import TerminalRow from './TerminalRow';
+
 import Datetime from '../components/Datetime';
 
 import './index.less';
-
-const commandTextToArgs = (commandText: string) =>
-  commandText.trim().replace(/\s+/g, ' ').split(' ');
 
 function Terminal() {
   const initialList: JTerminal.OutputType[] = [
@@ -35,9 +33,7 @@ function Terminal() {
 
   const [command, setCommand] = useState('');
 
-  const parseCommand: JTerminal.TerminalType['parseCommand'] = (
-    commandText
-  ) => {
+  const parseCommand: JTerminal.TerminalType['parseCommand'] = (commandText) => {
     setCommand(commandText);
 
     replace(list.length - 1, {
@@ -48,12 +44,8 @@ function Terminal() {
     push({
       type: 'commandInput',
     });
-
-    const args = commandTextToArgs(commandText)
-    const opts = getopts(args)
-    console.log('opts==>',opts)
   };
-
+  console.log(getopts(['-a', 'bbb', '-u', 'acc', '--t', 'abfd']));
   return (
     <div className="terminal-view">
       {list.map((output, index) => (

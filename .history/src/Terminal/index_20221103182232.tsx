@@ -50,8 +50,7 @@ function Terminal() {
     });
 
     const args = commandTextToArgs(commandText)
-    const opts = getopts(args)
-    console.log('opts==>',opts)
+    console.log('args==>',args)
   };
 
   return (
