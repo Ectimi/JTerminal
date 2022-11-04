@@ -1,6 +1,12 @@
 import {
+  Dispatch,
   createContext,
-  useRef
+  useState,
+  useRef,
+  useEffect,
+  useReducer,
+  useContext,
+  Fragment,
 } from 'react';
 import { useDynamicList, useEventListener, useKeyPress } from 'ahooks';
 import { Group } from '@mantine/core';
@@ -9,10 +15,14 @@ import TerminalRow from './TerminalRow';
 import Datetime from '../components/Datetime';
 import './index.less';
 
+interface IState {
+  list: JTerminal.OutputType[];
+}
+
 const commandTextToArgs = (commandText: string) =>
   commandText.trim().replace(/\s+/g, ' ').split(' ');
 
-const initialList: JTerminal.OutputType[] = [
+const initialList: IState['list'] = [
   {
     type: 'text',
     text: 'Welcome to JIndex !',
@@ -30,14 +40,14 @@ const initialList: JTerminal.OutputType[] = [
   },
 ];
 
-export const TerminalContext = createContext<JTerminal.TerminalType | {}>({});
+const TerminalContext = createContext<JTerminal.TerminalType | {}>({});
 
 function Terminal() {
   const ref = useRef<HTMLInputElement>(null);
   const {
     list,
     push: writeOutput,
-    resetList,
+    resetList: reset,
     replace,
   } = useDynamicList<JTerminal.OutputType>(initialList);
 
@@ -62,10 +72,6 @@ function Terminal() {
 
   const clear: JTerminal.TerminalType['clear'] = () => {};
 
-  const reset:JTerminal.TerminalType['reset'] = ()=>{
-    resetList(initialList)
-  }
-
   useEventListener(
     'blur',
     () => {
@@ -86,13 +92,12 @@ function Terminal() {
     }
   );
 
-  const TerminalProvider:JTerminal.TerminalType = {
+  const TerminalProvider = {
     clear,
     focusInput,
     reset,
     writeOutput,
     parseCommandInput,
-    excuteCommand
   };
 
   return (

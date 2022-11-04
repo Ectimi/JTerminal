@@ -12,14 +12,12 @@ export interface CommandOption {
 export interface CommandParam {
   key: string;
   desc: string;
-  defaultValue?: string | boolean;
   required: boolean;
 }
 
 export type Action = (
   options: ParsedOptions,
-  terminal: JTerminal.TerminalType,
-  parentCommand?: CommandType
+  terminal: JTerminal.TerminalType
 ) => void;
 
 export interface CommandType {

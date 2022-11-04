@@ -2,24 +2,20 @@ import { ParsedOptions } from 'getopts';
 import parser from 'yargs-parser';
 
 export interface CommandOption {
-  key: string;
-  desc:string;
+  name: string;
   alias: string[];
-  type:"string" | "boolean";
-  defaultValue?:any;
+  require:boolean
 }
 
 export interface CommandParam {
   key: string;
   desc: string;
-  defaultValue?: string | boolean;
   required: boolean;
 }
 
 export type Action = (
   options: ParsedOptions,
-  terminal: JTerminal.TerminalType,
-  parentCommand?: CommandType
+  terminal: JTerminal.TerminalType
 ) => void;
 
 export interface CommandType {

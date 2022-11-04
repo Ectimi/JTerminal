@@ -2,7 +2,7 @@ declare namespace JTerminal {
   type OutputStatus = 'success' | 'error' | 'warn' | 'info' | 'system';
 
   type OutputType = {
-    type: 'empty' | 'text' | 'component' | 'command';
+    type: 'empty' | 'text' | 'component' | 'command' | 'commandInput';
     text?: string;
     component?: any;
     resultList?: OutputType[];
@@ -39,8 +39,6 @@ declare namespace JTerminal {
 
   type TerminalType = {
     clear: () => void;
-
-    reset:()=>void;
 
     writeOutput: (output: OutputType) => void;
 

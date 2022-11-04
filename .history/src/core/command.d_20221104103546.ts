@@ -5,21 +5,18 @@ export interface CommandOption {
   key: string;
   desc:string;
   alias: string[];
-  type:"string" | "boolean";
   defaultValue?:any;
 }
 
 export interface CommandParam {
   key: string;
   desc: string;
-  defaultValue?: string | boolean;
   required: boolean;
 }
 
 export type Action = (
   options: ParsedOptions,
-  terminal: JTerminal.TerminalType,
-  parentCommand?: CommandType
+  terminal: JTerminal.TerminalType
 ) => void;
 
 export interface CommandType {

@@ -1,12 +1,10 @@
-import {
-  createContext,
-  useRef
-} from 'react';
+import { useState, useRef, useEffect, Fragment } from 'react';
 import { useDynamicList, useEventListener, useKeyPress } from 'ahooks';
 import { Group } from '@mantine/core';
 import getopts from 'getopts';
 import TerminalRow from './TerminalRow';
 import Datetime from '../components/Datetime';
+
 import './index.less';
 
 const commandTextToArgs = (commandText: string) =>
@@ -28,20 +26,15 @@ const initialList: JTerminal.OutputType[] = [
   {
     type: 'empty',
   },
+  {
+    type: 'commandInput',
+  },
 ];
-
-export const TerminalContext = createContext<JTerminal.TerminalType | {}>({});
 
 function Terminal() {
   const ref = useRef<HTMLInputElement>(null);
-  const {
-    list,
-    push: writeOutput,
-    resetList,
-    replace,
-  } = useDynamicList<JTerminal.OutputType>(initialList);
-
-  const focusInput = () => ref.current?.focus();
+  const { list, push, resetList, replace } =
+    useDynamicList<JTerminal.OutputType>(initialList);
 
   const parseCommandInput: JTerminal.TerminalType['parseCommandInput'] = (
     commandInput
@@ -51,20 +44,14 @@ function Terminal() {
       text: commandInput,
     });
 
+    push({
+      type: 'commandInput',
+    });
+
     const args = commandTextToArgs(commandInput);
     const opts = getopts(args);
     console.log('opts==>', opts);
   };
-
-  const excuteCommand: JTerminal.TerminalType['excuteCommand'] = (
-    command
-  ) => {};
-
-  const clear: JTerminal.TerminalType['clear'] = () => {};
-
-  const reset:JTerminal.TerminalType['reset'] = ()=>{
-    resetList(initialList)
-  }
 
   useEventListener(
     'blur',
@@ -86,27 +73,16 @@ function Terminal() {
     }
   );
 
-  const TerminalProvider:JTerminal.TerminalType = {
-    clear,
-    focusInput,
-    reset,
-    writeOutput,
-    parseCommandInput,
-    excuteCommand
-  };
-
   return (
-    <TerminalContext.Provider value={TerminalProvider}>
-      <div className="terminal-view">
-        {list.map((output, index) => (
-          <TerminalRow key={index} {...output} />
-        ))}
-        <Group>
-          <div>[root]# </div>
-          <input className="command-input" type="text" autoFocus ref={ref} />
-        </Group>
-      </div>
-    </TerminalContext.Provider>
+    <div className="terminal-view">
+      {list.map((output, index) => (
+        <TerminalRow key={index} {...output} />
+      ))}
+      <Group>
+        <div>[root]# </div>
+        <input className="command-input" type="text" autoFocus ref={ref} />
+      </Group>
+    </div>
   );
 }
 

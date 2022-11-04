@@ -18,8 +18,7 @@ export interface CommandParam {
 
 export type Action = (
   options: ParsedOptions,
-  terminal: JTerminal.TerminalType,
-  parentCommand?: CommandType
+  terminal: JTerminal.TerminalType
 ) => void;
 
 export interface CommandType {

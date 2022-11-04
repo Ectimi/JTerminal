@@ -40,8 +40,6 @@ declare namespace JTerminal {
   type TerminalType = {
     clear: () => void;
 
-    reset:()=>void;
-
     writeOutput: (output: OutputType) => void;
 
     focusInput: () => void;
