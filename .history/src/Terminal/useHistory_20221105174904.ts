@@ -1,0 +1,33 @@
+import { useSafeState } from 'ahooks';
+
+export default function useHistory(
+  commandList: JTerminal.CommandOutputType[],
+  commandInputRef: { current: { value: any } }
+) {
+  const [commandHistoryPos, setCommandHistoryPos] = useSafeState(commandList.length - 1);
+
+  const listCommandHistory = () => commandList;
+
+  const showNextCommand = () => {
+    setCommandHistoryPos(commandHistoryPos + 1);
+    if (commandHistoryPos < commandList.length - 1) {
+      commandInputRef.current.value = commandList[commandHistoryPos].text;
+    } else if (commandHistoryPos === commandList.length - 1) {
+      commandInputRef.current.value = '';
+    }
+  };
+
+  const showPrevCommand = ()=>{
+    if(commandList.length >= 1){
+        setCommandHistoryPos(commandHistoryPos - 1)
+        commandInputRef.current.value = commandList[commandHistoryPos].text
+    }
+  }
+
+  return {
+    commandHistoryPos,
+    listCommandHistory,
+    showNextCommand,
+    showPrevCommand
+  }
+}
