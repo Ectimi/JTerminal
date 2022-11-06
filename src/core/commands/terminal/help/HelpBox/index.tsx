@@ -1,6 +1,5 @@
-import { CommandType } from '../../../../command';
 import { Table } from '@mantine/core';
-import { commandList,commandMap } from '../../../../commandRegister';
+import { commandList } from '../../../../commandRegister';
 import './index.less'
 
 

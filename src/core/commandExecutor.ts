@@ -61,7 +61,7 @@ export const commandExecute = async  (
   // 解析文本，得到命令
   const command: CommandType = getCommand(text, parentCommand);
   if (!command) {
-    terminal.writeErrorOutput('找不到命令');
+    terminal.writeErrorOutput('找不到该命令');
     return;
   }
   // 解析参数（需传递不同的解析规则）

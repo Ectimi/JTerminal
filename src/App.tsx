@@ -1,8 +1,8 @@
 import { useRecoilValue } from 'recoil';
 import { Grid } from '@mantine/core';
 import { appGridSpanState } from './store';
-import Terminal from './Terminal';
-import Viewport from './Viewport';
+import Terminal from './components/Terminal';
+import Viewport from './components/Viewport';
 import './App.css';
 
 function App() {

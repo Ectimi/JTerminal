@@ -7,7 +7,7 @@ const baiduCommand: CommandType = {
   params: [
     {
       key: 'keyword',
-      desc: '搜索关键词',
+      desc: '搜索内容',
       required: true,
     },
   ],

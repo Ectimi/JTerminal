@@ -2,7 +2,7 @@ import { CommandType } from '../../command';
 import baiduCommand from './baiduCommand';
 import baidudevCommand from './baidudevCommand';
 import bilibiliCommand from './bilibiliCommand';
-import bingCommand from './fsearchCommand';
+import bingCommand from './bingCommand';
 import fsearchCommand from './fsearchCommand';
 import githubCommand from './githubCommand';
 import googleCommand from './googleCommand';
