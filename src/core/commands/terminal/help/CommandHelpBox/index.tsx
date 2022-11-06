@@ -21,7 +21,7 @@ export default function CommandHelpBox(props: IProps) {
           <div>子命令：</div>
           <ul>
             {command.subCommands.map((subCommand) => (
-              <li>
+              <li key={subCommand.func}>
                 <Text>{subCommand.func}</Text>
                 <Space w="xs" />
                 <Text>{subCommand.name}</Text>
@@ -38,7 +38,7 @@ export default function CommandHelpBox(props: IProps) {
           <div>参数：</div>
           <ul>
             {command.params.map((param) => (
-              <li>
+              <li key={param.key}>
                 <Text>{param.key}</Text>
                 <Space w="xs" />
                 <Text>{param.required ? '必填' : '可选'}</Text>
@@ -58,8 +58,8 @@ export default function CommandHelpBox(props: IProps) {
         <Fragment>
           <div>选项：</div>
           <ul>
-            {command.options.map((option) => (
-              <li>
+            {command.options.map((option,index) => (
+              <li key={index}>
                 <Text>{getOptionKeyList(option).join(', ')}</Text>{' '}
                 <Space w="xs" />
                 <Text>{option.required ? '必填' : '可选'}</Text>{' '}

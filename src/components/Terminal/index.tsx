@@ -143,7 +143,9 @@ function Terminal() {
     setInputText("");
   };
 
-  const clear: JTerminal.TerminalType["clear"] = () => {};
+  const clear: JTerminal.TerminalType["clear"] = () => {
+    resetList([])
+  };
 
   const reset: JTerminal.TerminalType["reset"] = () => {
     resetList(initialList);
