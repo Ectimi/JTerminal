@@ -5,11 +5,13 @@ declare namespace JTerminal {
     type: 'empty' | 'text' | 'component' | 'command';
     text?: string;
     component?: any;
+    componentName?: string;
     resultList?: OutputType[];
     status?: OutputStatus;
     props?: any;
     collapsible?: boolean;
     alwaysFocus?: boolean;
+    onlyOne?: boolean;
   };
 
   type EmptyOutputType = OutputType & {
@@ -34,7 +36,8 @@ declare namespace JTerminal {
 
   type ComponentOutputType = OutputType & {
     type: 'component';
-    component?: any;
+    component: any;
+    componentName: string;
   };
 
   type TerminalType = {
@@ -42,15 +45,25 @@ declare namespace JTerminal {
 
     reset: () => void;
 
+    getAllOutput: () => OutputType[];
+
+    rewriteOutput: (index: number, output: OutputType) => void;
+
     writeOutput: (output: OutputType) => void;
+
+    writeSuccessOutput: (text: string) => void;
 
     writeErrorOutput: (text: string) => void;
 
-    writeComponentOutput:(component:any)=>void;
+    writeComponentOutput: (component: ComponentOutputType) => void;
 
-    writeCommandOutput:(text:string)=>void;
+    writeCommandOutput: (text: string) => void;
+
+    removeOutput: (index: number) => void;
 
     focusInput: () => void;
+
+    unfocusInput: () => void;
 
     excuteCommand: () => void;
   };

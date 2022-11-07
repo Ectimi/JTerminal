@@ -14,6 +14,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
           globalStyles:(theme)=>({
             'table,thead,tr,td,th':{
               color:'#fff'
+            },
+            'input':{
+              caretColor:'#000'
             }
           })
         }}>

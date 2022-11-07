@@ -4,6 +4,7 @@ import { commandList, commandMap } from '../../../commandRegister';
 const helpCommand: CommandType = {
   func: 'help',
   name: '查看命令帮助',
+  desc: '获取命令帮助',
   alias: [],
   params: [
     {
@@ -17,7 +18,11 @@ const helpCommand: CommandType = {
     const { _ } = options;
     if (_.length === 0) {
       const HelpComponent = await import('./HelpBox');
-      terminal.writeComponentOutput(HelpComponent.default());
+      terminal.writeComponentOutput({
+        type: 'component',
+        component: HelpComponent.default(),
+        componentName: 'helpBox',
+      });
       return;
     }
     const commandName = _[0];
@@ -36,12 +41,14 @@ const helpCommand: CommandType = {
       return;
     }
     const CommandHelpComponent = await import('./CommandHelpBox');
-    terminal.writeComponentOutput(
-      CommandHelpComponent.default({
+    terminal.writeComponentOutput({
+      type: 'component',
+      component: CommandHelpComponent.default({
         command: command as CommandType,
         parentCommand,
-      })
-    );
+      }),
+      componentName: 'commandHelp',
+    });
   },
 };
 

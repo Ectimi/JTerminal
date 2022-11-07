@@ -1,0 +1,55 @@
+.login-box {
+  position: relative;
+  width: 400px;
+  margin:20px;
+
+  form {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+
+    .mantine-InputWrapper-root {
+      position: relative;
+      display: flex;
+      width: 100%;
+
+      &:nth-of-type(2) {
+        margin-top: 20px;
+      }
+
+      .mantine-InputWrapper-label {
+        display: block;
+        width: 80px;
+        height: 36px;
+        line-height: 36px;
+      }
+
+      .mantine-Input-wrapper {
+        flex: 1;
+      }
+
+      .mantine-InputWrapper-error {
+        position: absolute;
+        left: 80px;
+        bottom: -25px;
+        height: 36px;
+        line-height: 36px;
+      }
+    }
+
+    .mantine-UnstyledButton-root{
+        width: 80px;
+        margin-top: 35px;
+    }
+
+  }
+}
+
+.relogin-button{
+  cursor: pointer;
+}
+
+.success-text{
+  color: #5ef27f;
+}

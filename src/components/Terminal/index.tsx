@@ -1,61 +1,70 @@
-import { createContext, useRef, forwardRef } from "react";
+import { createContext, useRef, forwardRef, useEffect } from 'react';
 import {
+  useClickAway,
   useDynamicList,
   useEventListener,
   useKeyPress,
   useSafeState,
   useUpdateEffect,
-} from "ahooks";
-import { Autocomplete, Group } from "@mantine/core";
-import useHistory from "./useHistory";
-import { getUsageStr } from "../../core/commands/terminal/help/helpUtils";
-import { commandList } from "../../core/commandRegister";
-import { commandExecute } from "../../core/commandExecutor";
-import TerminalRow from "./TerminalRow";
-import Datetime from "../Datetime";
-import "./index.less";
+} from 'ahooks';
+import { Autocomplete, Group } from '@mantine/core';
+import useHistory from './useHistory';
+import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
+import { commandList } from '../../core/commandRegister';
+import { commandExecute } from '../../core/commandExecutor';
+import TerminalRow from './TerminalRow';
+import Datetime from '../Datetime';
+import { Login } from '../../serve/user';
+import './index.less';
 
-const initialList: JTerminal.OutputType[] = [
-  {
-    type: "text",
-    text: "Welcome to JIndex !",
-  },
-  {
-    type: "text",
-    text: `Please input 'help' to enjoy`,
-  },
-  {
-    type: "component",
-    component: <Datetime />,
-  },
-  {
-    type: "empty",
-  },
-];
-
-export const TerminalContext = createContext<JTerminal.TerminalType | {}>({});
+type TerminalType = JTerminal.TerminalType;
 
 interface ItemProps {
   name: string;
   desc: string;
 }
 
+const initialList: JTerminal.OutputType[] = [
+  {
+    type: 'text',
+    text: 'Welcome to JIndex !',
+  },
+  {
+    type: 'text',
+    text: `Please input 'help' to enjoy`,
+  },
+  {
+    type: 'component',
+    component: <Datetime />,
+  },
+  {
+    type: 'empty',
+  },
+];
+
+export const TerminalContext = createContext<JTerminal.TerminalType | unknown>(
+  {}
+);
+
 const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
   ({ desc, name, ...others }: ItemProps, ref) => (
     <div ref={ref} {...others} className="tip-item">
       <div className="tip-name">{name}</div>
-      <div className="tip-desc">{desc.replace(name, "")}</div>
+      <div className="tip-desc">{desc.replace(name, '')}</div>
     </div>
   )
 );
 
 function Terminal() {
   const ref = useRef<HTMLInputElement>(null);
-  const [inputText, setInputText] = useSafeState("");
+  const [alwaysFocus, setAlwayFocus] = useSafeState(true);
+  const [inputText, setInputText] = useSafeState('');
 
   const {
     list: outputList,
     push: writeOutput,
+    replace: rewriteOutput,
+    remove: removeOutput,
     resetList,
   } = useDynamicList<JTerminal.OutputType>(initialList);
 
@@ -69,30 +78,36 @@ function Terminal() {
 
   const [inputTips, setInputTips] = useSafeState<any[]>([]);
 
-  useEventListener("blur", () => ref.current?.focus(), { target: ref });
+  useEventListener('blur', () => alwaysFocus && ref.current?.focus(), {
+    target: ref,
+  });
 
-  useKeyPress("enter", (event: any) => excuteCommand(), {
+  useKeyPress('enter', (event: any) => excuteCommand(), {
     target: ref,
     exactMatch: true,
   });
 
-  useKeyPress("tab", (event: any) => {
+  useKeyPress('tab', (event: any) => {
     event.preventDefault();
     if (inputTips.length > 0) {
       setInputText(inputTips[0].value);
-      setInputTips([])
+      setInputTips([]);
     }
   });
 
-  useKeyPress("uparrow", () => showPrevCommand());
-  useKeyPress("downarrow", () => showNextCommand());
+  useKeyPress('uparrow', () => showPrevCommand());
+  useKeyPress('downarrow', () => showNextCommand());
+
+  useClickAway(() => {
+    focusInput();
+  }, ref);
 
   useUpdateEffect(() => {
-    const text = inputText.trim().replace(/\s+/g, " ").split(" ");
+    const text = inputText.trim().replace(/\s+/g, ' ').split(' ');
 
     if (text[0] && text.length === 1) {
       const arr = [...commandList];
-      const result:any[] = [];
+      const result: any[] = [];
       arr.forEach((command) => {
         if (command.func.startsWith(text[0][0])) {
           result.push({
@@ -124,15 +139,24 @@ function Terminal() {
     setCommandHistoryPos(inputList.length);
   }, [inputList]);
 
+  useUpdateEffect(() => {
+    ref.current?.scrollIntoView();
+  }, [outputList]);
+
   const onInputChange = (value: string) => {
     setInputText(value);
   };
 
-  const focusInput = () => ref.current?.focus();
+  const focusInput: TerminalType['focusInput'] = () => {
+    setAlwayFocus(true);
+    ref.current?.focus();
+  };
 
-  const excuteCommand: JTerminal.TerminalType["excuteCommand"] = async () => {
+  const unfocusInput: TerminalType['unfocusInput'] = () => setAlwayFocus(false);
+
+  const excuteCommand: TerminalType['excuteCommand'] = async () => {
     const command: JTerminal.CommandOutputType = {
-      type: "command",
+      type: 'command',
       text: inputText,
     };
     if (inputText.trim()) {
@@ -140,53 +164,65 @@ function Terminal() {
     }
     writeCommandOutput(inputText);
     await commandExecute(inputText, TerminalProvider);
-    setInputText("");
+    setInputText('');
   };
 
-  const clear: JTerminal.TerminalType["clear"] = () => {
-    resetList([])
+  const clear: TerminalType['clear'] = () => {
+    resetList([]);
   };
 
-  const reset: JTerminal.TerminalType["reset"] = () => {
+  const reset: TerminalType['reset'] = () => {
     resetList(initialList);
   };
 
-  const writeErrorOutput: JTerminal.TerminalType["writeErrorOutput"] = (
+  const getAllOutput: TerminalType['getAllOutput'] = () => outputList;
+
+  const writeSuccessOutput: TerminalType['writeSuccessOutput'] = (
     text: string
   ) => {
     writeOutput({
-      type: "text",
+      type: 'text',
+      text: `[Success] ${text}`,
+      status: 'success',
+    });
+  };
+
+  const writeErrorOutput: TerminalType['writeErrorOutput'] = (text: string) => {
+    writeOutput({
+      type: 'text',
       text: `[Error] ${text}`,
-      status: "error",
+      status: 'error',
     });
   };
 
-  const writeComponentOutput: JTerminal.TerminalType["writeComponentOutput"] = (
-    component: any
+  const writeComponentOutput: TerminalType['writeComponentOutput'] = (
+    output
   ) => {
-    writeOutput({
-      type: "component",
-      component,
-    });
+    writeOutput(output);
   };
 
-  const writeCommandOutput: JTerminal.TerminalType["writeCommandOutput"] = (
+  const writeCommandOutput: TerminalType['writeCommandOutput'] = (
     text: string
   ) => {
     writeOutput({
-      type: "command",
+      type: 'command',
       text,
     });
   };
 
-  const TerminalProvider: JTerminal.TerminalType = {
+  const TerminalProvider: TerminalType = {
     clear,
     focusInput,
+    unfocusInput,
+    getAllOutput,
     reset,
+    rewriteOutput,
     writeOutput,
     writeCommandOutput,
     writeComponentOutput,
+    writeSuccessOutput,
     writeErrorOutput,
+    removeOutput,
     excuteCommand,
   };
 
