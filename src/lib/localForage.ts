@@ -1,13 +1,13 @@
-import localForage from 'localforage';
+import localForage from "localforage";
 
 localForage.config({
   driver: localForage.INDEXEDDB, // Force WebSQL; same as using setDriver()
-  name: 'JTerminal',
+  name: "JTerminal",
   version: 1.0,
-  storeName:'terminal_store',
-  description: 'JTerminal store',
+  storeName: "terminal_store",
+  description: "JTerminal store",
 });
 
-const localforage = localForage.createInstance({ name: 'JTerminal' });
+const localforage = localForage.createInstance({ name: "JTerminal" });
 
-export default localforage;
+export { localforage };

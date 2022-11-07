@@ -11,7 +11,7 @@ import {
   Notification,
 } from '@mantine/core';
 import { IconCheck, IconX } from '@tabler/icons';
-import localforage from '@/lib/localForage';
+import { localforage } from '@/lib/localForage';
 import { Login } from '@/serve/user';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
@@ -46,7 +46,7 @@ export default function LoginBox() {
             break;
           }
         }
-        terminal.writeSuccessOutput('登录成功');
+        terminal.writeSuccessOutput('登陆成功');
         await localforage.setItem('token', data.data.token);
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
@@ -63,6 +63,7 @@ export default function LoginBox() {
 
   useEffect(() => {
     localforage.getItem('token').then((token) => {
+      console.log('token',token)
       if (token) {
         setStatus('login');
       }
@@ -73,8 +74,8 @@ export default function LoginBox() {
     <Fragment>
       {status === 'login' ? (
         <Group>
-          <Text className='success-text'>成功登录，</Text>
-          <Text className='relogin-button' underline onClick={relogin}>若要重新登录，请点击这里</Text>
+          <Text className='success-text'>成功登陆，</Text>
+          <Text className='relogin-button' underline onClick={relogin}>若要重新登陆，请点击这里</Text>
         </Group>
       ) : (
         <TerminalInnerWrapper className="login-box">

@@ -177,6 +177,8 @@ function Terminal() {
 
   const getAllOutput: TerminalType['getAllOutput'] = () => outputList;
 
+  const getOutputLength: TerminalType['getOutputLength'] = () => outputList.length;
+
   const writeSuccessOutput: TerminalType['writeSuccessOutput'] = (
     text: string
   ) => {
@@ -215,6 +217,7 @@ function Terminal() {
     focusInput,
     unfocusInput,
     getAllOutput,
+    getOutputLength,
     reset,
     rewriteOutput,
     writeOutput,
@@ -230,7 +233,7 @@ function Terminal() {
     <TerminalContext.Provider value={TerminalProvider}>
       <div className="terminal-view">
         {outputList.map((output, index) => (
-          <TerminalRow key={index} {...output} />
+          <TerminalRow key={output.componentName|| index} {...output} />
         ))}
         <TerminalRow
           type="component"
