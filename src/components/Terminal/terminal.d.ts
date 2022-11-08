@@ -1,8 +1,8 @@
 declare namespace JTerminal {
-  type OutputStatus = "success" | "error" | "warn" | "info" | "system";
+  type OutputStatus = 'success' | 'error' | 'warn' | 'info' | 'system' | 'common';
 
   type OutputType = {
-    type: "empty" | "text" | "component" | "command";
+    type: 'empty' | 'text' | 'component' | 'command';
     text?: string;
     component?: any;
     componentName?: string;
@@ -15,27 +15,27 @@ declare namespace JTerminal {
   };
 
   type EmptyOutputType = OutputType & {
-    type: "empty";
+    type: 'empty';
   };
 
   type CommandOutputType = OutputType & {
-    type: "command";
+    type: 'command';
     text: string;
     resultList?: OutputType[];
   };
 
   type CommandInputOutputType = OutputType & {
-    type: "commandInput";
+    type: 'commandInput';
     alwaysFocus: boolean;
   };
 
   type TextOutputType = OutputType & {
-    type: "text";
+    type: 'text';
     text: string;
   };
 
   type ComponentOutputType = OutputType & {
-    type: "component";
+    type: 'component';
     component: any;
     componentName: string;
   };
@@ -52,6 +52,8 @@ declare namespace JTerminal {
     rewriteOutput: (index: number, output: OutputType) => void;
 
     writeOutput: (output: OutputType) => void;
+
+    writeInfoOutput: (text: string) => void;
 
     writeSuccessOutput: (text: string) => void;
 

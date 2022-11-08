@@ -1,17 +1,16 @@
 import { useContext, useEffect, Fragment } from 'react';
-import { useRequest, useSafeState, useUpdateEffect } from 'ahooks';
+import { useRequest, useSafeState } from 'ahooks';
 import { useForm } from '@mantine/form';
 import {
   Text,
   TextInput,
+  PasswordInput,
   Button,
   Card,
   LoadingOverlay,
   Group,
-  Notification,
 } from '@mantine/core';
-import { IconCheck, IconX } from '@tabler/icons';
-import { localforage } from '@/lib/localForage';
+import { localforage,updateBookmarks } from '@/lib/localForage';
 import { Login } from '@/serve/user';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
@@ -48,6 +47,8 @@ export default function LoginBox() {
         }
         terminal.writeSuccessOutput('登陆成功');
         await localforage.setItem('token', data.data.token);
+        await localforage.setItem('user', data.data.user);
+        await updateBookmarks()
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
       }
@@ -63,7 +64,6 @@ export default function LoginBox() {
 
   useEffect(() => {
     localforage.getItem('token').then((token) => {
-      console.log('token',token)
       if (token) {
         setStatus('login');
       }
@@ -87,9 +87,8 @@ export default function LoginBox() {
                 wrapperProps={{ labelElement: 'div' }}
                 {...form.getInputProps('username')}
               />
-              <TextInput
+              <PasswordInput
                 label="password："
-                // type="password"
                 wrapperProps={{ labelElement: 'div' }}
                 {...form.getInputProps('password')}
               />

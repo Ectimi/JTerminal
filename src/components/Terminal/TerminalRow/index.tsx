@@ -6,7 +6,7 @@ function TerminalRow(props: PropsWithChildren<JTerminal.OutputType>) {
   const {
     component,
     collapsible,
-    status = "info",
+    status = "common",
     type = "text",
     text,
   } = props;

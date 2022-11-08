@@ -1,43 +1,58 @@
-.terminal-view{
-    width: 100%;
-    height: 100%;
+.terminal-view {
+  position: relative;
+  width: 100%;
+  height: 100%;
 
-    .mantine-Autocomplete-root{
-        flex: 1;
+  .mantine-Autocomplete-root {
+    flex: 1;
+  }
+
+  .mantine-Autocomplete-input {
+    padding-left: 0;
+    font-size: 16px;
+    font-weight: 400;
+    color: #fff;
+    caret-color: #fff;
+    border: none;
+    outline: none;
+    background-color: transparent;
+    font-family: 'Courier New', Courier, monospace;
+  }
+
+  .mantine-Autocomplete-dropdown {
+    background-color: transparent;
+    border: none;
+  }
+
+  .mantine-Autocomplete-item {
+    background-color: transparent;
+    display: flex;
+    .tip-name {
+      min-width: 100px;
+      color: rgb(209, 209, 209);
     }
 
-    .mantine-Autocomplete-input{
-        padding-left: 0;
-        font-size: 16px;
-        font-weight: 400;
-        color: #fff;
-        caret-color: #fff;
-        border: none;
-        outline: none;
-        background-color: transparent;
-        font-family: 'Courier New', Courier, monospace;
+    .tip-desc {
+      color: rgb(143, 140, 140);
     }
 
-    .mantine-Autocomplete-dropdown{
-        background-color: transparent;
-        border: none;
-    }
-
-    .mantine-Autocomplete-item{
-        background-color: transparent;
-    }
-
-    .tip-item{
-        display: flex;
-        cursor: pointer;
-
-        .tip-name{
+    &[data-hovered="true"]{
+        .tip-name {
             min-width: 100px;
-            color: grey;
-        }
-
-        .tip-desc{
-            color: rgb(51, 50, 50);
-        }
+            color: green;
+          }
+      
+          .tip-desc {
+            color: rgb(7, 73, 7);
+          }
     }
+  }
+
+  .mode-text {
+    position: fixed;
+    left: 20px;
+    bottom: 20px;
+    font-size: 14px;
+    color: rgb(156, 71, 71);
+  }
 }

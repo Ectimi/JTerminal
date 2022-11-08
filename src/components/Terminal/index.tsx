@@ -1,4 +1,5 @@
 import { createContext, useRef, forwardRef, useEffect } from 'react';
+import { useRecoilValue } from 'recoil';
 import {
   useClickAway,
   useDynamicList,
@@ -7,21 +8,32 @@ import {
   useSafeState,
   useUpdateEffect,
 } from 'ahooks';
-import { Autocomplete, Group } from '@mantine/core';
+import { Autocomplete, AutocompleteItem, Group } from '@mantine/core';
+import { bookmarksState } from '@/store';
 import useHistory from './useHistory';
 import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
 import { commandList } from '../../core/commandRegister';
 import { commandExecute } from '../../core/commandExecutor';
+import { updateBookmarks } from '@/lib/localForage';
 import TerminalRow from './TerminalRow';
 import Datetime from '../Datetime';
-import { Login } from '../../serve/user';
 import './index.less';
 
 type TerminalType = JTerminal.TerminalType;
 
 interface ItemProps {
   name: string;
-  desc: string;
+  description: string;
+}
+
+type TMode = 'common' | 'query';
+
+export interface IBookmarkItem {
+  name: string;
+  url: string;
+  icon: string;
+  label: string;
+  description: string;
 }
 
 const initialList: JTerminal.OutputType[] = [
@@ -47,18 +59,50 @@ export const TerminalContext = createContext<JTerminal.TerminalType | unknown>(
 );
 
 const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ desc, name, ...others }: ItemProps, ref) => (
-    <div ref={ref} {...others} className="tip-item">
+  ({ description, name, ...others }: ItemProps, ref) => (
+    <div ref={ref} {...others}>
       <div className="tip-name">{name}</div>
-      <div className="tip-desc">{desc.replace(name, '')}</div>
+      <div className="tip-desc">{description.replace(name, '')}</div>
     </div>
   )
 );
 
+const getInputTips = (word: string, originData: any[], filterKey: string) => {
+  const result: any = [];
+  const arr = [...originData];
+  for (let i = 0; i < arr.length; i++) {
+    const item = arr[i];
+    const value = item[filterKey].toLocaleLowerCase();
+    if (value.slice(0, word.length) === word) {
+      result.unshift({
+        value: value,
+        name: value,
+        description: item.func ? getUsageStr(item) : item.description,
+      });
+    } else if (
+      value.startsWith(word[0]) ||
+      (value.includes(word) && !result.some((r: any) => r.value === value))
+    ) {
+      result.push({
+        value: value,
+        name: value,
+        description: item.func ? getUsageStr(item) : item.description,
+      });
+    }
+    arr.splice(i, 1);
+    i--;
+  }
+  return result;
+};
+
 function Terminal() {
+  const bookmarks = useRecoilValue<IBookmarkItem[]>(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
+  const [mode, setMode] = useSafeState<TMode>('common');
   const [alwaysFocus, setAlwayFocus] = useSafeState(true);
   const [inputText, setInputText] = useSafeState('');
+  const [tipCursor, setTipCursor] = useSafeState(0);
+  const queryModeActiveKey = "'";
 
   const {
     list: outputList,
@@ -95,42 +139,48 @@ function Terminal() {
     }
   });
 
-  useKeyPress('uparrow', () => showPrevCommand());
-  useKeyPress('downarrow', () => showNextCommand());
+  useKeyPress('uparrow', () => {
+    if (inputTips.length === 0) {
+      showPrevCommand();
+    } else {
+      setTipCursor(tipCursor - 1 < 0 ? inputTips.length - 1 : tipCursor - 1);
+    }
+  });
+  useKeyPress('downarrow', () => {
+    if (inputTips.length === 0) {
+      showNextCommand();
+    } else {
+      setTipCursor(tipCursor + 1 > inputTips.length - 1 ? 0 : tipCursor + 1);
+    }
+  });
 
   useClickAway(() => {
     focusInput();
   }, ref);
 
+  useEffect(() => {
+    updateBookmarks();
+  }, []);
+
   useUpdateEffect(() => {
     const text = inputText.trim().replace(/\s+/g, ' ').split(' ');
+    let word = text[0].toLocaleLowerCase();
 
-    if (text[0] && text.length === 1) {
-      const arr = [...commandList];
-      const result: any[] = [];
-      arr.forEach((command) => {
-        if (command.func.startsWith(text[0][0])) {
-          result.push({
-            value: command.func,
-            name: command.func,
-            desc: getUsageStr(command),
-          });
+    if (word && text.length === 1) {
+      if (word.startsWith(queryModeActiveKey)) {
+        word = word.split(queryModeActiveKey)[1];
+        mode !== 'query' && setMode('query');
+        if (word) {
+          const tips = getInputTips(word, [...bookmarks], 'name');
+          setInputTips(tips);
         }
-      });
-      arr.forEach((command) => {
-        if (
-          command.func.includes(text[0]) &&
-          !result.some((r) => r.value === command.func)
-        ) {
-          result.push({
-            value: command.func,
-            name: command.func,
-            desc: getUsageStr(command),
-          });
-        }
-      });
-      setInputTips(result);
+      } else {
+        mode !== 'common' && setMode('common');
+        const tips = getInputTips(word, [...commandList], 'func');
+        setInputTips(tips);
+      }
     } else {
+      setMode('common');
       setInputTips([]);
     }
   }, [inputText]);
@@ -159,11 +209,28 @@ function Terminal() {
       type: 'command',
       text: inputText,
     };
+
     if (inputText.trim()) {
       addInputList(command);
     }
+
     writeCommandOutput(inputText);
-    await commandExecute(inputText, TerminalProvider);
+
+    if (mode === 'query') {
+      const name = inputText.trim().split(queryModeActiveKey)[1];
+      const bookmarkItem =
+        bookmarks!.filter((bookmark) => bookmark.name === name)[0] || {};
+      const url = bookmarkItem.url;
+      if (url) {
+        const commandText = `goto ${url}`;
+        await commandExecute(commandText, TerminalProvider);
+      } else {
+        writeErrorOutput(`名为 ${name} 的书签不存在`);
+      }
+    } else {
+      await commandExecute(inputText, TerminalProvider);
+    }
+
     setInputText('');
   };
 
@@ -177,7 +244,16 @@ function Terminal() {
 
   const getAllOutput: TerminalType['getAllOutput'] = () => outputList;
 
-  const getOutputLength: TerminalType['getOutputLength'] = () => outputList.length;
+  const getOutputLength: TerminalType['getOutputLength'] = () =>
+    outputList.length;
+
+  const writeInfoOutput: TerminalType['writeInfoOutput'] = (text: string) => {
+    writeOutput({
+      type: 'text',
+      text: `[Info] ${text}`,
+      status: 'info',
+    });
+  };
 
   const writeSuccessOutput: TerminalType['writeSuccessOutput'] = (
     text: string
@@ -223,6 +299,7 @@ function Terminal() {
     writeOutput,
     writeCommandOutput,
     writeComponentOutput,
+    writeInfoOutput,
     writeSuccessOutput,
     writeErrorOutput,
     removeOutput,
@@ -233,7 +310,12 @@ function Terminal() {
     <TerminalContext.Provider value={TerminalProvider}>
       <div className="terminal-view">
         {outputList.map((output, index) => (
-          <TerminalRow key={output.componentName|| index} {...output} />
+          <TerminalRow
+            key={
+              (output.componentName && output.componentName + index) || index
+            }
+            {...output}
+          />
         ))}
         <TerminalRow
           type="component"
@@ -247,10 +329,14 @@ function Terminal() {
                 value={inputText}
                 onChange={onInputChange}
                 itemComponent={AutoCompleteItem}
+                filter={() => true}
               />
             </Group>
           }
         />
+        {mode === 'query' ? (
+          <div className="mode-text">当前为书签检索模式</div>
+        ) : null}
       </div>
     </TerminalContext.Provider>
   );
