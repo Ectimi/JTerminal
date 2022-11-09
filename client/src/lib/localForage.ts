@@ -1,6 +1,8 @@
 import LocalForage from 'localforage';
-import { DEFAULT_BOOKMARKS } from '@/config/default_bookmark';
-import { GetBookmarks } from '@/serve/user';
+import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
+import DEFAULT_LABELS from '@/config/default_labels';
+import { GetBookmarks, GetLabels } from '@/serve/user';
+import { showNotification } from '@mantine/notifications';
 
 interface ICallback {
   success: () => void;
@@ -21,9 +23,18 @@ const clearLocalforage = async () => {
   await localforage.removeItem('token');
   await localforage.removeItem('user');
   await localforage.removeItem('bookmarks');
+  await localforage.removeItem('labels');
+  initLocalforage()
 };
 
-const updateBookmarks = async (option?: ICallback) => {
+const initLocalforage = async()=>{
+  await localforage.setItem('default_bookmarks', DEFAULT_BOOKMARKS);
+  await localforage.setItem('default_labels', DEFAULT_LABELS);
+  addUserBookmarks()
+  addUserLabels()
+}
+
+const addUserBookmarks = async (option?: ICallback) => {
   try {
     const token: any = await localforage.getItem('token');
 
@@ -33,14 +44,40 @@ const updateBookmarks = async (option?: ICallback) => {
         await localforage.setItem('bookmarks', data.data);
         option?.success && option.success();
       } else {
-        option?.fail &&  option.fail(data.message || 'update bookmarks error');
+        option?.fail && option.fail(data.message || 'update bookmarks error');
       }
-    } else {
-      await localforage.setItem('bookmarks', DEFAULT_BOOKMARKS);
-    }
-  } catch (error) {
-    option?.fail &&  option.fail(error);
+    } 
+  } catch (error:any) {
+    option?.fail && option.fail(error);
+    showNotification({
+      color:'red',
+      title: error.name|| 'Error',
+      message: error.message || 'addUserBookmarks error',
+    })
   }
 };
 
-export { localforage, updateBookmarks, clearLocalforage };
+const addUserLabels = async (option?: ICallback) => {
+  try {
+    const token: any = await localforage.getItem('token');
+
+    if (token) {
+      const data = await GetLabels();
+      if (data.success) {
+        await localforage.setItem('labels', data.data);
+        option?.success && option.success();
+      } else {
+        option?.fail && option.fail(data.message || 'update lables error');
+      }
+    } 
+  } catch (error:any) {
+    option?.fail && option.fail(error);
+    showNotification({
+      color:'red',
+      title: error.name|| 'Error',
+      message: error.message || 'addUserLabels error',
+    })
+  }
+};
+
+export { localforage, initLocalforage, addUserBookmarks, addUserLabels, clearLocalforage };

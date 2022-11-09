@@ -2,7 +2,8 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { HashRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
-import { MantineProvider } from '@mantine/core';
+import { MantineProvider, Loader } from '@mantine/core';
+import { NotificationsProvider } from '@mantine/notifications';
 import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
@@ -11,7 +12,18 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
   <React.StrictMode>
     <RecoilRoot>
       <ErrorBoundary>
-        <React.Suspense fallback={<div>loading</div>}>
+        <React.Suspense
+          fallback={
+            <Loader
+              sx={{
+                position: 'fixed',
+                top: '50%',
+                left: '50%',
+                transform: 'translate(-50%,-50%)',
+              }}
+            />
+          }
+        >
           <HashRouter>
             <MantineProvider
               withNormalizeCSS
@@ -26,7 +38,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
                 }),
               }}
             >
-              <App />
+              <NotificationsProvider>
+                <App />
+              </NotificationsProvider>
             </MantineProvider>
           </HashRouter>
         </React.Suspense>

@@ -1,6 +1,10 @@
 import { CommandType } from '../../../command';
 import { Login } from '@/serve/user';
-import { localforage,updateBookmarks } from '@/lib/localForage';
+import {
+  localforage,
+  addUserBookmarks,
+  addUserLabels,
+} from '@/lib/localForage';
 
 const loginCommand: CommandType = {
   func: 'login',
@@ -13,12 +17,14 @@ const loginCommand: CommandType = {
       alias: ['u'],
       desc: '用户名',
       type: 'string',
+      required: true,
     },
     {
       key: 'password',
       desc: '密码',
       alias: ['p'],
       type: 'string',
+      required: true,
     },
   ],
   async action(options, terminal, parentCommand) {
@@ -31,26 +37,17 @@ const loginCommand: CommandType = {
           terminal.writeSuccessOutput('登陆成功');
           await localforage.setItem('token', data.data.token);
           await localforage.setItem('user', data.data.user);
-          await updateBookmarks()
+          await addUserBookmarks();
+          await addUserLabels();
         } else {
           terminal.writeErrorOutput(data.message || '登陆错误');
         }
       } else if (username && !password) {
-        terminal.writeErrorOutput('缺少密码');
+        terminal.writeErrorOutput('请输入密码');
       } else if (password && !username) {
-        terminal.writeErrorOutput('缺少账号');
+        terminal.writeErrorOutput('请输入账号');
       } else {
-        const outputs = terminal.getAllOutput();
         const LoginBoxComponent = await import('./LoginBox');
-        for (let i = 0; i < outputs.length; i++) {
-          const output = outputs[i];
-          if (output.type === 'component') {
-            if (output.componentName === 'loginBox') {
-              terminal.removeOutput(i);
-              break;
-            }
-          }
-        }
         terminal.unfocusInput();
         terminal.writeComponentOutput({
           type: 'component',

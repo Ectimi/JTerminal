@@ -10,7 +10,11 @@ import {
   LoadingOverlay,
   Group,
 } from '@mantine/core';
-import { localforage,updateBookmarks } from '@/lib/localForage';
+import {
+  localforage,
+  addUserBookmarks,
+  addUserLabels,
+} from '@/lib/localForage';
 import { Login } from '@/serve/user';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
@@ -37,18 +41,19 @@ export default function LoginBox() {
     try {
       const data = await doLogin(submitData);
       if (data.success) {
-        const outputs = terminal.getAllOutput()
-        for(let i=0;i<outputs.length;i++){
-          const output = outputs[i]
-          if(output.componentName === 'loginBox'){
-            terminal.removeOutput(i)
+        const outputs = terminal.getAllOutput();
+        for (let i = 0; i < outputs.length; i++) {
+          const output = outputs[i];
+          if (output.componentName === 'loginBox') {
+            terminal.removeOutput(i);
             break;
           }
         }
         terminal.writeSuccessOutput('登陆成功');
         await localforage.setItem('token', data.data.token);
         await localforage.setItem('user', data.data.user);
-        await updateBookmarks()
+        await addUserBookmarks();
+        await addUserLabels();
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
       }
@@ -74,11 +79,13 @@ export default function LoginBox() {
     <Fragment>
       {status === 'login' ? (
         <Group>
-          <Text className='success-text'>成功登陆，</Text>
-          <Text className='relogin-button' underline onClick={relogin}>若要重新登陆，请点击这里</Text>
+          <Text className="success-text">成功登陆，</Text>
+          <Text className="relogin-button" underline onClick={relogin}>
+            若要重新登陆，请点击这里
+          </Text>
         </Group>
       ) : (
-        <TerminalInnerWrapper className="login-box">
+        <TerminalInnerWrapper className="login-box" stopPropagation={true}>
           <LoadingOverlay visible={loading} overlayBlur={2} />
           <Card>
             <form onSubmit={form.onSubmit(onSubmit)}>
@@ -86,6 +93,7 @@ export default function LoginBox() {
                 label="usename："
                 wrapperProps={{ labelElement: 'div' }}
                 {...form.getInputProps('username')}
+                autoFocus
               />
               <PasswordInput
                 label="password："

@@ -475,7 +475,7 @@ const DEFAULT_BOOKMARKS = [
     url: 'https://tinypng.com/',
     icon: 'https://tinypng.com/images/favicon.ico',
     description:
-      'Smart WebP, PNG and JPEG compression\nMore than 1 billion WebP, PNG and JPEG images optimized and still counting!\nSmart WebP, PNG and JPEG compression\nMore than 1 billion WebP, PNG and JPEG images optimized and still counting!\nSmart WebP, PNG and JPEG compression\nMore than 1 billion WebP, PNG and JPEG images optimized and still counting!\nSmart WebP, PNG and JPEG compression\nMore than 1 billion WebP, PNG and JPEG images optimized and still counting!\nSmart WebP, PNG and JPEG compression\n',
+      'image compression\n',
     label: '在线工具',
     sticky: '0',
   },
@@ -815,46 +815,6 @@ const DEFAULT_BOOKMARKS = [
     sticky: '0',
   },
   {
-    id: '859',
-
-    name: '蓝湖',
-    url: 'https://lanhuapp.com/web/#/item?tid=398988af-cda8-4839-95a6-bcd9e4b7e01e&fid=all',
-    icon: '/public/images/upload_1658194080449.0.18984285578589133.0.png',
-    description: '产品设计协作平台',
-    label: '良鸟',
-    sticky: '0',
-  },
-  {
-    id: '860',
-
-    name: '企业中心',
-    url: 'https://adm.webportal.top/',
-    icon: '/public/images/upload_1658194088255.0.31831345911117315.0.jpg',
-    description: '',
-    label: '良鸟',
-    sticky: '0',
-  },
-  {
-    id: '861',
-
-    name: 'gitlab',
-    url: 'http://172.16.20.190:10086/',
-    icon: '/public/images/upload_1657624105616.0.13424591675764042.0.png',
-    description: '代码管理',
-    label: '良鸟',
-    sticky: '0',
-  },
-  {
-    id: '862',
-
-    name: 'DSM',
-    url: 'https://172.16.20.200:5001/',
-    icon: '/public/images/upload_1657624036364.0.4335093445042524.0.png',
-    description: '公司云服务器',
-    label: '良鸟',
-    sticky: '0',
-  },
-  {
     id: '863',
 
     name: 'gulp',
@@ -1149,16 +1109,7 @@ const DEFAULT_BOOKMARKS = [
     label: 'javascript',
     sticky: '0',
   },
-  {
-    id: '976',
 
-    name: '案例库',
-    url: 'http://172.16.20.200/index.html',
-    icon: '',
-    description: '',
-    label: '良鸟',
-    sticky: '0',
-  },
   {
     id: '977',
 
@@ -1266,4 +1217,4 @@ const DEFAULT_BOOKMARKS = [
   },
 ];
 
-export { DEFAULT_BOOKMARKS };
+export default DEFAULT_BOOKMARKS;

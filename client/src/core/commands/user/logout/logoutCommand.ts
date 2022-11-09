@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { localforage,clearLocalforage,updateBookmarks } from '@/lib/localForage';
+import { localforage,clearLocalforage } from '@/lib/localForage';
 
 const logoutCommand: CommandType = {
   func: 'logout',
@@ -12,7 +12,6 @@ const logoutCommand: CommandType = {
     const token = await localforage.getItem('token');
     if (token) {
       await clearLocalforage()
-      await updateBookmarks()
       terminal.writeSuccessOutput('已退出登陆');
     } else {
       terminal.writeInfoOutput('当前没有登陆');

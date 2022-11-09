@@ -7,6 +7,7 @@ import gotoCommand from './commands/goto/gotoCommand';
 import loginCommand from './commands/user/login/loginCommand';
 import logoutCommand from './commands/user/logout/logoutCommand';
 import registerCommand from './commands/user/register/registerCommand';
+import bookmarkCommand from './commands/bookmark/bookmarkCommand';
 
 const commandList: CommandType[] = [
   ...searchCommand,
@@ -17,6 +18,7 @@ const commandList: CommandType[] = [
   loginCommand,
   logoutCommand,
   registerCommand,
+  bookmarkCommand
 ];
 
 const commandMap: Record<string, CommandType> = {};

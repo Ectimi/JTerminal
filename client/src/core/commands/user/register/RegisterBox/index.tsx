@@ -2,7 +2,6 @@ import { useContext } from 'react';
 import { useRequest } from 'ahooks';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Card, LoadingOverlay } from '@mantine/core';
-import { localforage } from '@/lib/localForage';
 import { Register } from '@/serve/user';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
@@ -28,7 +27,6 @@ export default function RegisterBox() {
 
   const onSubmit = async (submitData: any) => {
     try {
-      console.log('submit',submitData)
       const data = await doRegister(submitData);
       if (data.success) {
         terminal.writeSuccessOutput('注册成功');

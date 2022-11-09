@@ -25,3 +25,9 @@ export function GetBookmarks(): Promise<IResponse> {
     method: 'post',
   });
 }
+
+export function GetLabels(): Promise<IResponse> {
+  return request('./labels', {
+    method: 'post',
+  });
+}

@@ -33,7 +33,6 @@ const registerCommand: CommandType = {
         } else {
           terminal.writeErrorOutput(data.message || '注册错误');
         }
-        console.log('register', data);
       } else if (username && !password) {
         terminal.writeErrorOutput('缺少密码');
       } else if (password && !username) {
@@ -47,9 +46,7 @@ const registerCommand: CommandType = {
           componentName: 'registerBox',
         });
       }
-      console.log(options);
     } catch (error: any) {
-      console.log('err', error);
       const { name, message } = error;
       if (name || message) {
         terminal.writeErrorOutput(`${name}：${message}`);

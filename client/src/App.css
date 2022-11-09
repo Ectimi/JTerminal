@@ -1,9 +1,0 @@
-.App{
-    width: 100%;
-    height: calc(100% - 300px);
-    margin:0;
-    padding-bottom: 300px;
-    overflow-y: auto;
-    color: #fff;
-    background-color: #000;
-}

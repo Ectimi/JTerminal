@@ -1,0 +1,44 @@
+.bookmark-box {
+  height: 100%;
+  padding: 15px;
+
+  .mantine-Card-root,.mantine-Tabs-root,.mantine-Tabs-panel{
+    height: 100%;
+  }
+  .mantine-Tabs-panel{
+    overflow: auto;
+}
+
+  .mantine-Tabs-tab {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .bookmark-wrapper {
+    height: 100%;
+    padding: 0 15px;
+    overflow: auto;
+
+    .bookmark-item {
+      width: 300px;
+      margin-top: 15px;
+      cursor: pointer;
+
+      .top {
+        display: flex;
+        align-items: center;
+        height: 45px;
+
+        .name {
+          margin-left: 15px;
+        }
+      }
+
+      .desc {
+        font-size: 14px;
+        color: grey;
+      }
+    }
+  }
+}

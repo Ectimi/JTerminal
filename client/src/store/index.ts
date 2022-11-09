@@ -1,10 +1,10 @@
 import { atom, selector } from 'recoil';
 import { localforage } from '@/lib/localForage';
+import uniqBy from 'lodash/uniqBy';
 
 interface IState {
   showViewport: boolean;
 }
-
 
 export interface IBookmarkItem {
   name: string;
@@ -14,19 +14,28 @@ export interface IBookmarkItem {
   description: string;
 }
 
-const commonState = atom({
-  key: 'commonState',
-  default: {
-    showViewport: false,
-  } as IState,
+export interface ILabel {
+  id: string;
+  label: string;
+}
+
+export interface IBookmarkState {
+  bookmarks: IBookmarkItem[];
+  labels: ILabel[];
+}
+
+const viewportVisibleState = atom({
+  key: 'viewportVisibleState',
+  default: false
 });
+
 
 const appGridSpanState = selector({
   key: 'appGridSpanState',
   get: ({ get }) => {
-    const { showViewport } = get(commonState);
-    const terminalSpan = showViewport ? 6 : 12;
-    const viewportSpan = showViewport ? 6 : 0;
+    const viewportVisible = get(viewportVisibleState);
+    const terminalSpan = viewportVisible ? 6 : 12;
+    const viewportSpan = viewportVisible ? 6 : 0;
 
     return {
       terminalSpan,
@@ -35,11 +44,32 @@ const appGridSpanState = selector({
   },
 });
 
-const bookmarksState = selector<any>({
+const bookmarksState = selector<IBookmarkState>({
   key: 'bookmarkState',
   get: async () => {
-    return await localforage.getItem('bookmarks');
+    const default_bookmarks: any = await localforage.getItem(
+      'default_bookmarks'
+    );
+    const user_bookmarks: any = (await localforage.getItem('bookmarks')) || [];
+    const default_labels: any =
+      (await localforage.getItem('default_labels')) || [];
+    const user_labels: any = (await localforage.getItem('labels')) || [];
+
+    return {
+      bookmarks: uniqBy([...default_bookmarks, ...user_bookmarks], 'name'),
+      labels: uniqBy([...default_labels, ...user_labels], 'label'),
+    };
   },
 });
 
-export { commonState, appGridSpanState, bookmarksState };
+const viewportComponentListState = atom<JTerminal.ComponentOutputType[]>({
+  key: 'viewportComponentListState',
+  default: [],
+});
+
+export {
+  viewportVisibleState,
+  appGridSpanState,
+  bookmarksState,
+  viewportComponentListState,
+};

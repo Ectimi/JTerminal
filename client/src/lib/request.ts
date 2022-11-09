@@ -13,7 +13,6 @@ const instance = axios.create({
 instance.interceptors.request.use(
   async function (config) {
     const token:any = await localforage.getItem('token')
-    console.log('before',token)
     // 在发送请求之前做些什么
     config.headers = {
       'x-requested-with': '',

@@ -59,9 +59,11 @@ declare namespace JTerminal {
 
     writeErrorOutput: (text: string) => void;
 
-    writeComponentOutput: (component: ComponentOutputType) => void;
+    writeComponentOutput: (output: ComponentOutputType) => void;
 
     writeCommandOutput: (text: string) => void;
+
+    writeComponentToViewport:(output: ComponentOutputType)=>void;
 
     removeOutput: (index: number) => void;
 

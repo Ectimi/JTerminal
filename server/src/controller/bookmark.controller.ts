@@ -48,7 +48,6 @@ export class APIController {
   @Post('/labels')
   async getLabel(): Promise<IControllerReturn> {
     const token = this.ctx.headers['authorization'];
-    console.log('token', token);
     let labels;
     if (!token) {
       labels = await this.bookmarkService.getLabel();
