@@ -121,7 +121,6 @@ function Terminal() {
   const [viewportComponentsList, setViewportComponentsList] = useRecoilState(
     viewportComponentListState
   );
-  // const { bookmarks } = useRecoilValue(bookmarksState);
   const [{ bookmarks }, setBookmarkState] = useRecoilState(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
   const [mode, setMode] = useSafeState<TMode>("common");
@@ -154,9 +153,8 @@ function Terminal() {
   useKeyPress(
     "enter",
     (event: any) => {
-      if (inputTips.length === 0) {
-        excuteCommand();
-      }
+      setInputTips([]);
+      excuteCommand();
     },
     {
       target: ref,
@@ -167,7 +165,12 @@ function Terminal() {
   useKeyPress("tab", (event: any) => {
     event.preventDefault();
     if (inputTips.length > 0) {
-      setInputText(inputTips[0].value);
+      const text =
+        mode === "query"
+          ? queryModeActiveKey + inputTips[0].value
+          : inputTips[0].value;
+       
+      setInputText(text);
       setTimeout(() => {
         setInputTips([]);
       }, 0);
@@ -196,7 +199,8 @@ function Terminal() {
   useUpdateEffect(() => {
     const text = inputText.trimStart().replace(/\s+/g, " ").split(" ");
     let word = text[0].toLocaleLowerCase();
-    if (word && text.length === 1) {
+
+    if (word) {
       if (word.startsWith(queryModeActiveKey)) {
         word = word.split(queryModeActiveKey)[1];
         mode !== "query" && setMode("query");
@@ -227,8 +231,8 @@ function Terminal() {
     const user_bookmarks: any = (await localforage.getItem("bookmarks")) || [];
     const user_labels: any = (await localforage.getItem("labels")) || [];
     setBookmarkState((cur) => ({
-      bookmarks: uniqBy([...user_bookmarks, ...cur.bookmarks],'name'),
-      labels: uniqBy([...user_labels, ...cur.labels],'label'),
+      bookmarks: uniqBy([...user_bookmarks, ...cur.bookmarks], "name"),
+      labels: uniqBy([...user_labels, ...cur.labels], "label"),
     }));
   };
 
@@ -258,8 +262,11 @@ function Terminal() {
     if (mode === "query") {
       const name = inputText.trim().split(queryModeActiveKey)[1];
       const bookmarkItem =
-        bookmarks!.filter((bookmark) => bookmark.name === name)[0] || {};
+        bookmarks!.filter(
+          (bookmark) => bookmark.name.toLocaleLowerCase() === name
+        )[0] || {};
       const url = bookmarkItem.url;
+
       if (url) {
         const commandText = `goto ${url}`;
         await commandExecute(commandText, TerminalProvider);

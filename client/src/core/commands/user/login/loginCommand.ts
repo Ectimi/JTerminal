@@ -49,7 +49,7 @@ const loginCommand: CommandType = {
         terminal.writeErrorOutput('请输入账号');
       } else {
         const LoginBoxComponent = await import('./LoginBox');
-        terminal.unfocusInput();
+        // terminal.unfocusInput();
         terminal.writeComponentOutput({
           type: 'component',
           component: LoginBoxComponent.default,
