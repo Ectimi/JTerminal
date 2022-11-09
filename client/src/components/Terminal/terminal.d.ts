@@ -72,5 +72,7 @@ declare namespace JTerminal {
     unfocusInput: () => void;
 
     excuteCommand: () => void;
+
+    setState:()=>void
   };
 }

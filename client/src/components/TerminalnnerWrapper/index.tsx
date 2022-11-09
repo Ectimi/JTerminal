@@ -11,6 +11,7 @@ export default function TerminalInnerWrapper(
   const ref = useRef(null);
 
   useClickAway(() => {
+    console.log('ter',terminal)
     terminal.focusInput();
   }, ref);
 

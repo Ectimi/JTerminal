@@ -30,3 +30,4 @@ client/deploy_config.json
 # misc
 .DS_Store
 
+node_modules
