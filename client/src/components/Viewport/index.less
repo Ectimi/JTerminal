@@ -1,3 +1,38 @@
-.viewport-view{
+.viewport-view {
+  height: 100%;
+  background-color: #fff;
+
+  .compoent-tab {
+    display: flex;
+    flex-direction: column;
     height: 100%;
+
+    .mantine-Tabs-tabsList {
+      padding: 10px;
+    }
+
+    .mantine-Tabs-panel {
+      flex: 1;
+      height: 100%;
+    }
+
+    .component-tablist {
+      flex: 0 0 auto;
+      height: 41px;
+      border-bottom: 1px solid rgb(235, 228, 228);
+
+      .component-tab-item {
+        padding: 0;
+        background-color: transparent;
+
+        &:hover {
+          background-color: transparent;
+        }
+      }
+    }
+
+    .component-tabpanel{
+      height: calc(100% - 41px);
+    }
+  }
 }

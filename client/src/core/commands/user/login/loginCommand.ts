@@ -2,6 +2,7 @@ import { CommandType } from '../../../command';
 import { Login } from '@/serve/user';
 import {
   localforage,
+  LocalForageKeys,
   addUserBookmarks,
   addUserLabels,
 } from '@/lib/localForage';
@@ -35,11 +36,11 @@ const loginCommand: CommandType = {
         if (data.success) {
           terminal.removeOutput(terminal.getOutputLength.length - 1);
           terminal.writeSuccessOutput('登陆成功');
-          await localforage.setItem('token', data.data.token);
-          await localforage.setItem('user', data.data.user);
+          await localforage.setItem(LocalForageKeys.TOKEN, data.data.token);
+          await localforage.setItem(LocalForageKeys.USER, data.data.user);
           await addUserBookmarks();
           await addUserLabels();
-          terminal.setState()
+          terminal.updateState()
         } else {
           terminal.writeErrorOutput(data.message || '登陆错误');
         }

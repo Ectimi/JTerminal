@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { localforage,clearLocalforage } from '@/lib/localForage';
+import { localforage,LocalForageKeys, clearLocalforage } from '@/lib/localForage';
 
 const logoutCommand: CommandType = {
   func: 'logout',
@@ -9,7 +9,7 @@ const logoutCommand: CommandType = {
   params: [],
   options: [],
   async action(options, terminal) {
-    const token = await localforage.getItem('token');
+    const token = await localforage.getItem(LocalForageKeys.TOKEN);
     if (token) {
       await clearLocalforage()
       terminal.writeSuccessOutput('已退出登陆');

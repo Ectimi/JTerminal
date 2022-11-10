@@ -12,9 +12,12 @@ import {
 } from '@mantine/core';
 import {
   localforage,
+  LocalForageKeys,
   addUserBookmarks,
   addUserLabels,
 } from '@/lib/localForage';
+import { useRecoilValue } from 'recoil';
+import { userState } from '@/store';
 import { Login } from '@/serve/user';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
@@ -22,6 +25,7 @@ import './index.less';
 
 export default function LoginBox() {
   const terminal = useContext(TerminalContext) as JTerminal.TerminalType;
+  const user = useRecoilValue(userState);
   const [status, setStatus] = useSafeState('unlogin');
 
   const { loading, runAsync: doLogin } = useRequest(Login, { manual: true });
@@ -50,11 +54,11 @@ export default function LoginBox() {
           }
         }
         terminal.writeSuccessOutput('登陆成功');
-        await localforage.setItem('token', data.data.token);
-        await localforage.setItem('user', data.data.user);
+        await localforage.setItem(LocalForageKeys.TOKEN, data.data.token);
+        await localforage.setItem(LocalForageKeys.USER, data.data.user);
         await addUserBookmarks();
         await addUserLabels();
-        terminal.setState()
+        terminal.updateState();
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
       }
@@ -69,12 +73,10 @@ export default function LoginBox() {
   };
 
   useEffect(() => {
-    localforage.getItem('token').then((token) => {
-      if (token) {
-        setStatus('login');
-      }
-    });
-  }, []);
+    if (user) {
+      setStatus('login');
+    }
+  }, [user]);
 
   return (
     <Fragment>

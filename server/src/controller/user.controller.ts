@@ -44,6 +44,7 @@ export class APIController {
           data: '',
         };
       } else {
+        Reflect.deleteProperty(findUser, 'password');
         return {
           success: true,
           message: 'OK',

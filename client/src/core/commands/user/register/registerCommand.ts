@@ -1,6 +1,6 @@
 import { CommandType } from '../../../command';
 import { Register } from '@/serve/user';
-import localforage from 'localforage';
+import {localforage,LocalForageKeys} from '@/lib/localForage'
 
 const registerCommand: CommandType = {
   func: 'register',
@@ -27,7 +27,7 @@ const registerCommand: CommandType = {
       if (username && password) {
         const data = await Register({ username, password });
         if (data.success) {
-          await localforage.setItem('token', data.data.token);
+          await localforage.setItem(LocalForageKeys.TOKEN, data.data.token);
           terminal.removeOutput(terminal.getOutputLength.length - 1);
           terminal.writeSuccessOutput('注册成功，请输入 login 命令登录');
         } else {

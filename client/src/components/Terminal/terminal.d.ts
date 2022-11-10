@@ -73,6 +73,6 @@ declare namespace JTerminal {
 
     excuteCommand: () => void;
 
-    setState:()=>void
+    updateState:()=>void
   };
 }

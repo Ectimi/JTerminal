@@ -1,13 +1,17 @@
 .bookmark-box {
+  position: relative;
   height: 100%;
-  padding: 15px;
+  padding: 0 15px;
 
-  .mantine-Card-root,.mantine-Tabs-root,.mantine-Tabs-panel{
+  .mantine-Card-root,
+  .mantine-Tabs-root,
+  .mantine-Tabs-panel {
     height: 100%;
   }
-  .mantine-Tabs-panel{
+
+  .mantine-Tabs-panel {
     overflow: auto;
-}
+  }
 
   .mantine-Tabs-tab {
     display: flex;
@@ -40,5 +44,11 @@
         color: grey;
       }
     }
+  }
+
+  .action-button{
+    position: absolute;
+    left: 20px;
+    bottom:20px;
   }
 }

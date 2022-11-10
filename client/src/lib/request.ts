@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { localforage } from '@/lib/localForage';
+import { localforage,LocalForageKeys } from '@/lib/localForage';
 
 const instance = axios.create({
   baseURL: import.meta.env.DEV
@@ -12,7 +12,7 @@ const instance = axios.create({
 // 添加请求拦截器
 instance.interceptors.request.use(
   async function (config) {
-    const token:any = await localforage.getItem('token')
+    const token:any = await localforage.getItem(LocalForageKeys.TOKEN)
     // 在发送请求之前做些什么
     config.headers = {
       'x-requested-with': '',
