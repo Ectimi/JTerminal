@@ -28,8 +28,9 @@ const baiduCommand: CommandType = {
     },
   ],
   action(options, terminal) {
+    console.log('op',options )
     const { _, self, picture } = options;
-    const word = _.length > 0 ? _[0] : "";
+    const word = _.length > 0 ? _.join(' ') : "";
     let targetLink = `https://www.baidu.com/s?wd=${word}`;
     // 搜索图片
     if (picture) {

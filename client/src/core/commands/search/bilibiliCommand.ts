@@ -22,7 +22,7 @@ const bilibiliCommand: CommandType = {
   ],
   action(options, terminal) {
     const { _, self } = options;
-    const word = _.length > 0 ? _[0] : "";
+    const word = _.length > 0 ?  _.join(' ') : "";
     const targetLink = `https://search.bilibili.com/all?keyword=${word}`;
     if (self) {
       window.location.href = targetLink;

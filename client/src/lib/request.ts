@@ -3,10 +3,10 @@ import { localforage,LocalForageKeys } from '@/lib/localForage';
 
 const instance = axios.create({
   baseURL: import.meta.env.DEV
-    ? '/api'
+    ?  'http://127.0.0.1:7001/bookmark'
     : 'http://124.223.24.47:7001/bookmark',
   timeout: 10000,
-  withCredentials: true,
+  withCredentials: false,
 });
 
 // 添加请求拦截器
@@ -15,7 +15,6 @@ instance.interceptors.request.use(
     const token:any = await localforage.getItem(LocalForageKeys.TOKEN)
     // 在发送请求之前做些什么
     config.headers = {
-      'x-requested-with': '',
       authorization:  token || '',
     };
     return config;
