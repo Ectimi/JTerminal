@@ -1,5 +1,5 @@
 import { createContext, useRef, forwardRef, useEffect } from "react";
-import { useRecoilState, useRecoilValue, useSetRecoilState } from "recoil";
+import { useRecoilState, useSetRecoilState } from "recoil";
 import {
   useAsyncEffect,
   useClickAway,
@@ -11,9 +11,12 @@ import {
 } from "ahooks";
 import { Autocomplete, AutocompleteItem, Group } from "@mantine/core";
 import {
+  userState,
   bookmarksState,
   viewportComponentListState,
   viewportVisibleState,
+  ILabel,
+  IUser,
 } from "@/store";
 import uniqBy from "lodash/uniqBy";
 import useHistory from "./useHistory";
@@ -117,6 +120,7 @@ const getInputTips = (word: string, originData: any[], filterKey: string) => {
 };
 
 function Terminal() {
+  const setUser = useSetRecoilState(userState)
   const setViewportVisible = useSetRecoilState(viewportVisibleState);
   const [viewportComponentsList, setViewportComponentsList] = useRecoilState(
     viewportComponentListState
@@ -232,15 +236,19 @@ function Terminal() {
     ref.current?.scrollIntoView();
   }, [outputList]);
 
-  const updateState: TerminalType["updateState"] = async () => {
-    const user_bookmarks: any =
-      (await localforage.getItem(LocalForageKeys.USER_BOOKMARKS)) || [];
-    const user_labels: any =
-      (await localforage.getItem(LocalForageKeys.USER_LABELS)) || [];
-    setBookmarkState((cur) => ({
-      bookmarks: uniqBy([...user_bookmarks, ...cur.bookmarks], "name"),
-      labels: uniqBy([...user_labels, ...cur.labels], "label"),
-    }));
+  const updateState: TerminalType["updateState"] = async (type) => {
+    if (type === "login") {
+      const user = (await localforage.getItem(LocalForageKeys.USER)) as IUser
+      const user_bookmarks =
+        (await localforage.getItem(LocalForageKeys.USER_BOOKMARKS)) as IBookmarkItem[];
+      const user_labels =
+        (await localforage.getItem(LocalForageKeys.USER_LABELS)) as ILabel[];
+      setBookmarkState((cur) => ({
+        bookmarks: uniqBy(user_bookmarks, "name"),
+        labels: uniqBy(user_labels, "label"),
+      }));
+      setUser(user)
+    }
   };
 
   const onItemSubmit = (item: AutocompleteItem) => {

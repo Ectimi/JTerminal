@@ -7,17 +7,18 @@ import {
   Flex,
   Space,
   Menu,
-} from '@mantine/core';
-import { IconSettings } from '@tabler/icons';
-import { useRecoilValue } from 'recoil';
-import { bookmarksState, IBookmarkItem } from '@/store';
-import { useSafeState, useToggle } from 'ahooks';
-import { Fragment, useEffect } from 'react';
-import BookmarkModal from '../BookmarkModal';
-import './index.less';
+} from "@mantine/core";
+import { IconSettings } from "@tabler/icons";
+import { useRecoilValue } from "recoil";
+import { bookmarksState, IBookmarkItem, userState } from "@/store";
+import { useSafeState, useToggle } from "ahooks";
+import { Fragment, useEffect } from "react";
+import BookmarkModal from "../BookmarkModal";
+import "./index.less";
 
 export default function BookmarkBox() {
   const { bookmarks, labels } = useRecoilValue(bookmarksState);
+  const user = useRecoilValue(userState);
   const [activeTab, setActiveTab] = useSafeState(labels[0].label);
   const [showBookmarks, setShowBookmarks] = useSafeState<IBookmarkItem[]>([]);
   const [
@@ -26,6 +27,10 @@ export default function BookmarkBox() {
   ] = useToggle();
 
   const onTabChange = (value: string) => setActiveTab(value);
+
+  useEffect(()=>{
+    console.log('user',user)
+  },[user])
 
   useEffect(() => {
     const obj: Record<string, IBookmarkItem[]> = {};
@@ -40,24 +45,26 @@ export default function BookmarkBox() {
 
   return (
     <Card className="bookmark-box">
-      <Menu shadow="sm" position="top" withArrow>
-        <Menu.Target>
-          <ActionIcon
-            variant="transparent"
-            color="blue"
-            className="action-button"
-          >
-            <IconSettings size={20} />
-          </ActionIcon>
-        </Menu.Target>
+      {user ? (
+        <Menu shadow="sm" position="top" withArrow>
+          <Menu.Target>
+            <ActionIcon
+              variant="transparent"
+              color="blue"
+              className="action-button"
+            >
+              <IconSettings size={20} />
+            </ActionIcon>
+          </Menu.Target>
 
-        <Menu.Dropdown>
-          <Menu.Item component="div" onClick={showBookmarkModal}>
-            添加书签
-          </Menu.Item>
-          <Menu.Item component="div">添加标签</Menu.Item>
-        </Menu.Dropdown>
-      </Menu>
+          <Menu.Dropdown>
+            <Menu.Item component="div" onClick={showBookmarkModal}>
+              添加书签
+            </Menu.Item>
+            <Menu.Item component="div">添加标签</Menu.Item>
+          </Menu.Dropdown>
+        </Menu>
+      ) : null}
 
       <Tabs
         value={activeTab}
@@ -108,7 +115,7 @@ export default function BookmarkBox() {
                       <Text className="name">{bookmark.name}</Text>
                     </div>
                     <Text className="desc">
-                      {bookmark.description || '暂无简介'}
+                      {bookmark.description || "暂无简介"}
                     </Text>
                   </Card>
                   <Space w="xl" />

@@ -12,9 +12,8 @@ import {
 import { IconUpload } from '@tabler/icons';
 import { useForm } from '@mantine/form';
 import { useRecoilValue } from 'recoil';
-import { bookmarksState, userState } from '@/store';
+import { bookmarksState } from '@/store';
 import './index.less';
-import { useEffect } from 'react';
 
 interface IFormData {
   name: string;
@@ -41,7 +40,6 @@ const initialValues: IFormData = {
 export default function BookmarkModal(props: IProps) {
   const { visible, formValue = initialValues, onClose } = props;
   const { labels } = useRecoilValue(bookmarksState);
-  const user = useRecoilValue(userState);
   const theme = useMantineTheme();
 
   const form = useForm({
@@ -55,13 +53,8 @@ export default function BookmarkModal(props: IProps) {
   });
 
   const onSubmit = (formData: IFormData) => {
-    console.log('user', user);
     console.log('submit', formData);
   };
-
-  useEffect(()=>{
-    console.log('user',user)
-  },[user])
 
   return (
     <Modal
@@ -70,7 +63,7 @@ export default function BookmarkModal(props: IProps) {
       closeOnClickOutside={false}
       withCloseButton={false}
       centered
-      size="90%"
+      size="60%"
       overlayColor={
         theme.colorScheme === 'dark'
           ? theme.colors.dark[9]
@@ -105,15 +98,13 @@ export default function BookmarkModal(props: IProps) {
           data={labels.map((label) => label.label)}
           withAsterisk
         />
-        {user ? (
-          <FileInput
+       <FileInput
             {...form.getInputProps('icon')}
             label="图标"
             placeholder="请上传图片"
             icon={<IconUpload size={14} />}
             accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
           />
-        ) : null}
         <Textarea
           {...form.getInputProps('desc')}
           placeholder="请输入书签描述"
