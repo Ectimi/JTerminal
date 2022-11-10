@@ -29,7 +29,7 @@ function App() {
         {(styles) => (
           <div
             className="viewport-container"
-            style={{...styles, width: visible ? "50%" : 0 }}
+            style={{...styles, width: visible ? "830px" : 0 }}
           >
             <Viewport />
           </div>
