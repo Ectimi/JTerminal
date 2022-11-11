@@ -40,7 +40,6 @@ const loginCommand: CommandType = {
           await localforage.setItem(LocalForageKeys.USER, data.data.user);
           await addUserBookmarks();
           await addUserLabels();
-          terminal.updateState('login')
         } else {
           terminal.writeErrorOutput(data.message || '登陆错误');
         }

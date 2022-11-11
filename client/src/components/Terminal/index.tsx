@@ -1,5 +1,5 @@
-import { createContext, useRef, forwardRef, useEffect } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { createContext, useRef, forwardRef, useEffect } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useAsyncEffect,
   useClickAway,
@@ -8,8 +8,8 @@ import {
   useKeyPress,
   useSafeState,
   useUpdateEffect,
-} from "ahooks";
-import { Autocomplete, AutocompleteItem, Group } from "@mantine/core";
+} from 'ahooks';
+import { Autocomplete, AutocompleteItem, Group } from '@mantine/core';
 import {
   userState,
   bookmarksState,
@@ -17,17 +17,17 @@ import {
   viewportVisibleState,
   ILabel,
   IUser,
-} from "@/store";
-import uniqBy from "lodash/uniqBy";
-import useHistory from "./useHistory";
-import { localforage, LocalForageKeys } from "@/lib/localForage";
-import { getUsageStr } from "../../core/commands/terminal/help/helpUtils";
-import { commandList } from "../../core/commandRegister";
-import { commandExecute } from "../../core/commandExecutor";
-import { initLocalforage } from "@/lib/localForage";
-import TerminalRow from "./TerminalRow";
-import Datetime from "../Datetime";
-import "./index.less";
+} from '@/store';
+import uniqBy from 'lodash/uniqBy';
+import useHistory from './useHistory';
+import { localforage, LocalForageKeys } from '@/lib/localForage';
+import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
+import { commandList } from '../../core/commandRegister';
+import { commandExecute } from '../../core/commandExecutor';
+import { initLocalforage } from '@/lib/localForage';
+import TerminalRow from './TerminalRow';
+import Datetime from '../Datetime';
+import './index.less';
 
 type TerminalType = JTerminal.TerminalType;
 
@@ -36,7 +36,7 @@ interface ItemProps {
   description: string;
 }
 
-type TMode = "common" | "query";
+type TMode = 'common' | 'query';
 
 export interface IBookmarkItem {
   name: string;
@@ -48,19 +48,19 @@ export interface IBookmarkItem {
 
 const initialList: JTerminal.OutputType[] = [
   {
-    type: "text",
-    text: "Welcome To JTerminal Index !",
+    type: 'text',
+    text: 'Welcome To JTerminal Index !',
   },
   {
-    type: "text",
+    type: 'text',
     text: `Please input 'help' to enjoy`,
   },
   {
-    type: "component",
+    type: 'component',
     component: <Datetime />,
   },
   {
-    type: "empty",
+    type: 'empty',
   },
 ];
 
@@ -72,7 +72,7 @@ const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
   ({ description, name, ...others }: ItemProps, ref) => (
     <div ref={ref} {...others}>
       <div className="tip-name">{name}</div>
-      <div className="tip-desc">{description.replace(name, "")}</div>
+      <div className="tip-desc">{description.replace(name, '')}</div>
     </div>
   )
 );
@@ -120,16 +120,16 @@ const getInputTips = (word: string, originData: any[], filterKey: string) => {
 };
 
 function Terminal() {
-  const setUser = useSetRecoilState(userState)
+  const [user, setUser] = useRecoilState(userState);
   const setViewportVisible = useSetRecoilState(viewportVisibleState);
   const [viewportComponentsList, setViewportComponentsList] = useRecoilState(
     viewportComponentListState
   );
   const [{ bookmarks }, setBookmarkState] = useRecoilState(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useSafeState<TMode>("common");
+  const [mode, setMode] = useSafeState<TMode>('common');
   const [alwaysFocus, setAlwayFocus] = useSafeState(true);
-  const [inputText, setInputText] = useSafeState("");
+  const [inputText, setInputText] = useSafeState('');
   const queryModeActiveKey = "'";
 
   const {
@@ -151,9 +151,9 @@ function Terminal() {
   const [inputTips, setInputTips] = useSafeState<any[]>([]);
 
   useEventListener(
-    "blur",
+    'blur',
     (event: any) => {
-      const excludeNodes = ["INPUT", "TEXTAREA"];
+      const excludeNodes = ['INPUT', 'TEXTAREA'];
       if (
         event.relatedTarget &&
         excludeNodes.includes(event.relatedTarget.nodeName)
@@ -166,16 +166,16 @@ function Terminal() {
     }
   );
 
-  useKeyPress("enter", () => {
+  useKeyPress('enter', () => {
     setInputTips([]);
     excuteCommand();
   });
 
-  useKeyPress("tab", (event: any) => {
+  useKeyPress('tab', (event: any) => {
     event.preventDefault();
     if (inputTips.length > 0) {
       const text =
-        mode === "query"
+        mode === 'query'
           ? queryModeActiveKey + inputTips[0].value
           : inputTips[0].value;
 
@@ -186,12 +186,12 @@ function Terminal() {
     }
   });
 
-  useKeyPress("uparrow", () => {
+  useKeyPress('uparrow', () => {
     if (inputTips.length === 0) {
       showPrevCommand();
     }
   });
-  useKeyPress("downarrow", () => {
+  useKeyPress('downarrow', () => {
     if (inputTips.length === 0) {
       showNextCommand();
     }
@@ -206,24 +206,27 @@ function Terminal() {
   }, []);
 
   useUpdateEffect(() => {
-    const text = inputText.trimStart().replace(/\s+/g, " ").split(" ");
+    const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
     let word = text[0].toLocaleLowerCase();
 
     if (word && text.length === 1) {
       if (word.startsWith(queryModeActiveKey)) {
         word = word.split(queryModeActiveKey)[1];
-        mode !== "query" && setMode("query");
+        mode !== 'query' && setMode('query');
         if (word) {
-          const tips = getInputTips(word, [...bookmarks], "name");
+          const tips = getInputTips(word, [...bookmarks], 'name');
           setInputTips(tips);
         }
       } else {
-        mode !== "common" && setMode("common");
-        const tips = getInputTips(word, [...commandList], "func");
+        mode !== 'common' && setMode('common');
+        const tips = getInputTips(word, [...commandList], 'func');
         setInputTips(tips);
       }
     } else {
-      setMode("common");
+      if(!word.startsWith(queryModeActiveKey)){
+        setMode('common');
+      }
+      
       setInputTips([]);
     }
   }, [inputText]);
@@ -236,24 +239,9 @@ function Terminal() {
     ref.current?.scrollIntoView();
   }, [outputList]);
 
-  const updateState: TerminalType["updateState"] = async (type) => {
-    if (type === "login") {
-      const user = (await localforage.getItem(LocalForageKeys.USER)) as IUser
-      const user_bookmarks =
-        (await localforage.getItem(LocalForageKeys.USER_BOOKMARKS)) as IBookmarkItem[];
-      const user_labels =
-        (await localforage.getItem(LocalForageKeys.USER_LABELS)) as ILabel[];
-      setBookmarkState((cur) => ({
-        bookmarks: uniqBy(user_bookmarks, "name"),
-        labels: uniqBy(user_labels, "label"),
-      }));
-      setUser(user)
-    }
-  };
-
   const onItemSubmit = (item: AutocompleteItem) => {
     const text =
-      mode === "query" ? queryModeActiveKey + item.value : item.value;
+      mode === 'query' ? queryModeActiveKey + item.value : item.value;
 
     setInputText(text);
 
@@ -264,25 +252,26 @@ function Terminal() {
 
   const onInputChange = (value: string) => setInputText(value);
 
-  const focusInput: TerminalType["focusInput"] = () => {
+  const focusInput: TerminalType['focusInput'] = () => {
     setAlwayFocus(true);
     ref.current?.focus();
   };
 
-  const unfocusInput: TerminalType["unfocusInput"] = () => setAlwayFocus(false);
+  const unfocusInput: TerminalType['unfocusInput'] = () => setAlwayFocus(false);
 
-  const excuteCommand: TerminalType["excuteCommand"] = async () => {
+  const excuteCommand: TerminalType['excuteCommand'] = async () => {
     const command: JTerminal.CommandOutputType = {
-      type: "command",
+      type: 'command',
       text: inputText,
     };
 
     if (inputText.trim()) {
       addInputList(command);
     }
-
+    console.log('mode',mode)
     writeCommandOutput(inputText);
-    if (mode === "query") {
+    if (mode === 'query') {
+      
       const name = inputText.trim().split(queryModeActiveKey)[1];
       const bookmarkItem =
         bookmarks!.filter(
@@ -300,49 +289,49 @@ function Terminal() {
       await commandExecute(inputText, TerminalProvider);
     }
 
-    setInputText("");
+    setInputText('');
   };
 
-  const clear: TerminalType["clear"] = () => resetList([]);
+  const clear: TerminalType['clear'] = () => resetList([]);
 
-  const reset: TerminalType["reset"] = () => resetList(initialList);
+  const reset: TerminalType['reset'] = () => resetList(initialList);
 
-  const getAllOutput: TerminalType["getAllOutput"] = () => outputList;
+  const getAllOutput: TerminalType['getAllOutput'] = () => outputList;
 
-  const getOutputLength: TerminalType["getOutputLength"] = () =>
+  const getOutputLength: TerminalType['getOutputLength'] = () =>
     outputList.length;
 
-  const writeInfoOutput: TerminalType["writeInfoOutput"] = (text) => {
+  const writeInfoOutput: TerminalType['writeInfoOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Info] ${text}`,
-      status: "info",
+      status: 'info',
     });
   };
 
-  const writeSuccessOutput: TerminalType["writeSuccessOutput"] = (text) => {
+  const writeSuccessOutput: TerminalType['writeSuccessOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Success] ${text}`,
-      status: "success",
+      status: 'success',
     });
   };
 
-  const writeErrorOutput: TerminalType["writeErrorOutput"] = (text) => {
+  const writeErrorOutput: TerminalType['writeErrorOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Error] ${text}`,
-      status: "error",
+      status: 'error',
     });
   };
 
-  const writeComponentOutput: TerminalType["writeComponentOutput"] = (
+  const writeComponentOutput: TerminalType['writeComponentOutput'] = (
     output
   ) => {
     if (output.onlyOne) {
       for (let i = 0; i < outputList.length; i++) {
         const item = outputList[i];
-        if (item.type === "component") {
+        if (item.type === 'component') {
           if (item.componentName === output.componentName) {
             removeOutput(i);
             break;
@@ -353,28 +342,28 @@ function Terminal() {
     writeOutput(output);
   };
 
-  const writeCommandOutput: TerminalType["writeCommandOutput"] = (text) => {
+  const writeCommandOutput: TerminalType['writeCommandOutput'] = (text) => {
     writeOutput({
-      type: "command",
+      type: 'command',
       text,
     });
   };
 
-  const writeComponentToViewport: TerminalType["writeComponentToViewport"] = (
+  const writeComponentToViewport: TerminalType['writeComponentToViewport'] = (
     output
   ) => {
     setViewportVisible(true);
     if (output.onlyOne) {
       for (let i = 0; i < viewportComponentsList.length; i++) {
         if (viewportComponentsList[i].componentName === output.componentName) {
-          writeInfoOutput("该组件已打开");
+          writeInfoOutput('该组件已打开');
           return;
         }
       }
     }
     setViewportComponentsList((cur) => [
       {
-        type: "component",
+        type: 'component',
         component: output.component,
         componentName: output.componentName,
         onlyOne: true,
@@ -400,7 +389,6 @@ function Terminal() {
     writeComponentToViewport,
     removeOutput,
     excuteCommand,
-    updateState,
   };
 
   return (
@@ -435,7 +423,7 @@ function Terminal() {
             </Group>
           }
         />
-        {mode === "query" ? (
+        {mode === 'query' ? (
           <div className="mode-text">当前为书签检索模式</div>
         ) : null}
       </div>

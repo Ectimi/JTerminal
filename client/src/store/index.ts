@@ -3,6 +3,7 @@ import { localforage, LocalForageKeys } from '@/lib/localForage';
 import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
 import uniqBy from 'lodash/uniqBy';
+import PubSub from 'pubsub-js';
 
 interface IState {
   showViewport: boolean;
@@ -14,6 +15,7 @@ export interface IBookmarkItem {
   icon: string;
   label: string;
   description: string;
+  // sticky: string;
 }
 
 export interface ILabel {
@@ -27,7 +29,7 @@ export interface IBookmarkState {
 }
 
 export interface IUser {
-  id: number;
+  id: any;
   setting: any;
   username: string;
 }
@@ -47,7 +49,6 @@ const userState = atom<IUser | null>({
         const user =
           (await localforage.getItem<IUser>(LocalForageKeys.USER)) || null;
 
-        console.log('get user', user);
         setSelf(user);
       };
       loadPersisted();
@@ -103,9 +104,23 @@ const bookmarksState = atom<IBookmarkState>({
         }
       };
       loadPersisted();
+
       if (trigger === 'get') {
         loadPersisted();
       }
+
+      [
+        LocalForageKeys.TOKEN,
+        LocalForageKeys.USER_BOOKMARKS,
+        LocalForageKeys.USER_LABELS,
+        LocalForageKeys.LOCAL_BOOKMARKS,
+        LocalForageKeys.LOCAL_LABELS,
+      ].forEach((key) => {
+        PubSub.subscribe(key, (name: any, data: any) => {
+          setSelf(data.value);
+          // console.log('sub name==>', data, name);
+        });
+      });
     },
   ],
 });

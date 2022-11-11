@@ -11,16 +11,18 @@ import {
 } from '@mantine/core';
 import { IconUpload } from '@tabler/icons';
 import { useForm } from '@mantine/form';
-import { useRecoilValue } from 'recoil';
-import { bookmarksState } from '@/store';
+import { showNotification } from '@mantine/notifications';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { bookmarksState, userState } from '@/store';
+import { AddBookmarkItem } from '@/serve/user';
 import './index.less';
 
 interface IFormData {
   name: string;
-  link: string;
+  url: string;
   label: string;
   icon: string;
-  desc: string;
+  description: string;
 }
 
 interface IProps {
@@ -31,15 +33,16 @@ interface IProps {
 
 const initialValues: IFormData = {
   name: '',
-  link: '',
+  url: '',
   label: '',
   icon: '',
-  desc: '',
+  description: '',
 };
 
 export default function BookmarkModal(props: IProps) {
   const { visible, formValue = initialValues, onClose } = props;
-  const { labels } = useRecoilValue(bookmarksState);
+  const user = useRecoilValue(userState);
+  const [{ labels }, setBookmarkState] = useRecoilState(bookmarksState);
   const theme = useMantineTheme();
 
   const form = useForm({
@@ -47,13 +50,77 @@ export default function BookmarkModal(props: IProps) {
 
     validate: {
       name: (value) => (!!value ? null : '名称不能为空'),
-      link: (value) => (!!value ? null : '链接不能为空'),
+      url: (value) => (!!value ? null : '链接不能为空'),
       label: (value) => (!!value ? null : '分类不能为空'),
     },
   });
 
-  const onSubmit = (formData: IFormData) => {
-    console.log('submit', formData);
+  const onSubmit = async (data: IFormData) => {
+    console.log('submit', data);
+    try {
+      if (user) {
+        const formData = new FormData();
+        formData.append('user_id', user.id);
+        for (const key in data) {
+          formData.append(key, data[key as keyof IFormData]);
+        }
+        const res = await AddBookmarkItem(formData);
+        if (res.success) {
+          setBookmarkState((cur) => ({
+            ...cur,
+            bookmarks: res.data,
+          }));
+          showNotification({
+            color: 'blue',
+            message: '添加成功',
+            style: {
+              position: 'fixed',
+              top: '10px',
+              right: '10px',
+              width: '300px',
+            },
+          });
+        } else {
+          showNotification({
+            color: 'red',
+            message: res.message,
+            style: {
+              position: 'fixed',
+              top: '10px',
+              right: '10px',
+              width: '300px',
+            },
+          });
+        }
+      } else {
+        setBookmarkState((cur) => ({
+          ...cur,
+          bookmarks: [{ ...data, sticky: 0 }, ...cur.bookmarks],
+        }));
+        showNotification({
+          color: 'blue',
+          message: '添加成功',
+          style: {
+            position: 'fixed',
+            top: '10px',
+            right: '10px',
+            width: '300px',
+          },
+        });
+      }
+    } catch (error: any) {
+      showNotification({
+        color: 'red',
+        title: error.name ? error.name : 'Error',
+        message: error.message ? error.message : '添加书签遇到未知错误',
+        style: {
+          position: 'fixed',
+          top: '10px',
+          right: '10px',
+          width: '300px',
+        },
+      });
+    }
   };
 
   return (
@@ -86,7 +153,7 @@ export default function BookmarkModal(props: IProps) {
           data-autofocus
         />
         <TextInput
-          {...form.getInputProps('link')}
+          {...form.getInputProps('url')}
           placeholder="请输入书签链接"
           label="链接"
           withAsterisk
@@ -98,15 +165,16 @@ export default function BookmarkModal(props: IProps) {
           data={labels.map((label) => label.label)}
           withAsterisk
         />
-       <FileInput
-            {...form.getInputProps('icon')}
-            label="图标"
-            placeholder="请上传图片"
-            icon={<IconUpload size={14} />}
-            accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
-          />
+        <FileInput
+          {...form.getInputProps('icon')}
+          label="图标"
+          placeholder={user ? '请上传图片' : '登陆后才能上传图片'}
+          icon={<IconUpload size={14} />}
+          accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
+          disabled={!user}
+        />
         <Textarea
-          {...form.getInputProps('desc')}
+          {...form.getInputProps('description')}
           placeholder="请输入书签描述"
           label="描述"
           sx={{ caretColor: '#000' }}

@@ -58,7 +58,6 @@ export default function LoginBox() {
         await localforage.setItem(LocalForageKeys.USER, data.data.user);
         await addUserBookmarks();
         await addUserLabels();
-        terminal.updateState('login');
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
       }

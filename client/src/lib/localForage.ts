@@ -1,8 +1,10 @@
 import LocalForage from 'localforage';
+import PubSub from 'pubsub-js';
 import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
 import { GetBookmarks, GetLabels } from '@/serve/user';
 import { showNotification } from '@mantine/notifications';
+import { IBookmarkItem, IBookmarkState, ILabel } from '@/store';
 
 interface ICallback {
   success: () => void;
@@ -10,8 +12,8 @@ interface ICallback {
 }
 
 const LocalForageKeys = {
-  TOKEN:"TOKEN",
-  USER:"USER",
+  TOKEN: 'TOKEN',
+  USER: 'USER',
   DEFAULT_BOOKMARKS: 'DEFAULT_BOOKMARKS',
   DEFAULT_LABELS: 'DEFAULT_LABELS',
   LOCAL_BOOKMARKS: 'LOCAL_BOOKMARKS',
@@ -20,15 +22,107 @@ const LocalForageKeys = {
   USER_LABELS: 'USER_LABELS',
 };
 
+const PubSubkeys = {
+  UPDATE_BOOKMARK: 'UPDATE_BOOKMARK',
+};
+
 LocalForage.config({
-  driver: LocalForage.INDEXEDDB, // Force WebSQL; same as using setDriver()
+  driver: LocalForage.INDEXEDDB,
   name: 'JTerminal',
   version: 1.0,
   storeName: 'terminal_store',
   description: 'JTerminal store',
 });
 
-const localforage = LocalForage.createInstance({ name: 'JTerminal' });
+let localforage = LocalForage.createInstance({ name: 'JTerminal' });
+
+const originLocalforageSetItem = localforage.setItem;
+const originLocalforageRemoveItem = localforage.removeItem;
+
+// 重写 setItem,removeItem 方法，在设置值的时候，同时更新 store 的值
+localforage = {
+  ...localforage,
+  setItem: <T>(
+    key: string,
+    value: T,
+    callback: ((err: any, value: T) => void) | undefined
+  ): Promise<T> => {
+    return originLocalforageSetItem(key, value, callback).then((newValue) => {
+      const fn = async () => {
+        let publishValue: IBookmarkState;
+        if (
+          key === LocalForageKeys.LOCAL_BOOKMARKS ||
+          key === LocalForageKeys.LOCAL_LABELS
+        ) {
+          const local_bookmarks = (await localforage.getItem(
+            LocalForageKeys.LOCAL_BOOKMARKS
+          )) as IBookmarkItem[];
+          const local_labels = (await localforage.getItem(
+            LocalForageKeys.LOCAL_LABELS
+          )) as ILabel[];
+
+          publishValue = {
+            bookmarks: [...local_bookmarks, ...DEFAULT_BOOKMARKS],
+            labels: [...local_labels, ...DEFAULT_LABELS],
+          };
+          PubSub.publish(key, {
+            type: 'set',
+            value: publishValue,
+          });
+        } else if (
+          key === LocalForageKeys.USER_BOOKMARKS ||
+          key === LocalForageKeys.USER_LABELS
+        ) {
+          const user_bookmarks = (await localforage.getItem(
+            LocalForageKeys.USER_BOOKMARKS
+          )) as IBookmarkItem[];
+          const user_labels = (await localforage.getItem(
+            LocalForageKeys.USER_LABELS
+          )) as ILabel[];
+
+          publishValue = {
+            bookmarks: [...user_bookmarks],
+            labels: [...user_labels],
+          };
+
+          PubSub.publish(key, {
+            type: 'set',
+            value: publishValue,
+          });
+        }
+      };
+
+      fn();
+
+      return newValue;
+    });
+  },
+  removeItem: (key: string, callback: (err: any) => void): Promise<void> => {
+    return originLocalforageRemoveItem(key, callback).then(() => {
+      const fn = async () => {
+        // 如果删除 token 说明在执行退出登陆操作
+        if (key === LocalForageKeys.TOKEN) {
+          const local_bookmarks = (await localforage.getItem(
+            LocalForageKeys.LOCAL_BOOKMARKS
+          )) as IBookmarkItem[];
+          const local_labels = (await localforage.getItem(
+            LocalForageKeys.LOCAL_LABELS
+          )) as ILabel[];
+
+          const publishValue: IBookmarkState = {
+            bookmarks: [...local_bookmarks, ...DEFAULT_BOOKMARKS],
+            labels: [...local_labels, ...DEFAULT_LABELS],
+          };
+          PubSub.publish(key, {
+            type: 'remove',
+            value: publishValue,
+          });
+        }
+      };
+      fn()
+    });
+  },
+};
 
 // 退出登陆时清除用户数据
 const clearLocalforage = async () => {
@@ -50,7 +144,10 @@ const initLocalforage = async () => {
   if (!local_labels) {
     await localforage.setItem(LocalForageKeys.LOCAL_LABELS, []);
   }
-  await localforage.setItem(LocalForageKeys.DEFAULT_BOOKMARKS, DEFAULT_BOOKMARKS);
+  await localforage.setItem(
+    LocalForageKeys.DEFAULT_BOOKMARKS,
+    DEFAULT_BOOKMARKS
+  );
   await localforage.setItem(LocalForageKeys.DEFAULT_LABELS, DEFAULT_LABELS);
   addUserBookmarks();
   addUserLabels();
@@ -105,6 +202,7 @@ const addUserLabels = async (option?: ICallback) => {
 export {
   localforage,
   LocalForageKeys,
+  PubSubkeys,
   initLocalforage,
   addUserBookmarks,
   addUserLabels,

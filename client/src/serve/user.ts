@@ -26,6 +26,13 @@ export function GetBookmarks(): Promise<IResponse> {
   });
 }
 
+export function AddBookmarkItem(formData:any): Promise<IResponse> {
+  return request('./addBookmark', {
+    method: 'post',
+    data:formData
+  });
+}
+
 export function GetLabels(): Promise<IResponse> {
   return request('./labels', {
     method: 'post',
