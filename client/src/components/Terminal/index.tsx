@@ -223,10 +223,10 @@ function Terminal() {
         setInputTips(tips);
       }
     } else {
-      if(!word.startsWith(queryModeActiveKey)){
+      if (!word.startsWith(queryModeActiveKey)) {
         setMode('common');
       }
-      
+
       setInputTips([]);
     }
   }, [inputText]);
@@ -268,10 +268,9 @@ function Terminal() {
     if (inputText.trim()) {
       addInputList(command);
     }
-    console.log('mode',mode)
+    console.log('mode', mode);
     writeCommandOutput(inputText);
     if (mode === 'query') {
-      
       const name = inputText.trim().split(queryModeActiveKey)[1];
       const bookmarkItem =
         bookmarks!.filter(
@@ -399,14 +398,16 @@ function Terminal() {
             key={
               (output.componentName && output.componentName + index) || index
             }
+            user={user}
             {...output}
           />
         ))}
         <TerminalRow
+          user={user}
           type="component"
           component={
             <Group>
-              <div>[root]# </div>
+              <div>[{user ? user.username : 'local'}]# </div>
               <Autocomplete
                 ref={ref}
                 data={inputTips}

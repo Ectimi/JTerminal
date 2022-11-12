@@ -56,6 +56,10 @@ const userState = atom<IUser | null>({
       if (trigger === 'get') {
         loadPersisted();
       }
+
+      PubSub.subscribe(LocalForageKeys.USER, (name: any, data: any) => {
+        setSelf(data.value);
+      });
     },
   ],
 });
@@ -105,9 +109,9 @@ const bookmarksState = atom<IBookmarkState>({
       };
       loadPersisted();
 
-      if (trigger === 'get') {
-        loadPersisted();
-      }
+      // if (trigger === 'get') {
+      //   loadPersisted();
+      // }
 
       [
         LocalForageKeys.TOKEN,

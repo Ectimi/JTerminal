@@ -4,7 +4,7 @@ import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
 import { GetBookmarks, GetLabels } from '@/serve/user';
 import { showNotification } from '@mantine/notifications';
-import { IBookmarkItem, IBookmarkState, ILabel } from '@/store';
+import { IBookmarkItem, IBookmarkState, ILabel, IUser } from '@/store';
 
 interface ICallback {
   success: () => void;
@@ -49,7 +49,7 @@ localforage = {
   ): Promise<T> => {
     return originLocalforageSetItem(key, value, callback).then((newValue) => {
       const fn = async () => {
-        let publishValue: IBookmarkState;
+        let publishValue: any = null;
         if (
           key === LocalForageKeys.LOCAL_BOOKMARKS ||
           key === LocalForageKeys.LOCAL_LABELS
@@ -65,6 +65,7 @@ localforage = {
             bookmarks: [...local_bookmarks, ...DEFAULT_BOOKMARKS],
             labels: [...local_labels, ...DEFAULT_LABELS],
           };
+
           PubSub.publish(key, {
             type: 'set',
             value: publishValue,
@@ -80,10 +81,21 @@ localforage = {
             LocalForageKeys.USER_LABELS
           )) as ILabel[];
 
-          publishValue = {
-            bookmarks: [...user_bookmarks],
-            labels: [...user_labels],
-          };
+          if (user_bookmarks && user_labels) {
+            publishValue = {
+              bookmarks: [...user_bookmarks],
+              labels: [...user_labels],
+            };
+
+            PubSub.publish(key, {
+              type: 'set',
+              value: publishValue,
+            });
+          }
+        } else if (key === LocalForageKeys.USER) {
+          publishValue = (await localforage.getItem(
+            LocalForageKeys.USER
+          )) as IUser;
 
           PubSub.publish(key, {
             type: 'set',
@@ -117,9 +129,14 @@ localforage = {
             type: 'remove',
             value: publishValue,
           });
+        } else if (key === LocalForageKeys.USER) {
+          PubSub.publish(key, {
+            type: 'remove',
+            value: null,
+          });
         }
       };
-      fn()
+      fn();
     });
   },
 };
