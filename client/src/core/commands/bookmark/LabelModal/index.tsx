@@ -9,51 +9,37 @@ import {
   Title,
   useMantineTheme,
 } from "@mantine/core";
-import { IconUpload } from "@tabler/icons";
 import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { bookmarksState, IBookmarkItem, userState } from "@/store";
-import { AddBookmarkItem } from "@/serve/user";
+import { AddLabel } from "@/serve/user";
 import { LocalForageKeys, localforage } from "@/lib/localForage";
 import "./index.less";
 
 interface IFormData {
-  name: string;
-  url: string;
   label: string;
-  icon: string;
-  description: string;
 }
 
 interface IProps {
   visible: boolean;
-  formValue?: IFormData;
   onClose: () => void;
 }
 
-const initialValues: IFormData = {
-  name: "",
-  url: "",
-  label: "",
-  icon: "",
-  description: "",
-};
-
-export default function BookmarkModal(props: IProps) {
-  const { visible, formValue = initialValues, onClose } = props;
+export default function LabelModal(props: IProps) {
+  const { visible, onClose } = props;
   const user = useRecoilValue(userState);
   const [{ bookmarks, labels }, setBookmarkState] =
     useRecoilState(bookmarksState);
   const theme = useMantineTheme();
 
   const form = useForm({
-    initialValues: formValue,
+    initialValues: {
+      label: "",
+    },
 
     validate: {
-      name: (value) => (!!value ? null : "名称不能为空"),
-      url: (value) => (!!value ? null : "链接不能为空"),
-      label: (value) => (!!value ? null : "分类不能为空"),
+      label: (value) => (!!value ? null : "名称不能为空"),
     },
   });
 
@@ -63,18 +49,14 @@ export default function BookmarkModal(props: IProps) {
   };
 
   const onSubmit = async (data: IFormData) => {
+    console.log("submit", data);
     try {
       if (user) {
-        const formData = new FormData();
-        formData.append("user_id", user.id);
-        for (const key in data) {
-          formData.append(key, data[key as keyof IFormData]);
-        }
-        const res = await AddBookmarkItem(formData);
+        const res = await AddLabel(data.label);
         if (res.success) {
           setBookmarkState((cur) => ({
             ...cur,
-            bookmarks: res.data,
+            labels: res.data,
           }));
           showNotification({
             color: "blue",
@@ -100,10 +82,10 @@ export default function BookmarkModal(props: IProps) {
           });
         }
       } else {
-        if (bookmarks.some((bookmark) => bookmark.name === data.name)) {
+        if (labels.some((label) => label.label === data.label)) {
           showNotification({
             color: "yellow",
-            message: "该书签名已存在",
+            message: "该标签名已存在",
             style: {
               position: "fixed",
               top: "10px",
@@ -113,12 +95,12 @@ export default function BookmarkModal(props: IProps) {
           });
           return;
         }
-        const local_bookmarks = (await localforage.getItem(
-          LocalForageKeys.LOCAL_BOOKMARKS
+        const loacl_labels = (await localforage.getItem(
+          LocalForageKeys.LOCAL_LABELS
         )) as IBookmarkItem[];
-        await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, [
+        await localforage.setItem(LocalForageKeys.LOCAL_LABELS, [
+          ...loacl_labels,
           data,
-          ...local_bookmarks,
         ]);
         showNotification({
           color: "blue",
@@ -136,7 +118,7 @@ export default function BookmarkModal(props: IProps) {
       showNotification({
         color: "red",
         title: error.name ? error.name : "Error",
-        message: error.message ? error.message : "添加书签遇到未知错误",
+        message: error.message ? error.message : "添加标 签遇到未知错误",
         style: {
           position: "fixed",
           top: "10px",
@@ -165,44 +147,18 @@ export default function BookmarkModal(props: IProps) {
       transition="fade"
       transitionDuration={400}
       transitionTimingFunction="ease"
-      title={<Title order={5}>添加书签</Title>}
+      title={<Title order={5}>添加标签</Title>}
       target=".viewport-view"
     >
       <form onSubmit={form.onSubmit(onSubmit)} className="bookmark-modal-form">
         <TextInput
-          {...form.getInputProps("name")}
-          placeholder="请输入书签名"
+          {...form.getInputProps("label")}
+          placeholder="请输入标签名"
           label="名称"
           withAsterisk
           data-autofocus
         />
-        <TextInput
-          {...form.getInputProps("url")}
-          placeholder="请输入书签链接"
-          label="链接"
-          withAsterisk
-        />
-        <Select
-          {...form.getInputProps("label")}
-          label="分类"
-          placeholder="请选择分类"
-          data={labels.map((label) => label.label)}
-          withAsterisk
-        />
-        <FileInput
-          {...form.getInputProps("icon")}
-          label="图标"
-          placeholder={user ? "请上传图片" : "登陆后才能上传图片"}
-          icon={<IconUpload size={14} />}
-          accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
-          disabled={!user}
-        />
-        <Textarea
-          {...form.getInputProps("description")}
-          placeholder="请输入书签描述"
-          label="描述"
-          sx={{ caretColor: "#000" }}
-        />
+
         <Flex justify="center" align="center">
           <Button type="submit">确定</Button>
           <Button

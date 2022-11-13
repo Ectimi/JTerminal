@@ -1,9 +1,9 @@
-import { atom, selector, AtomEffect } from 'recoil';
-import { localforage, LocalForageKeys } from '@/lib/localForage';
-import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
-import DEFAULT_LABELS from '@/config/default_labels';
-import uniqBy from 'lodash/uniqBy';
-import PubSub from 'pubsub-js';
+import { atom, selector, AtomEffect } from "recoil";
+import { localforage, LocalForageKeys } from "@/lib/localForage";
+import DEFAULT_BOOKMARKS from "@/config/default_bookmark";
+import DEFAULT_LABELS from "@/config/default_labels";
+import uniqBy from "lodash/uniqBy";
+import PubSub from "pubsub-js";
 
 interface IState {
   showViewport: boolean;
@@ -36,12 +36,12 @@ export interface IUser {
 
 // viewport是否打开
 const viewportVisibleState = atom({
-  key: 'viewportVisibleState',
+  key: "viewportVisibleState",
   default: false,
 });
 
 const userState = atom<IUser | null>({
-  key: 'userState',
+  key: "userState",
   default: null,
   effects_UNSTABLE: [
     ({ setSelf, trigger }) => {
@@ -53,7 +53,7 @@ const userState = atom<IUser | null>({
       };
       loadPersisted();
 
-      if (trigger === 'get') {
+      if (trigger === "get") {
         loadPersisted();
       }
 
@@ -66,7 +66,7 @@ const userState = atom<IUser | null>({
 
 // 书签和分类标签
 const bookmarksState = atom<IBookmarkState>({
-  key: 'bookmarkState',
+  key: "bookmarkState",
   default: {
     bookmarks: DEFAULT_BOOKMARKS,
     labels: DEFAULT_LABELS,
@@ -85,9 +85,9 @@ const bookmarksState = atom<IBookmarkState>({
             setSelf({
               bookmarks: uniqBy(
                 [...user_bookmarks, ...DEFAULT_BOOKMARKS],
-                'name'
+                "name"
               ),
-              labels: uniqBy([...user_labels, ...DEFAULT_LABELS], 'label'),
+              labels: uniqBy([...user_labels, ...DEFAULT_LABELS], "label"),
             });
           }
         } else {
@@ -96,15 +96,14 @@ const bookmarksState = atom<IBookmarkState>({
             (await localforage.getItem(LocalForageKeys.LOCAL_BOOKMARKS)) || [];
           const local_labels: ILabel[] =
             (await localforage.getItem(LocalForageKeys.LOCAL_LABELS)) || [];
-          if (local_bookmarks.length && local_labels.length) {
-            setSelf({
-              bookmarks: uniqBy(
-                [...local_bookmarks, ...DEFAULT_BOOKMARKS],
-                'name'
-              ),
-              labels: uniqBy([...local_labels, ...DEFAULT_LABELS], 'label'),
-            });
-          }
+         
+          setSelf({
+            bookmarks: uniqBy(
+              [...local_bookmarks, ...DEFAULT_BOOKMARKS],
+              "name"
+            ),
+            labels: uniqBy([...local_labels, ...DEFAULT_LABELS], "label"),
+          });
         }
       };
       loadPersisted();
@@ -131,7 +130,7 @@ const bookmarksState = atom<IBookmarkState>({
 
 // 在viewport中展示的组件
 const viewportComponentListState = atom<JTerminal.ComponentOutputType[]>({
-  key: 'viewportComponentListState',
+  key: "viewportComponentListState",
   default: [],
 });
 
