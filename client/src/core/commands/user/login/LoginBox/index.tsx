@@ -18,7 +18,7 @@ import {
 } from '@/lib/localForage';
 import { useRecoilValue } from 'recoil';
 import { userState } from '@/store';
-import { Login } from '@/serve/user';
+import { Login } from '@/serve/api';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
 import './index.less';

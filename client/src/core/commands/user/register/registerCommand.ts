@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { Register } from '@/serve/user';
+import { Register } from '@/serve/api';
 import {localforage,LocalForageKeys} from '@/lib/localForage'
 
 const registerCommand: CommandType = {

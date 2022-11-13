@@ -18,9 +18,8 @@ import {
   ILabel,
   IUser,
 } from '@/store';
-import uniqBy from 'lodash/uniqBy';
+import { GetWallpaper } from '@/serve/api';
 import useHistory from './useHistory';
-import { localforage, LocalForageKeys } from '@/lib/localForage';
 import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
 import { commandList } from '../../core/commandRegister';
 import { commandExecute } from '../../core/commandExecutor';

@@ -13,7 +13,7 @@ import { useForm } from "@mantine/form";
 import { showNotification } from "@mantine/notifications";
 import { useRecoilValue, useRecoilState } from "recoil";
 import { bookmarksState, IBookmarkItem, userState } from "@/store";
-import { AddLabel } from "@/serve/user";
+import { AddLabel } from "@/serve/api";
 import { LocalForageKeys, localforage } from "@/lib/localForage";
 import "./index.less";
 

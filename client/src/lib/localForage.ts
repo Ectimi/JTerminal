@@ -2,7 +2,7 @@ import LocalForage from 'localforage';
 import PubSub from 'pubsub-js';
 import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
-import { GetBookmarks, GetLabels } from '@/serve/user';
+import { GetBookmarks, GetLabels } from '@/serve/api';
 import { showNotification } from '@mantine/notifications';
 import { IBookmarkItem, IBookmarkState, ILabel, IUser } from '@/store';
 

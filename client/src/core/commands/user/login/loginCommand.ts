@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { Login } from '@/serve/user';
+import { Login } from '@/serve/api';
 import {
   localforage,
   LocalForageKeys,

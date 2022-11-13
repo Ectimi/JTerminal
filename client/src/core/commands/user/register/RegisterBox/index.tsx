@@ -2,7 +2,7 @@ import { useContext } from 'react';
 import { useRequest } from 'ahooks';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Card, LoadingOverlay } from '@mantine/core';
-import { Register } from '@/serve/user';
+import { Register } from '@/serve/api';
 import { TerminalContext } from '@/components/Terminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
 import './index.less';

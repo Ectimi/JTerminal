@@ -44,3 +44,7 @@ export function GetLabels(): Promise<IResponse> {
     method: "post",
   });
 }
+
+export function GetWallpaper():any{
+  return request('https://source.unsplash.com/random')
+}
