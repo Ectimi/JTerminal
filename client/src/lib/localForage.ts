@@ -62,8 +62,8 @@ localforage = {
           )) as ILabel[];
 
           publishValue = {
-            bookmarks: [...local_bookmarks, ...DEFAULT_BOOKMARKS],
-            labels: [...local_labels, ...DEFAULT_LABELS],
+            bookmarks: local_bookmarks,
+            labels: local_labels,
           };
 
           PubSub.publish(key, {
@@ -122,8 +122,8 @@ localforage = {
           )) as ILabel[];
 
           const publishValue: IBookmarkState = {
-            bookmarks: [...local_bookmarks, ...DEFAULT_BOOKMARKS],
-            labels: [...local_labels, ...DEFAULT_LABELS],
+            bookmarks: local_bookmarks,
+            labels: local_labels,
           };
           PubSub.publish(key, {
             type: 'remove',
@@ -156,10 +156,10 @@ const initLocalforage = async () => {
   );
   const local_labels = await localforage.getItem(LocalForageKeys.LOCAL_LABELS);
   if (!local_bookmarks) {
-    await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, []);
+    await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, DEFAULT_BOOKMARKS);
   }
   if (!local_labels) {
-    await localforage.setItem(LocalForageKeys.LOCAL_LABELS, []);
+    await localforage.setItem(LocalForageKeys.LOCAL_LABELS, DEFAULT_LABELS);
   }
   await localforage.setItem(
     LocalForageKeys.DEFAULT_BOOKMARKS,

@@ -32,6 +32,15 @@ export function AddBookmarkItem(formData: any): Promise<IResponse> {
     data: formData,
   });
 }
+
+export function UpdateBookmarkItem(formData: any): Promise<IResponse> {
+  return request('./updateBookmark', {
+    method: 'post',
+    data: formData,
+  });
+}
+
+
 export function AddLabel(label: string): Promise<IResponse> {
   return request('./addLabel', {
     method: 'post',

@@ -1,4 +1,4 @@
-.App {
+#app {
   position: relative;
   display: flex;
   width: 100%;
@@ -7,15 +7,15 @@
   color: #fff;
   background-color: #000;
 }
-.App .terminal-container {
+#app .terminal-container {
   position: relative;
   flex: 1;
 }
-.App .viewport-container {
+#app .viewport-container {
   position: relative;
   height: 100%;
 }
-.App .switch-button {
+#app .switch-button {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);

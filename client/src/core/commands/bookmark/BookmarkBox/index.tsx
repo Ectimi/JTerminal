@@ -1,3 +1,5 @@
+import React, { Fragment, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import {
   ActionIcon,
   Card,
@@ -7,21 +9,53 @@ import {
   Flex,
   Space,
   Menu,
-} from "@mantine/core";
-import { IconSettings } from "@tabler/icons";
-import { useRecoilValue } from "recoil";
-import { bookmarksState, IBookmarkItem } from "@/store";
-import { useSafeState, useToggle } from "ahooks";
-import { Fragment, useEffect } from "react";
-import BookmarkModal from "../BookmarkModal";
-import LabelModal from "../LabelModal";
-import "./index.less";
+} from '@mantine/core';
+import { IconSettings } from '@tabler/icons';
+import {
+  useContextMenu,
+  Menu as RightClickMenu,
+  Item,
+  ItemParams,
+} from 'react-contexify';
+import { useRecoilValue } from 'recoil';
+import { userState, bookmarksState, IBookmarkItem } from '@/store';
+import { useSafeState, useToggle } from 'ahooks';
+import BookmarkModal, {
+  IBookmarkModalFormData,
+  TBookmarkModalType,
+} from '../BookmarkModal';
+import LabelModal from '../LabelModal';
+
+import 'react-contexify/ReactContexify.css';
+import './index.less';
+import { localforage, LocalForageKeys } from '@/lib/localForage';
+
+interface ItemProps {
+  bookmark_id: string | number;
+}
+
+type ItemData = any;
+
+const MENU_ID = 'menu_id';
+
+const initialBookmarkModalFormData: IBookmarkModalFormData = {
+  name: '',
+  url: '',
+  label: '',
+  icon: '',
+  description: '',
+};
 
 export default function BookmarkBox() {
+  const user = useRecoilValue(userState);
   const { bookmarks, labels } = useRecoilValue(bookmarksState);
-
   const [activeTab, setActiveTab] = useSafeState(labels[0].label);
   const [showBookmarks, setShowBookmarks] = useSafeState<IBookmarkItem[]>([]);
+  const [bookmarkModalFormData, setBookmarkModalFormData] = useSafeState(
+    initialBookmarkModalFormData
+  );
+  const [bookmarkModalType, setBookmarkModalType] =
+    useSafeState<TBookmarkModalType>('add');
   const [
     bookmarkModalVisible,
     { setLeft: hideBookmarkModal, setRight: showBookmarkModal },
@@ -30,8 +64,44 @@ export default function BookmarkBox() {
     labelModalVisible,
     { setLeft: hideLabelModal, setRight: showLabelModal },
   ] = useToggle();
+  const { show } = useContextMenu({ id: MENU_ID });
 
   const onTabChange = (value: string) => setActiveTab(value);
+
+  const handleItemClick = async ({
+    id,
+    props,
+  }: ItemParams<ItemProps, ItemData>) => {
+    const { bookmark_id } = props!;
+    let bookmark: IBookmarkItem;
+    if (id === 'edit') {
+      if (user) {
+        const user_bookmarks = (await localforage.getItem(
+          LocalForageKeys.USER_BOOKMARKS
+        )) as IBookmarkItem[];
+
+        bookmark = user_bookmarks.filter(
+          (bookmark) => bookmark.id === bookmark_id
+        )[0];
+      } else {
+        const default_bookmarks = (await localforage.getItem(
+          LocalForageKeys.DEFAULT_BOOKMARKS
+        )) as IBookmarkItem[];
+
+        const local_bookmarks = (await localforage.getItem(
+          LocalForageKeys.LOCAL_BOOKMARKS
+        )) as IBookmarkItem[];
+
+        bookmark = [...default_bookmarks, ...local_bookmarks].filter(
+          (bookmark) => bookmark.id === bookmark_id
+        )[0];
+      }
+      setBookmarkModalType('edit');
+      setBookmarkModalFormData(bookmark);
+      showBookmarkModal();
+    } else if (id === 'delete') {
+    }
+  };
 
   useEffect(() => {
     const obj: Record<string, IBookmarkItem[]> = {};
@@ -58,7 +128,13 @@ export default function BookmarkBox() {
         </Menu.Target>
 
         <Menu.Dropdown>
-          <Menu.Item component="div" onClick={showBookmarkModal}>
+          <Menu.Item
+            component="div"
+            onClick={() => {
+              showBookmarkModal();
+              setBookmarkModalType('add');
+            }}
+          >
             添加书签
           </Menu.Item>
           <Menu.Item component="div" onClick={showLabelModal}>
@@ -95,7 +171,7 @@ export default function BookmarkBox() {
               wrap="wrap"
             >
               {showBookmarks.map((bookmark) => (
-                <Fragment key={bookmark.name}>
+                <Fragment key={bookmark.id}>
                   <Card
                     className="bookmark-item"
                     shadow="sm"
@@ -103,6 +179,16 @@ export default function BookmarkBox() {
                     radius="md"
                     withBorder
                     onClick={() => window.open(bookmark.url)}
+                    onContextMenu={(e: React.MouseEvent) => {
+                      show({
+                        event: e,
+                        props: { bookmark_id: bookmark.id },
+                        position: {
+                          x: e.screenX,
+                          y: e.screenY - 50,
+                        },
+                      });
+                    }}
                   >
                     <div className="top">
                       <Image
@@ -116,18 +202,32 @@ export default function BookmarkBox() {
                       <Text className="name">{bookmark.name}</Text>
                     </div>
                     <Text className="desc">
-                      {bookmark.description || "暂无简介"}
+                      {bookmark.description || '暂无简介'}
                     </Text>
                   </Card>
                   <Space w="xl" />
                 </Fragment>
               ))}
+
+              {createPortal(
+                <RightClickMenu id={MENU_ID} animation="slide">
+                  <Item id="edit" onClick={handleItemClick}>
+                    编辑
+                  </Item>
+                  <Item id="delete" onClick={handleItemClick}>
+                    删除
+                  </Item>
+                </RightClickMenu>,
+                document.getElementById('app')!
+              )}
             </Flex>
           </Tabs.Panel>
         ))}
       </Tabs>
 
       <BookmarkModal
+        type={bookmarkModalType}
+        formValue={bookmarkModalFormData}
         onClose={hideBookmarkModal}
         visible={bookmarkModalVisible}
       />

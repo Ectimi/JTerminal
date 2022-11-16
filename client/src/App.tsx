@@ -24,7 +24,7 @@ function App() {
   const viewportComponentList = useRecoilValue(viewportComponentListState);
 
   return (
-    <div className="App">
+    <div id="app">
       <div className="terminal-container">
         <Terminal />
       </div>
