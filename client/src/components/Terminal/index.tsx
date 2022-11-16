@@ -18,11 +18,12 @@ import {
   ILabel,
   IUser,
 } from '@/store';
-import { GetWallpaper } from '@/serve/api';
+import { GetSearchSuggest } from '@/serve/api';
 import useHistory from './useHistory';
-import { getUsageStr } from '../../core/commands/terminal/help/helpUtils';
-import { commandList } from '../../core/commandRegister';
-import { commandExecute } from '../../core/commandExecutor';
+import searchCommand from '@/core/commands/search/searchCommand';
+import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
+import { commandList } from '@/core/commandRegister';
+import { commandExecute } from '@/core/commandExecutor';
 import { initLocalforage } from '@/lib/localForage';
 import TerminalRow from './TerminalRow';
 import Datetime from '../Datetime';
@@ -35,7 +36,7 @@ interface ItemProps {
   description: string;
 }
 
-type TMode = 'common' | 'query';
+type TMode = 'common' | 'query' | 'history';
 
 export interface IBookmarkItem {
   name: string;
@@ -71,7 +72,9 @@ const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
   ({ description, name, ...others }: ItemProps, ref) => (
     <div ref={ref} {...others}>
       <div className="tip-name">{name}</div>
-      <div className="tip-desc">{description.replace(name, '')}</div>
+      {description ? (
+        <div className="tip-desc">{description.replace(name, '')}</div>
+      ) : null}
     </div>
   )
 );
@@ -142,10 +145,13 @@ function Terminal() {
   const { list: inputList, push: addInputList } =
     useDynamicList<JTerminal.CommandOutputType>([]);
 
-  const { setCommandHistoryPos, showNextCommand, showPrevCommand } = useHistory(
-    inputList,
-    setInputText
-  );
+  const {
+    commandHistoryPos,
+    setCommandHistoryPos,
+    showNextCommand,
+    showPrevCommand,
+    listCommandHistory,
+  } = useHistory(inputList, setInputText);
 
   const [inputTips, setInputTips] = useSafeState<any[]>([]);
 
@@ -159,6 +165,17 @@ function Terminal() {
       )
         return;
       alwaysFocus && ref.current?.focus();
+    },
+    {
+      target: ref,
+    }
+  );
+
+  useEventListener(
+    'change',
+    () => {
+      if (mode === 'history') {
+      }
     },
     {
       target: ref,
@@ -186,23 +203,25 @@ function Terminal() {
   });
 
   useKeyPress('uparrow', () => {
-    if (inputTips.length === 0) {
+    if (mode !== 'history') {
+      if (!inputText) {
+        setMode('history');
+        showPrevCommand();
+      }
+    } else if (mode === 'history') {
       showPrevCommand();
     }
   });
+
   useKeyPress('downarrow', () => {
-    if (inputTips.length === 0) {
+    if (mode == 'history') {
       showNextCommand();
     }
   });
 
-  useClickAway((event: any) => {
-    focusInput();
-  }, ref);
+  useClickAway((event: any) => focusInput(), ref);
 
-  useAsyncEffect(async () => {
-    initLocalforage();
-  }, []);
+  useAsyncEffect(async () => initLocalforage(), []);
 
   useUpdateEffect(() => {
     const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
@@ -211,38 +230,68 @@ function Terminal() {
     if (word && text.length === 1) {
       if (word.startsWith(queryModeActiveKey)) {
         word = word.split(queryModeActiveKey)[1];
-        mode !== 'query' && setMode('query');
+        if (mode === 'common') {
+          setMode('query');
+        }
         if (word) {
           const tips = getInputTips(word, [...bookmarks], 'name');
           setInputTips(tips);
         }
       } else {
-        mode !== 'common' && setMode('common');
+        if (mode !== 'history' && mode !== 'common') {
+          setMode('common');
+        }
         const tips = getInputTips(word, [...commandList], 'func');
         setInputTips(tips);
       }
     } else {
-      if (!word.startsWith(queryModeActiveKey)) {
+      if (!word.startsWith(queryModeActiveKey) && mode !== 'history') {
         setMode('common');
       }
-
-      setInputTips([]);
+      const searchWord = getSearchWord();
+      if (searchWord) {
+        GetSearchSuggest(searchWord).then((res) => {
+          if (res.success) {
+            setInputTips(
+              res.data.map((value: string) => ({
+                value,
+                name: value,
+              }))
+            );
+          }
+        });
+      } else {
+        setInputTips([]);
+      }
     }
   }, [inputText]);
 
-  useUpdateEffect(() => {
-    setCommandHistoryPos(inputList.length);
-  }, [inputList]);
+  useUpdateEffect(() => setCommandHistoryPos(inputList.length), [inputList]);
 
-  useUpdateEffect(() => {
-    ref.current?.scrollIntoView();
-  }, [outputList]);
+  useUpdateEffect(() => ref.current?.scrollIntoView(), [outputList]);
+
+  const getSearchWord = () => {
+    const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
+    const word = text[0].toLocaleLowerCase();
+    const searchFuncs: string[] = [];
+    searchCommand.forEach((command) => {
+      searchFuncs.push(command.func, ...command.alias!);
+    });
+    if (searchFuncs.includes(word) && text.length > 1) {
+      return [...text].splice(1, text.length - 1).join(' ');
+    }
+    return '';
+  };
 
   const onItemSubmit = (item: AutocompleteItem) => {
-    const text =
-      mode === 'query' ? queryModeActiveKey + item.value : item.value;
-
-    setInputText(text);
+    if (getSearchWord()) {
+      const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+      setInputText(command + ' ' + item.value);
+    } else {
+      const text =
+        mode === 'query' ? queryModeActiveKey + item.value : item.value;
+      setInputText(text);
+    }
 
     setTimeout(() => {
       setInputTips([]);
@@ -267,9 +316,10 @@ function Terminal() {
     if (inputText.trim()) {
       addInputList(command);
     }
-    console.log('mode', mode);
+
     writeCommandOutput(inputText);
-    if (mode === 'query') {
+
+    if (inputText.startsWith(queryModeActiveKey)) {
       const name = inputText.trim().split(queryModeActiveKey)[1];
       const bookmarkItem =
         bookmarks!.filter(
@@ -288,6 +338,8 @@ function Terminal() {
     }
 
     setInputText('');
+    setInputTips([])
+    setMode('common');
   };
 
   const clear: TerminalType['clear'] = () => resetList([]);
