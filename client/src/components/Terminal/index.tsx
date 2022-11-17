@@ -1,4 +1,4 @@
-import { createContext, useRef, forwardRef, useEffect } from 'react';
+import { createContext, useRef, forwardRef } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useAsyncEffect,
@@ -15,8 +15,6 @@ import {
   bookmarksState,
   viewportComponentListState,
   viewportVisibleState,
-  ILabel,
-  IUser,
 } from '@/store';
 import { GetSearchSuggest } from '@/serve/api';
 import useHistory from './useHistory';
