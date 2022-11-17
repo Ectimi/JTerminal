@@ -1,14 +1,13 @@
-import { useContext } from 'react';
 import { useRequest } from 'ahooks';
 import { useForm } from '@mantine/form';
 import { TextInput, Button, Card, LoadingOverlay } from '@mantine/core';
 import { Register } from '@/serve/api';
-import { TerminalContext } from '@/components/Terminal';
+import { useTerminal } from '@/components/Terminal/useTerminal';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
 import './index.less';
 
 export default function RegisterBox() {
-  const terminal = useContext(TerminalContext) as JTerminal.TerminalType;
+  const terminal = useTerminal()
 
   const { loading, runAsync: doRegister } = useRequest(Register, {
     manual: true,
@@ -49,6 +48,7 @@ export default function RegisterBox() {
             label="usename："
             wrapperProps={{ labelElement: 'div' }}
             {...form.getInputProps('username')}
+            autoFocus
           />
           <TextInput
             label="password："

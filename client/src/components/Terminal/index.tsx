@@ -190,12 +190,15 @@ function Terminal() {
   useKeyPress('tab', (event: any) => {
     event.preventDefault();
     if (inputTips.length > 0) {
-      const text =
-        mode === 'query'
-          ? queryModeActiveKey + inputTips[0].value
-          : inputTips[0].value;
+      if (getSearchWord()) {
+        const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+        setInputText(command + ' ' + inputTips[0].value);
+      } else {
+        const text =
+          mode === 'query' ? queryModeActiveKey + inputTips[0].value : inputTips[0].value;
+        setInputText(text);
+      }
 
-      setInputText(text);
       setTimeout(() => {
         setInputTips([]);
       }, 0);

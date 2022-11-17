@@ -1,4 +1,3 @@
-import { nanoid } from 'nanoid';
 import {
   Modal,
   Button,
@@ -15,8 +14,7 @@ import { useForm } from '@mantine/form';
 import { showNotification } from '@mantine/notifications';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { bookmarksState, IBookmarkItem, userState } from '@/store';
-import { AddBookmarkItem, UpdateBookmarkItem } from '@/serve/api';
-import { LocalForageKeys, localforage } from '@/lib/localForage';
+import { addBookmark, updateBookmark } from '../controller';
 import './index.less';
 import { useUpdateEffect } from 'ahooks';
 
@@ -33,11 +31,11 @@ export interface IBookmarkModalFormData {
 interface IProps {
   type: TBookmarkModalType;
   visible: boolean;
-  formValue: IBookmarkModalFormData;
+  formValue: IBookmarkItem;
   onClose: () => void;
 }
 
-const notify = (type: 'success' | 'error' | 'warn', message: string) => {
+export const notify = (type: 'success' | 'error' | 'warn', message: string) => {
   showNotification({
     color: type === 'success' ? 'blue' : type === 'error' ? 'red' : 'yellow',
     message,
@@ -76,89 +74,11 @@ export default function BookmarkModal(props: IProps) {
     form.reset();
   };
 
-  const addBookmark = async (data: IBookmarkModalFormData) => {
-    try {
-      if (user) {
-        const formData = new FormData();
-        formData.append('user_id', user.id);
-        for (const key in data) {
-          formData.append(key, data[key as keyof IBookmarkModalFormData]);
-        }
-        const res = await AddBookmarkItem(formData);
-        if (res.success) {
-          setBookmarkState((cur) => ({
-            ...cur,
-            bookmarks: res.data,
-          }));
-          notify('success', '添加成功');
-          closeModal();
-        } else {
-          notify('error', res.message);
-        }
-      } else {
-        if (bookmarks.some((bookmark) => bookmark.name === data.name)) {
-          notify('warn', '该书签名已存在');
-          return;
-        }
-        const local_bookmarks = (await localforage.getItem(
-          LocalForageKeys.LOCAL_BOOKMARKS
-        )) as IBookmarkItem[];
-        await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, [
-          { id: nanoid(), ...data },
-          ...local_bookmarks,
-        ]);
-        notify('success', '添加成功');
-        closeModal();
-      }
-    } catch (error: any) {
-      notify('error', error.message ? error.message : '添加书签遇到未知错误');
-    }
-  };
-
-  const editBookmark = async (data: IBookmarkModalFormData) => {
-    try {
-      if (bookmarks.some((bookmark) => bookmark.name === data.name)) {
-        notify('warn', '该书签名已存在');
-        return;
-      }
-      if (user) {
-        const formData = new FormData();
-        formData.append('user_id', user.id);
-        for (const key in data) {
-          formData.append(key, data[key as keyof IBookmarkModalFormData]);
-        }
-        const res = await AddBookmarkItem(formData);
-        if (res.success) {
-          setBookmarkState((cur) => ({
-            ...cur,
-            bookmarks: res.data,
-          }));
-          notify('success', '更新成功');
-          closeModal();
-        } else {
-          notify('error', res.message);
-        }
-      } else {
-        const local_bookmarks = (await localforage.getItem(
-          LocalForageKeys.LOCAL_BOOKMARKS
-        )) as IBookmarkItem[];
-        await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, [
-          { id: nanoid(), ...data },
-          ...local_bookmarks,
-        ]);
-        notify('success', '更新成功');
-        closeModal();
-      }
-    } catch (error: any) {
-      notify('error', error.message ? error.message : '更新书签遇到未知错误');
-    }
-  };
-
   const onSubmit = async (data: IBookmarkModalFormData) => {
     if (type === 'add') {
-      addBookmark(data);
+      addBookmark(data, closeModal);
     } else {
-      editBookmark(data);
+      updateBookmark(formValue, data, closeModal);
     }
   };
 

@@ -1,11 +1,8 @@
 import {
   Modal,
   Button,
-  FileInput,
   Flex,
-  Select,
   TextInput,
-  Textarea,
   Title,
   useMantineTheme,
 } from "@mantine/core";

@@ -25,9 +25,17 @@
     overflow: auto;
 
     .bookmark-item {
+      position: relative;
       width: 300px;
       margin-top: 15px;
       cursor: pointer;
+
+      .mark-button{
+        position: absolute;
+        top:0;
+        right:0;
+        width:20px;
+      }
 
       .top {
         display: flex;

@@ -39,7 +39,7 @@ const registerCommand: CommandType = {
         terminal.writeErrorOutput('缺少账号');
       } else {
         const RegisterComponent = await import('./RegisterBox');
-        terminal.unfocusInput();
+        // terminal.unfocusInput();
         terminal.writeComponentOutput({
           type: 'component',
           component: RegisterComponent.default,

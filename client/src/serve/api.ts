@@ -40,6 +40,24 @@ export function UpdateBookmarkItem(formData: any): Promise<IResponse> {
   });
 }
 
+export function DeleteBookmarkItem(id: any): Promise<IResponse> {
+  return request('/deleteBookmarkItem', {
+    method: 'post',
+    data: {
+      id,
+    },
+  });
+}
+
+export function Sticky(param: {
+  id: string | number;
+  sticky: number;
+}): Promise<IResponse> {
+  return request('/sticky', {
+    method: 'post',
+    data: param,
+  });
+}
 
 export function AddLabel(label: string): Promise<IResponse> {
   return request('./addLabel', {

@@ -4,6 +4,7 @@ import { HashRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { MantineProvider, Loader } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
+import { ModalsProvider } from '@mantine/modals';
 import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
@@ -39,7 +40,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               }}
             >
               <NotificationsProvider>
-                <App />
+                <ModalsProvider labels={{ confirm: '确认', cancel: '取消' }}>
+                  <App />
+                </ModalsProvider>
               </NotificationsProvider>
             </MantineProvider>
           </HashRouter>

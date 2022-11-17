@@ -16,7 +16,7 @@ export interface IBookmarkItem {
   icon: string;
   label: string;
   description: string;
-  // sticky: string;
+  sticky: string | number;
 }
 
 export interface ILabel {
@@ -109,9 +109,9 @@ const bookmarksState = atom<IBookmarkState>({
       };
       loadPersisted();
 
-      // if (trigger === 'get') {
-      //   loadPersisted();
-      // }
+      if (trigger === 'get') {
+        loadPersisted();
+      }
 
       [
         LocalForageKeys.TOKEN,
