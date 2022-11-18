@@ -23,6 +23,7 @@ import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
 import { commandList } from '@/core/commandRegister';
 import { commandExecute } from '@/core/commandExecutor';
 import { initLocalforage } from '@/lib/localForage';
+import { registerShortcuts } from './shortcuts';
 import TerminalRow from './TerminalRow';
 import Datetime from '../Datetime';
 import './index.less';
@@ -189,11 +190,16 @@ function Terminal() {
     event.preventDefault();
     if (inputTips.length > 0) {
       if (getSearchWord()) {
-        const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+        const command = inputText
+          .trimStart()
+          .replace(/\s+/g, ' ')
+          .split(' ')[0];
         setInputText(command + ' ' + inputTips[0].value);
       } else {
         const text =
-          mode === 'query' ? queryModeActiveKey + inputTips[0].value : inputTips[0].value;
+          mode === 'query'
+            ? queryModeActiveKey + inputTips[0].value
+            : inputTips[0].value;
         setInputText(text);
       }
 
@@ -222,7 +228,9 @@ function Terminal() {
 
   useClickAway((event: any) => focusInput(), ref);
 
-  useAsyncEffect(async () => initLocalforage(), []);
+  useAsyncEffect(async () => {
+    initLocalforage();
+  }, []);
 
   useUpdateEffect(() => {
     const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
@@ -339,7 +347,7 @@ function Terminal() {
     }
 
     setInputText('');
-    setInputTips([])
+    setInputTips([]);
     setMode('common');
   };
 
