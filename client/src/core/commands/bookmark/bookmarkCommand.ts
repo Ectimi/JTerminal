@@ -18,7 +18,7 @@ const bookmarkCommand: CommandType = {
     terminal.writeComponentToViewport({
       type: 'component',
       component: BookmarkComponent,
-      componentName: '书签列表',
+      componentName: 'bookmarkList',
       onlyOne: true,
     });
   },

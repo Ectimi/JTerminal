@@ -19,12 +19,22 @@ export const shortcutList: ShortcutType[] = [
       terminal.clear();
     },
   },
+  {
+    desc: '打开书签列表',
+    code: 'KeyB',
+    keyDesc: 'Ctrl + B',
+    ctrlKey: true,
+    action(e, terminal) {
+      e.preventDefault();
+      // terminal.shortcutExcuteCommand('bookmark')
+    },
+  },
 ];
 
 export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
   document.onkeydown = (e) => {
-    // console.log(e);
     let key = e.key;
+    
     // 自动聚焦输入框
     if (key >= 'a' && key <= 'z' && !e.metaKey && !e.shiftKey && !e.ctrlKey) {
       terminal.focusInput();
@@ -32,6 +42,7 @@ export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
     }
     // 匹配快捷键
     let code = e.code;
+    
     for (const shortcut of shortcutList) {
       if (
         code === shortcut.code &&

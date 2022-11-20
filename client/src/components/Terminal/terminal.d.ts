@@ -71,6 +71,8 @@ declare namespace JTerminal {
 
     unfocusInput: () => void;
 
-    excuteCommand: () => void;
+    excuteCommand: (commandStr?:string) => void;
+
+    shortcutExcuteCommand:(commandStr?:string) => void;
   };
 }
