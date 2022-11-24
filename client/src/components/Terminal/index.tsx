@@ -1,5 +1,5 @@
-import { createContext, useRef, useMemo, forwardRef, useCallback } from "react";
-import { useRecoilState, useSetRecoilState } from "recoil";
+import { createContext, useRef, useMemo, forwardRef, useCallback } from 'react';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useAsyncEffect,
   useClickAway,
@@ -8,25 +8,25 @@ import {
   useKeyPress,
   useSafeState,
   useUpdateEffect,
-} from "ahooks";
-import { Autocomplete, AutocompleteItem, Group } from "@mantine/core";
+} from 'ahooks';
+import { Autocomplete, AutocompleteItem, Group } from '@mantine/core';
 import {
   userState,
   bookmarksState,
   viewportComponentListState,
   viewportVisibleState,
-} from "@/store";
-import { GetSearchSuggest } from "@/serve/api";
-import useHistory from "./useHistory";
-import searchCommand from "@/core/commands/search/searchCommand";
-import { getUsageStr } from "@/core/commands/terminal/help/helpUtils";
-import { commandList } from "@/core/commandRegister";
-import { commandExecute } from "@/core/commandExecutor";
-import { initLocalforage } from "@/lib/localForage";
-import { registerShortcuts } from "./shortcuts";
-import TerminalRow from "./TerminalRow";
-import Datetime from "../Datetime";
-import "./index.less";
+} from '@/store';
+import { GetSearchSuggest } from '@/serve/api';
+import useHistory from './useHistory';
+import searchCommand from '@/core/commands/search/searchCommand';
+import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
+import { commandList } from '@/core/commandRegister';
+import { commandExecute } from '@/core/commandExecutor';
+import { initLocalforage } from '@/lib/localForage';
+import { registerShortcuts } from './shortcuts';
+import TerminalRow from './TerminalRow';
+import Datetime from '../Datetime';
+import './index.less';
 
 type TerminalType = JTerminal.TerminalType;
 
@@ -35,7 +35,7 @@ interface ItemProps {
   description: string;
 }
 
-type TMode = "common" | "query" | "history";
+type TMode = 'common' | 'query' | 'history';
 
 export interface IBookmarkItem {
   name: string;
@@ -47,19 +47,19 @@ export interface IBookmarkItem {
 
 const initialList: JTerminal.OutputType[] = [
   {
-    type: "text",
-    text: "Welcome To JTerminal Index !",
+    type: 'text',
+    text: 'Welcome To JTerminal Index !',
   },
   {
-    type: "text",
+    type: 'text',
     text: `Please input 'help' to enjoy`,
   },
   {
-    type: "component",
+    type: 'component',
     component: <Datetime />,
   },
   {
-    type: "empty",
+    type: 'empty',
   },
 ];
 
@@ -72,7 +72,7 @@ const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
     <div ref={ref} {...others}>
       <div className="tip-name">{name}</div>
       {description ? (
-        <div className="tip-desc">{description.replace(name, "")}</div>
+        <div className="tip-desc">{description.replace(name, '')}</div>
       ) : null}
     </div>
   )
@@ -128,9 +128,9 @@ function Terminal() {
   );
   const [{ bookmarks }, setBookmarkState] = useRecoilState(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useSafeState<TMode>("common");
+  const [mode, setMode] = useSafeState<TMode>('common');
   const [alwaysFocus, setAlwayFocus] = useSafeState(true);
-  const [inputText, setInputText] = useSafeState("");
+  const [inputText, setInputText] = useSafeState('');
   const queryModeActiveKey = "'";
 
   const {
@@ -155,9 +155,9 @@ function Terminal() {
   const [inputTips, setInputTips] = useSafeState<any[]>([]);
 
   useEventListener(
-    "blur",
+    'blur',
     (event: any) => {
-      const excludeNodes = ["INPUT", "TEXTAREA"];
+      const excludeNodes = ['INPUT', 'TEXTAREA'];
       if (
         event.relatedTarget &&
         excludeNodes.includes(event.relatedTarget.nodeName)
@@ -171,9 +171,9 @@ function Terminal() {
   );
 
   useEventListener(
-    "change",
+    'change',
     () => {
-      if (mode === "history") {
+      if (mode === 'history') {
       }
     },
     {
@@ -181,23 +181,23 @@ function Terminal() {
     }
   );
 
-  useKeyPress("enter", () => {
+  useKeyPress('enter', () => {
     setInputTips([]);
     excuteCommand();
   });
 
-  useKeyPress("tab", (event: any) => {
+  useKeyPress('tab', (event: any) => {
     event.preventDefault();
     if (inputTips.length > 0) {
       if (getSearchWord()) {
         const command = inputText
           .trimStart()
-          .replace(/\s+/g, " ")
-          .split(" ")[0];
-        setInputText(command + " " + inputTips[0].value);
+          .replace(/\s+/g, ' ')
+          .split(' ')[0];
+        setInputText(command + ' ' + inputTips[0].value);
       } else {
         const text =
-          mode === "query"
+          mode === 'query'
             ? queryModeActiveKey + inputTips[0].value
             : inputTips[0].value;
         setInputText(text);
@@ -209,19 +209,19 @@ function Terminal() {
     }
   });
 
-  useKeyPress("uparrow", () => {
-    if (mode !== "history") {
+  useKeyPress('uparrow', () => {
+    if (mode !== 'history') {
       if (!inputText) {
-        setMode("history");
+        setMode('history');
         showPrevCommand();
       }
-    } else if (mode === "history") {
+    } else if (mode === 'history') {
       showPrevCommand();
     }
   });
 
-  useKeyPress("downarrow", () => {
-    if (mode == "history") {
+  useKeyPress('downarrow', () => {
+    if (mode == 'history') {
       showNextCommand();
     }
   });
@@ -234,29 +234,33 @@ function Terminal() {
   }, []);
 
   useUpdateEffect(() => {
-    const text = inputText.trimStart().replace(/\s+/g, " ").split(" ");
+    registerShortcuts(TerminalProvider);
+  }, [viewportComponentsList]);
+
+  useUpdateEffect(() => {
+    const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
     let word = text[0].toLocaleLowerCase();
 
     if (word && text.length === 1) {
       if (word.startsWith(queryModeActiveKey)) {
         word = word.split(queryModeActiveKey)[1];
-        if (mode === "common") {
-          setMode("query");
+        if (mode === 'common') {
+          setMode('query');
         }
         if (word) {
-          const tips = getInputTips(word, [...bookmarks], "name");
+          const tips = getInputTips(word, [...bookmarks], 'name');
           setInputTips(tips);
         }
       } else {
-        if (mode !== "history" && mode !== "common") {
-          setMode("common");
+        if (mode !== 'history' && mode !== 'common') {
+          setMode('common');
         }
-        const tips = getInputTips(word, [...commandList], "func");
+        const tips = getInputTips(word, [...commandList], 'func');
         setInputTips(tips);
       }
     } else {
-      if (!word.startsWith(queryModeActiveKey) && mode !== "history") {
-        setMode("common");
+      if (!word.startsWith(queryModeActiveKey) && mode !== 'history') {
+        setMode('common');
       }
       const searchWord = getSearchWord();
       if (searchWord) {
@@ -280,16 +284,16 @@ function Terminal() {
 
   useUpdateEffect(() => ref.current?.scrollIntoView(), [outputList]);
 
-  const shortcutExcuteCommand: TerminalType["shortcutExcuteCommand"] = (
+  const shortcutExcuteCommand: TerminalType['shortcutExcuteCommand'] = (
     command
   ) => {
-    console.log("call", viewportComponentsList);
-    if (command === "bookmark") {
+    if (command === 'bookmark') {
       if (
         viewportComponentsList.find(
-          (component) => component.componentName === "bookmarkList"
+          (component) => component.componentName === 'bookmarkList'
         )
       ) {
+        setViewportVisible((prev) => !prev);
         return;
       }
       excuteCommand(command);
@@ -297,25 +301,25 @@ function Terminal() {
   };
 
   const getSearchWord = () => {
-    const text = inputText.trimStart().replace(/\s+/g, " ").split(" ");
+    const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
     const word = text[0].toLocaleLowerCase();
     const searchFuncs: string[] = [];
     searchCommand.forEach((command) => {
       searchFuncs.push(command.func, ...command.alias!);
     });
     if (searchFuncs.includes(word) && text.length > 1) {
-      return [...text].splice(1, text.length - 1).join(" ");
+      return [...text].splice(1, text.length - 1).join(' ');
     }
-    return "";
+    return '';
   };
 
   const onItemSubmit = (item: AutocompleteItem) => {
     if (getSearchWord()) {
-      const command = inputText.trimStart().replace(/\s+/g, " ").split(" ")[0];
-      setInputText(command + " " + item.value);
+      const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+      setInputText(command + ' ' + item.value);
     } else {
       const text =
-        mode === "query" ? queryModeActiveKey + item.value : item.value;
+        mode === 'query' ? queryModeActiveKey + item.value : item.value;
       setInputText(text);
     }
 
@@ -326,19 +330,19 @@ function Terminal() {
 
   const onInputChange = (value: string) => setInputText(value);
 
-  const focusInput: TerminalType["focusInput"] = () => {
+  const focusInput: TerminalType['focusInput'] = () => {
     setAlwayFocus(true);
     ref.current?.focus();
   };
 
-  const unfocusInput: TerminalType["unfocusInput"] = () => setAlwayFocus(false);
+  const unfocusInput: TerminalType['unfocusInput'] = () => setAlwayFocus(false);
 
-  const excuteCommand: TerminalType["excuteCommand"] = async (
+  const excuteCommand: TerminalType['excuteCommand'] = async (
     commandStr?: string
   ) => {
     const commandText = commandStr || inputText;
     const command: JTerminal.CommandOutputType = {
-      type: "command",
+      type: 'command',
       text: commandText,
     };
 
@@ -366,51 +370,51 @@ function Terminal() {
       await commandExecute(commandText, TerminalProvider);
     }
 
-    setInputText("");
+    setInputText('');
     setInputTips([]);
-    setMode("common");
+    setMode('common');
   };
 
-  const clear: TerminalType["clear"] = () => resetList([]);
+  const clear: TerminalType['clear'] = () => resetList([]);
 
-  const reset: TerminalType["reset"] = () => resetList(initialList);
+  const reset: TerminalType['reset'] = () => resetList(initialList);
 
-  const getAllOutput: TerminalType["getAllOutput"] = () => outputList;
+  const getAllOutput: TerminalType['getAllOutput'] = () => outputList;
 
-  const getOutputLength: TerminalType["getOutputLength"] = () =>
+  const getOutputLength: TerminalType['getOutputLength'] = () =>
     outputList.length;
 
-  const writeInfoOutput: TerminalType["writeInfoOutput"] = (text) => {
+  const writeInfoOutput: TerminalType['writeInfoOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Info] ${text}`,
-      status: "info",
+      status: 'info',
     });
   };
 
-  const writeSuccessOutput: TerminalType["writeSuccessOutput"] = (text) => {
+  const writeSuccessOutput: TerminalType['writeSuccessOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Success] ${text}`,
-      status: "success",
+      status: 'success',
     });
   };
 
-  const writeErrorOutput: TerminalType["writeErrorOutput"] = (text) => {
+  const writeErrorOutput: TerminalType['writeErrorOutput'] = (text) => {
     writeOutput({
-      type: "text",
+      type: 'text',
       text: `[Error] ${text}`,
-      status: "error",
+      status: 'error',
     });
   };
 
-  const writeComponentOutput: TerminalType["writeComponentOutput"] = (
+  const writeComponentOutput: TerminalType['writeComponentOutput'] = (
     output
   ) => {
     if (output.onlyOne) {
       for (let i = 0; i < outputList.length; i++) {
         const item = outputList[i];
-        if (item.type === "component") {
+        if (item.type === 'component') {
           if (item.componentName === output.componentName) {
             removeOutput(i);
             break;
@@ -421,21 +425,21 @@ function Terminal() {
     writeOutput(output);
   };
 
-  const writeCommandOutput: TerminalType["writeCommandOutput"] = (text) => {
+  const writeCommandOutput: TerminalType['writeCommandOutput'] = (text) => {
     writeOutput({
-      type: "command",
+      type: 'command',
       text,
     });
   };
 
-  const writeComponentToViewport: TerminalType["writeComponentToViewport"] = (
+  const writeComponentToViewport: TerminalType['writeComponentToViewport'] = (
     output
   ) => {
     setViewportVisible(true);
     if (output.onlyOne) {
       for (let i = 0; i < viewportComponentsList.length; i++) {
         if (viewportComponentsList[i].componentName === output.componentName) {
-          writeInfoOutput("该组件已打开");
+          writeInfoOutput('该组件已打开');
           return;
         }
       }
@@ -443,7 +447,7 @@ function Terminal() {
 
     setViewportComponentsList((cur) => [
       {
-        type: "component",
+        type: 'component',
         component: output.component,
         componentName: output.componentName,
         onlyOne: true,
@@ -488,7 +492,7 @@ function Terminal() {
           type="component"
           component={
             <Group>
-              <div>[{user ? user.username : "local"}]# </div>
+              <div>[{user ? user.username : 'local'}]# </div>
               <Autocomplete
                 ref={ref}
                 data={inputTips}
@@ -505,7 +509,7 @@ function Terminal() {
             </Group>
           }
         />
-        {mode === "query" ? (
+        {mode === 'query' ? (
           <div className="mode-text">当前为书签检索模式</div>
         ) : null}
       </div>

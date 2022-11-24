@@ -26,7 +26,7 @@ export const shortcutList: ShortcutType[] = [
     ctrlKey: true,
     action(e, terminal) {
       e.preventDefault();
-      // terminal.shortcutExcuteCommand('bookmark')
+      terminal.shortcutExcuteCommand('bookmark')
     },
   },
 ];
