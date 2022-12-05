@@ -1,7 +1,9 @@
 import { PropsWithChildren } from 'react';
 import { Group } from '@mantine/core';
-import './index.less';
 import { IUser } from '@/store';
+import { useTerminal } from '../useTerminal';
+
+import './index.less';
 
 interface IProps extends JTerminal.OutputType {
   user: IUser | null;
@@ -16,6 +18,7 @@ function TerminalRow(props: PropsWithChildren<IProps>) {
     type = 'text',
     text,
   } = props;
+  const terminal = useTerminal();
 
   const RowContent = () => {
     switch (type) {
@@ -35,7 +38,19 @@ function TerminalRow(props: PropsWithChildren<IProps>) {
     }
   };
 
-  return <div className="terminal-row">{RowContent()}</div>;
+  const onDoubleClick = () => {
+    if ((window as any).event.ctrlKey) {
+      if (type === 'command') {
+        terminal.excuteCommand(text);
+      }
+    }
+  };
+
+  return (
+    <div className="terminal-row" onDoubleClick={onDoubleClick}>
+      {RowContent()}
+    </div>
+  );
 }
 
 export default TerminalRow;

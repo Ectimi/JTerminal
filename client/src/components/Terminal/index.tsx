@@ -351,6 +351,8 @@ function Terminal() {
     }
 
     writeCommandOutput(commandText);
+    setInputText('');
+    setInputTips([]);
 
     if (commandText.startsWith(queryModeActiveKey)) {
       const name = commandText.trim().split(queryModeActiveKey)[1];
@@ -370,8 +372,7 @@ function Terminal() {
       await commandExecute(commandText, TerminalProvider);
     }
 
-    setInputText('');
-    setInputTips([]);
+   
     setMode('common');
   };
 
@@ -475,6 +476,7 @@ function Terminal() {
     excuteCommand,
     shortcutExcuteCommand,
   };
+  
   return (
     <TerminalContext.Provider value={TerminalProvider}>
       <div className="terminal-view">
