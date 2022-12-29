@@ -26,15 +26,16 @@ export const shortcutList: ShortcutType[] = [
     ctrlKey: true,
     action(e, terminal) {
       e.preventDefault();
-      terminal.shortcutExcuteCommand('bookmark')
+      terminal.shortcutExcuteCommand('bookmark');
     },
   },
 ];
 
 export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
   document.onkeydown = (e) => {
+    console.log(e);
     let key = e.key;
-    
+
     // 自动聚焦输入框
     // if (key >= 'a' && key <= 'z' && !e.metaKey && !e.shiftKey && !e.ctrlKey) {
     //   terminal.focusInput();
@@ -42,7 +43,7 @@ export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
     // }
     // 匹配快捷键
     let code = e.code;
-    
+
     for (const shortcut of shortcutList) {
       if (
         code === shortcut.code &&
@@ -53,5 +54,12 @@ export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
         shortcut.action(e, terminal);
       }
     }
+
+    terminal.setModifyKeyStatus({
+      altKey: e.altKey,
+      ctrlKey: e.ctrlKey,
+      metaKey: e.metaKey,
+      shiftKey: e.shiftKey,
+    });
   };
 };

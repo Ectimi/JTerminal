@@ -1,5 +1,11 @@
 declare namespace JTerminal {
-  type OutputStatus = 'success' | 'error' | 'warn' | 'info' | 'system' | 'common';
+  type OutputStatus =
+    | 'success'
+    | 'error'
+    | 'warn'
+    | 'info'
+    | 'system'
+    | 'common';
 
   type OutputType = {
     type: 'empty' | 'text' | 'component' | 'command';
@@ -40,6 +46,13 @@ declare namespace JTerminal {
     componentName: string;
   };
 
+  type ModifyKeyStatus = {
+    altKey: boolean;
+    ctrlKey: boolean;
+    metaKey: boolean;
+    shiftKey: boolean;
+  };
+
   type TerminalType = {
     clear: () => void;
 
@@ -63,7 +76,7 @@ declare namespace JTerminal {
 
     writeCommandOutput: (text: string) => void;
 
-    writeComponentToViewport:(output: ComponentOutputType)=>void;
+    writeComponentToViewport: (output: ComponentOutputType) => void;
 
     removeOutput: (index: number) => void;
 
@@ -71,8 +84,14 @@ declare namespace JTerminal {
 
     unfocusInput: () => void;
 
-    excuteCommand: (commandStr?:string) => void;
+    excuteCommand: (commandStr?: string) => void;
 
-    shortcutExcuteCommand:(commandStr?:string) => void;
+    shortcutExcuteCommand: (commandStr?: string) => void;
+
+    getModifyKeyStatus: () => ModifyKeyStatus;
+
+    setModifyKeyStatus: (obj: {
+      [key in keyof ModifyKeyStatus]?: boolean;
+    }) => void;
   };
 }

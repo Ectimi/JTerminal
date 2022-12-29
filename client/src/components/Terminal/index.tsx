@@ -128,6 +128,13 @@ function Terminal() {
   );
   const [{ bookmarks }, setBookmarkState] = useRecoilState(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
+  const [modifyKeyStatus, setModifykeyStatus] =
+    useSafeState<JTerminal.ModifyKeyStatus>({
+      altKey: false,
+      ctrlKey: false,
+      metaKey: false,
+      shiftKey: false,
+    });
   const [mode, setMode] = useSafeState<TMode>('common');
   const [alwaysFocus, setAlwayFocus] = useSafeState(true);
   const [inputText, setInputText] = useSafeState('');
@@ -181,7 +188,9 @@ function Terminal() {
     }
   );
 
+  // 按下 enter 时，会先走 submit，再走这里
   useKeyPress('enter', () => {
+    console.log('enter');
     setInputTips([]);
     excuteCommand();
   });
@@ -314,7 +323,18 @@ function Terminal() {
   };
 
   const onItemSubmit = (item: AutocompleteItem) => {
-    if (getSearchWord()) {
+    console.log('submit', modifyKeyStatus);
+    const searchWord = getSearchWord()
+    if (!modifyKeyStatus.altKey){
+      if(searchWord){
+        const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+        setInputText(command + ' ' + searchWord);
+      } else {
+        setInputText(inputText);
+      }
+      return;
+    };
+    if (searchWord) {
       const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
       setInputText(command + ' ' + item.value);
     } else {
@@ -372,7 +392,6 @@ function Terminal() {
       await commandExecute(commandText, TerminalProvider);
     }
 
-   
     setMode('common');
   };
 
@@ -457,6 +476,16 @@ function Terminal() {
     ]);
   };
 
+  const getModifyKeyStatus: TerminalType['getModifyKeyStatus'] = () =>
+    modifyKeyStatus;
+
+  const setModifyKeyStatus: TerminalType['setModifyKeyStatus'] = (status) => {
+    setModifykeyStatus((prev) => ({
+      ...prev,
+      ...status,
+    }));
+  };
+
   const TerminalProvider: TerminalType = {
     clear,
     focusInput,
@@ -475,8 +504,10 @@ function Terminal() {
     removeOutput,
     excuteCommand,
     shortcutExcuteCommand,
+    getModifyKeyStatus,
+    setModifyKeyStatus,
   };
-  
+
   return (
     <TerminalContext.Provider value={TerminalProvider}>
       <div className="terminal-view">

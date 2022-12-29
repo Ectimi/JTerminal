@@ -195,10 +195,6 @@ export default function BookmarkBox() {
                       show({
                         event: e,
                         props: { bookmark_id: bookmark.id },
-                        position: {
-                          x: e.screenX,
-                          y: e.screenY - 50,
-                        },
                       });
                     }}
                   >
