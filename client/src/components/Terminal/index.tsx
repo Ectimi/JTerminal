@@ -1,4 +1,4 @@
-import { createContext, useRef, useMemo, forwardRef, useCallback } from 'react';
+import { createContext, useRef, forwardRef } from 'react';
 import { useRecoilState, useSetRecoilState } from 'recoil';
 import {
   useAsyncEffect,
@@ -65,17 +65,6 @@ const initialList: JTerminal.OutputType[] = [
 
 export const TerminalContext = createContext<JTerminal.TerminalType | unknown>(
   {}
-);
-
-const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
-  ({ description, name, ...others }: ItemProps, ref) => (
-    <div ref={ref} {...others}>
-      <div className="tip-name">{name}</div>
-      {description ? (
-        <div className="tip-desc">{description.replace(name, '')}</div>
-      ) : null}
-    </div>
-  )
 );
 
 const getInputTips = (word: string, originData: any[], filterKey: string) => {
@@ -177,20 +166,8 @@ function Terminal() {
     }
   );
 
-  useEventListener(
-    'change',
-    () => {
-      if (mode === 'history') {
-      }
-    },
-    {
-      target: ref,
-    }
-  );
-
   // 按下 enter 时，会先走 submit，再走这里
   useKeyPress('enter', () => {
-    console.log('enter');
     setInputTips([]);
     excuteCommand();
   });
@@ -322,18 +299,20 @@ function Terminal() {
     return '';
   };
 
-  const onItemSubmit = (item: AutocompleteItem) => {
-    console.log('submit', modifyKeyStatus);
-    const searchWord = getSearchWord()
-    if (!modifyKeyStatus.altKey){
-      if(searchWord){
-        const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
+  const onItemSubmit = (item: AutocompleteItem, trigger: string = 'enter') => {
+    const searchWord = getSearchWord();
+    if (trigger === 'enter' && !modifyKeyStatus.altKey) {
+      if (searchWord) {
+        const command = inputText
+          .trimStart()
+          .replace(/\s+/g, ' ')
+          .split(' ')[0];
         setInputText(command + ' ' + searchWord);
       } else {
         setInputText(inputText);
       }
       return;
-    };
+    }
     if (searchWord) {
       const command = inputText.trimStart().replace(/\s+/g, ' ').split(' ')[0];
       setInputText(command + ' ' + item.value);
@@ -347,6 +326,25 @@ function Terminal() {
       setInputTips([]);
     }, 0);
   };
+
+  const AutoCompleteItem = forwardRef<HTMLDivElement, ItemProps>(
+    ({ description, name, ...others }: ItemProps, ref) => {
+      return (
+        <div
+          ref={ref}
+          {...others}
+          onMouseDown={() => {
+            onItemSubmit({ value: name, name, description }, 'click');
+          }}
+        >
+          <div className="tip-name">{name}</div>
+          {description ? (
+            <div className="tip-desc">{description.replace(name, '')}</div>
+          ) : null}
+        </div>
+      );
+    }
+  );
 
   const onInputChange = (value: string) => setInputText(value);
 
@@ -386,7 +384,7 @@ function Terminal() {
         const commandText = `goto ${url}`;
         await commandExecute(commandText, TerminalProvider);
       } else {
-        writeErrorOutput(`名为 "${name}" 的书签不存在`);
+        writeInfoOutput(`书签 "${name}" 不存在`);
       }
     } else {
       await commandExecute(commandText, TerminalProvider);
@@ -531,13 +529,13 @@ function Terminal() {
                 data={inputTips}
                 autoFocus
                 value={inputText}
-                onChange={onInputChange}
                 itemComponent={AutoCompleteItem}
                 filter={() => true}
+                onChange={onInputChange}
                 onDropdownClose={() => {
                   setInputTips([]);
                 }}
-                onItemSubmit={onItemSubmit}
+                onItemSubmit={(item) => onItemSubmit(item)}
               />
             </Group>
           }

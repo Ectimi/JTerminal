@@ -33,7 +33,6 @@ export const shortcutList: ShortcutType[] = [
 
 export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
   document.onkeydown = (e) => {
-    console.log(e);
     let key = e.key;
 
     // 自动聚焦输入框
@@ -41,12 +40,11 @@ export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
     //   terminal.focusInput();
     //   return;
     // }
-    // 匹配快捷键
-    let code = e.code;
 
+    // 匹配快捷键
     for (const shortcut of shortcutList) {
       if (
-        code === shortcut.code &&
+        e.code === shortcut.code &&
         e.ctrlKey == !!shortcut.ctrlKey &&
         e.metaKey == !!shortcut.metaKey &&
         e.shiftKey == !!shortcut.shiftKey
