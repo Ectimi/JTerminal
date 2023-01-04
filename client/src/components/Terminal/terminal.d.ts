@@ -87,11 +87,5 @@ declare namespace JTerminal {
     excuteCommand: (commandStr?: string) => void;
 
     shortcutExcuteCommand: (commandStr?: string) => void;
-
-    getModifyKeyStatus: () => ModifyKeyStatus;
-
-    setModifyKeyStatus: (obj: {
-      [key in keyof ModifyKeyStatus]?: boolean;
-    }) => void;
   };
 }

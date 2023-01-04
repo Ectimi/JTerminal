@@ -52,12 +52,5 @@ export const registerShortcuts = (terminal: JTerminal.TerminalType) => {
         shortcut.action(e, terminal);
       }
     }
-
-    terminal.setModifyKeyStatus({
-      altKey: e.altKey,
-      ctrlKey: e.ctrlKey,
-      metaKey: e.metaKey,
-      shiftKey: e.shiftKey,
-    });
   };
 };

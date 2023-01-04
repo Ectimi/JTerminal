@@ -117,13 +117,6 @@ function Terminal() {
   );
   const [{ bookmarks }, setBookmarkState] = useRecoilState(bookmarksState);
   const ref = useRef<HTMLInputElement>(null);
-  const [modifyKeyStatus, setModifykeyStatus] =
-    useSafeState<JTerminal.ModifyKeyStatus>({
-      altKey: false,
-      ctrlKey: false,
-      metaKey: false,
-      shiftKey: false,
-    });
   const [mode, setMode] = useSafeState<TMode>('common');
   const [alwaysFocus, setAlwayFocus] = useSafeState(true);
   const [inputText, setInputText] = useSafeState('');
@@ -301,7 +294,7 @@ function Terminal() {
 
   const onItemSubmit = (item: AutocompleteItem, trigger: string = 'enter') => {
     const searchWord = getSearchWord();
-    if (trigger === 'enter' && !modifyKeyStatus.altKey) {
+    if (trigger === 'enter' && !(window as any).event.altKey) {
       if (searchWord) {
         const command = inputText
           .trimStart()
@@ -474,15 +467,6 @@ function Terminal() {
     ]);
   };
 
-  const getModifyKeyStatus: TerminalType['getModifyKeyStatus'] = () =>
-    modifyKeyStatus;
-
-  const setModifyKeyStatus: TerminalType['setModifyKeyStatus'] = (status) => {
-    setModifykeyStatus((prev) => ({
-      ...prev,
-      ...status,
-    }));
-  };
 
   const TerminalProvider: TerminalType = {
     clear,
@@ -502,8 +486,6 @@ function Terminal() {
     removeOutput,
     excuteCommand,
     shortcutExcuteCommand,
-    getModifyKeyStatus,
-    setModifyKeyStatus,
   };
 
   return (
