@@ -1,74 +1,91 @@
-import { Title } from '@mantine/core';
+import { Container, Flex, Title } from '@mantine/core';
 import { useForm } from '@mantine/form';
-import { IFormItem } from '../FormRenderer';
+import { Fragment } from 'react';
+import { IFormItem, FormRenderer } from '../FormRenderer';
 import './index.less';
+
+type IResumeModuleItem = Omit<IFormItem, 'form'>
 
 interface IResumeModule {
   title: string;
   require: boolean;
-  list: Array<IFormItem>;
+  list: Array<IResumeModuleItem>;
 }
 
-const defaultResume: IResumeModule[] = [
+const defaultResumeModule: IResumeModule[] = [
   {
     title: '基本信息',
     require: true,
     list: [
       {
-        name: 'name',
+        propName: 'fullname',
         label: '姓名',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入姓名'
       },
       {
-        name: 'birth',
+        propName: 'birth',
         label: '出生年月',
         required: true,
         disable: false,
         type: 'datepicker',
+        placeholder:'请选择出生日期'
       },
       {
-        name: 'gender',
+        propName: 'gender',
         label: '性别',
         required: true,
         disable: false,
         type: 'select',
+        selectData:[
+          {value:'male',label:'男'},
+          {value:'female',label:'女'},
+        ],
+        defaultSelected:'male'
       },
       {
-        name: 'degree',
+        propName: 'degree',
         label: '学历',
         required: true,
         disable: false,
         type: 'select',
+        selectData:['小学','初中','高中','中专','大专','本科','硕士','博士','其他'],
+        defaultSelected:'本科'
       },
       {
-        name: 'tel',
+        propName: 'tel',
         label: '电话',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入电话号码'
       },
       {
-        name: 'politics',
+        propName: 'politics',
         label: '政治面貌',
         required: true,
         disable: false,
-        type: 'input',
+        type: 'select',
+        selectData:['团员','党员','群众','其他'],
+        placeholder:'请选择政治面貌'
       },
       {
-        name: 'email',
+        propName: 'email',
         label: '邮箱',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入邮箱'
       },
       {
-        name: 'school',
+        propName: 'school',
         label: '毕业院校',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入毕业院校'
       },
     ],
   },
@@ -77,87 +94,120 @@ const defaultResume: IResumeModule[] = [
     require: false,
     list: [
       {
-        name: 'entranceTime',
+        propName: 'entranceTime',
         label: '入学时间',
         required: true,
         disable: false,
         type: 'datepicker',
+        placeholder:'请选择入学时间'
       },
       {
-        name: 'graduationTime',
+        propName: 'graduationTime',
         label: '毕业时间',
         required: true,
         disable: false,
         type: 'datepicker',
+        placeholder:'请选择毕业时间'
       },
       {
-        name: 'schoolName',
+        propName: 'schoolpropName',
         label: '学校名称',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入学校名称'
       },
       {
-        name: 'majorName',
+        propName: 'majorpropName',
         label: '专业名称',
         required: true,
         disable: false,
-        type: 'datepicker',
+        type: 'input',
+        placeholder:'请输入专业名称'
       },
       {
-        name: 'highestEducation',
+        propName: 'highestEducation',
         label: '最高学历',
         required: true,
         disable: false,
-        type: 'datepicker',
+        type: 'select',
+        selectData:['小学','初中','高中','中专','大专','本科','硕士','博士','其他'],
+        placeholder:'请选择学历'
       },
     ],
   },
   {
-    title:'工作/实习经历',
-    require:false,
-    list:[
+    title: '工作/实习经历',
+    require: false,
+    list: [
       {
-        name: 'entryTime',
+        propName: 'entryTime',
         label: '入职时间',
         required: true,
         disable: false,
         type: 'datepicker',
+        placeholder:'请选择入职时间'
       },
       {
-        name: 'dimissionTime',
+        propName: 'dimissionTime',
         label: '离职时间',
         required: true,
         disable: false,
         type: 'datepicker',
+        placeholder:'请选择离职时间'
       },
       {
-        name: 'company',
+        propName: 'company',
         label: '公司名称',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入公司名称'
       },
       {
-        name: 'post',
+        propName: 'post',
         label: '职位',
         required: true,
         disable: false,
         type: 'input',
+        placeholder:'请输入职位'
       },
-    ]
-  }
+      {
+        propName: 'responsibility',
+        label: '岗位职责',
+        required: true,
+        disable: false,
+        type: 'richTextEditor',
+        placeholder:'请填写工作职责'
+      },
+    ],
+  },
 ];
 
 export default function ResumeEditor() {
   const form = useForm({
-    initialValues: {},
+    initialValues: {
+      fullname: 'aa',
+    },
   });
 
   return (
     <div className="ResumeEditor">
       <form>
-        <Title order={4}>基本信息</Title>
+        {defaultResumeModule.map((module) => (
+          <Fragment key={module.title}>
+            <Title order={4}>{module.title}</Title>
+            {module.list.map(({ type, propName, ...rest }) => (
+              <FormRenderer
+                key={propName}
+                type={type}
+                propName={propName}
+                form={form}
+                {...rest}
+              />
+            ))}
+          </Fragment>
+        ))}
       </form>
     </div>
   );
