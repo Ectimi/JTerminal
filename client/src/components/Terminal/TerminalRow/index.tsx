@@ -28,7 +28,7 @@ function TerminalRow(props: PropsWithChildren<IProps>) {
         return <div className={status}>{text}</div>;
       case 'command':
         return (
-          <Group>
+          <Group sx={{alignItems:'flex-start',flexWrap:'nowrap'}}>
             <div>[{user ? user.username : 'local'}]# </div>
             <div>{text}</div>
           </Group>
