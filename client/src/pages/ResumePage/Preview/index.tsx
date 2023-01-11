@@ -11,7 +11,7 @@ export default function ResumePreview({ data }: IResumePreview) {
   return (
     <div className="ResumePreview">
       <Paper className="paper" shadow="xs" p="sm">
-        <Image src={HeaderImg}/>
+        {/* <Image src={HeaderImg}/> */}
         preview
       </Paper>
     </div>

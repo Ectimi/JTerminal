@@ -1,15 +1,54 @@
 .ResumeEditor {
+  display: flex;
+  justify-content: space-between;
   height: 100%;
 
+  .moduleContainer {
+    width: 180px;
+    margin-right: 15px;
+    padding: 0;
+
+    .title {
+      padding: 12px 12px 0 12px;
+    }
+
+    .moduleItem {
+      height: 50px;
+      padding: 0 12px;
+      user-select: none;
+      cursor: pointer;
+
+      &:nth-of-type(even) {
+        background-color: #fbfbfb;
+      }
+
+      &.hover {
+        background-color: #f7f6f6;
+      }
+      .mantine-Switch-root {
+        line-height: 0;
+      }
+    }
+  }
+
   .form {
+    flex: 1;
     display: flex;
     flex-direction: column;
     justify-content: space-between;
     height: 100%;
 
-    .mantine-Paper-root{
-        flex: 1;
-        overflow-y: auto;
+    .mantine-Paper-root {
+      flex: 1;
+      overflow-y: auto;
+
+      .moduleBox {
+        padding: 12px;
+
+        &.hover {
+          background-color: #f7f6f6;
+        }
+      }
     }
 
     .saveButton {
