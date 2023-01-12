@@ -12,7 +12,7 @@ export enum FormType {
 
 export interface IFormItem {
   type: FormType;
-  defaultValue?: any;
+  defaultValue: any;
   label: string;
   placeholder?: string;
   required: boolean;
@@ -27,7 +27,7 @@ export function FormRenderer(props: IFormItem) {
     type,
     disable = false,
     selectData = [],
-    defaultValue = '',
+    defaultValue,
     onRichTextEditorUpdate,
     ...rest
   } = props;
@@ -59,7 +59,7 @@ export function FormRenderer(props: IFormItem) {
       return (
         <Input.Wrapper sx={{ gridColumnStart: 1, gridColumnEnd: 4 }} {...rest}>
           <RichTextEditor
-            content={defaultValue}
+            defaultValue={defaultValue}
             placeholder={rest.placeholder || ''}
             onUpdate={onRichTextEditorUpdate}
           />

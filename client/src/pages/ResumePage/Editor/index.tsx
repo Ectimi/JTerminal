@@ -21,12 +21,15 @@ import { FormType, FormRenderer } from '../FormRenderer';
 import { defaultResumeModule } from '../resumeModule';
 import clsx from 'clsx';
 import cloneDeep from 'lodash/cloneDeep';
+import PubSub from 'pubsub-js';
 import './index.less';
 
 interface IResumeEditor {
   formData: any;
   setFormData: (data: any) => void;
 }
+
+export const RESET_RICH_TEXT_EDITOR = 'resetRichTextEditor'
 
 const getMoudleListItems = (moduleName: string) =>
   defaultResumeModule.filter((module) => module.moduleName === moduleName)[0]
@@ -40,7 +43,9 @@ const getDefaultListItemsValue = (moduleName: string) => {
 };
 
 export default function ResumeEditor({ formData, setFormData }: IResumeEditor) {
-  const [resumeModule, setResumeModule] = useSafeState(defaultResumeModule);
+  const [resumeModule, setResumeModule] = useSafeState(
+    cloneDeep(defaultResumeModule)
+  );
   const [hoverMoudleName, setHoverMoudleName] = useSafeState('');
   const [moduleState, setModuleState] = useSetState(
     resumeModule.reduce((prev, cur) => {
@@ -67,6 +72,12 @@ export default function ResumeEditor({ formData, setFormData }: IResumeEditor) {
     });
     setResumeModule(rm);
     form.insertListItem(moduleName, getDefaultListItemsValue(moduleName));
+  };
+
+  const resetHandle = () => {
+    form.reset();
+    setResumeModule(cloneDeep(defaultResumeModule));
+    PubSub.publish(RESET_RICH_TEXT_EDITOR);
   };
 
   useUpdateEffect(() => {
@@ -172,7 +183,7 @@ export default function ResumeEditor({ formData, setFormData }: IResumeEditor) {
                         <SimpleGrid cols={2} verticalSpacing="sm">
                           {arr.map(({ type, propName, ...rest }) => (
                             <FormRenderer
-                              key={propName}
+                              key={propName + '_' + listIndex}
                               type={type}
                               {...rest}
                               {...(type === FormType.richTextEditor
@@ -197,7 +208,11 @@ export default function ResumeEditor({ formData, setFormData }: IResumeEditor) {
                   {multiple && (
                     <Flex justify="center" sx={{ marginTop: '20px' }}>
                       <Tooltip label="添加新条目" position="bottom">
-                        <ActionIcon size="lg" variant="transparent" onClick={()=>addMoudleListItem(moduleName)}>
+                        <ActionIcon
+                          size="lg"
+                          variant="transparent"
+                          onClick={() => addMoudleListItem(moduleName)}
+                        >
                           <IconCirclePlus size={26} />
                         </ActionIcon>
                       </Tooltip>
@@ -207,9 +222,18 @@ export default function ResumeEditor({ formData, setFormData }: IResumeEditor) {
               )
           )}
         </Paper>
-        <Button className="saveButton" type="submit">
-          保存
-        </Button>
+        <Flex align="center" justify="center">
+          <Button
+            className="controlButton reset"
+            color="red"
+            onClick={resetHandle}
+          >
+            重置
+          </Button>
+          <Button className="controlButton save" type="submit">
+            保存
+          </Button>
+        </Flex>
       </form>
     </div>
   );

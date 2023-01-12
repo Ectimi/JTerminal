@@ -23,87 +23,93 @@ export interface IResumeModule {
 
 export const defaultResumeModule: IResumeModule[] = [
   // 基本信息
-  // {
-  //   moduleLabel: '基本信息',
-  //   moduleName: 'basicInfo',
-  //   defaultVisibility: true,
-  //   multiple: false,
-  //   icon: BasicImage,
-  //   require: true,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'fullname',
-  //         label: '姓名',
-  //         required: true,
-  //         type: FormType.input,
-  //         placeholder: '请输入姓名',
-  //       },
-  //       {
-  //         propName: 'age',
-  //         label: '年龄',
-  //         required: true,
-  //         type: FormType.input,
-  //         placeholder: '请输入年龄',
-  //       },
-  //       {
-  //         propName: 'gender',
-  //         label: '性别',
-  //         required: true,
-  //         type: FormType.select,
-  //         selectData: ['男', '女'],
-  //         defaultValue: '男',
-  //       },
-  //       {
-  //         propName: 'degree',
-  //         label: '学历',
-  //         required: true,
-  //         type: FormType.select,
-  //         selectData: [
-  //           '小学',
-  //           '初中',
-  //           '高中',
-  //           '中专',
-  //           '大专',
-  //           '本科',
-  //           '硕士',
-  //           '博士',
-  //           '其他',
-  //         ],
-  //         defaultValue: '本科',
-  //       },
-  //       {
-  //         propName: 'tel',
-  //         label: '电话',
-  //         required: true,
-  //         type: FormType.input,
-  //         placeholder: '请输入电话号码',
-  //       },
-  //       {
-  //         propName: 'politics',
-  //         label: '政治面貌',
-  //         required: false,
-  //         type: FormType.select,
-  //         selectData: ['团员', '党员', '群众', '其他'],
-  //         placeholder: '请选择政治面貌',
-  //       },
-  //       {
-  //         propName: 'email',
-  //         label: '邮箱',
-  //         required: false,
-  //         type: FormType.input,
-  //         placeholder: '请输入邮箱',
-  //       },
-  //       {
-  //         propName: 'school',
-  //         label: '毕业院校',
-  //         required: false,
-  //         type: FormType.input,
-  //         placeholder: '请输入毕业院校',
-  //       },
-  //     ],
-  //   ],
-  // },
+  {
+    moduleLabel: '基本信息',
+    moduleName: 'basicInfo',
+    defaultVisibility: true,
+    multiple: false,
+    icon: BasicImage,
+    require: true,
+    list: [
+      [
+        {
+          propName: 'fullname',
+          label: '姓名',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入姓名',
+          defaultValue:'',
+        },
+        {
+          propName: 'age',
+          label: '年龄',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入年龄',
+          defaultValue:'',
+        },
+        {
+          propName: 'gender',
+          label: '性别',
+          required: true,
+          type: FormType.select,
+          selectData: ['男', '女'],
+          defaultValue: '男',
+        },
+        {
+          propName: 'degree',
+          label: '学历',
+          required: true,
+          type: FormType.select,
+          selectData: [
+            '小学',
+            '初中',
+            '高中',
+            '中专',
+            '大专',
+            '本科',
+            '硕士',
+            '博士',
+            '其他',
+          ],
+          defaultValue: '本科',
+        },
+        {
+          propName: 'tel',
+          label: '电话',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入电话号码',
+          defaultValue:'',
+        },
+        {
+          propName: 'politics',
+          label: '政治面貌',
+          required: false,
+          type: FormType.select,
+          selectData: ['团员', '党员', '群众', '其他'],
+          placeholder: '请选择政治面貌',
+          defaultValue:'',
+        },
+        {
+          propName: 'email',
+          label: '邮箱',
+          required: false,
+          type: FormType.input,
+          placeholder: '请输入邮箱',
+          defaultValue:'',
+        },
+        {
+          propName: 'school',
+          label: '毕业院校',
+          required: false,
+          type: FormType.input,
+          placeholder: '请输入毕业院校',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
   // 教育背景
   {
@@ -121,6 +127,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择入学时间',
+          defaultValue:null,
         },
         {
           propName: 'graduationTime',
@@ -128,6 +135,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择毕业时间',
+          defaultValue:null,
         },
         {
           propName: 'schoolpropName',
@@ -135,6 +143,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入学校名称',
+          defaultValue:'',
         },
         {
           propName: 'majorpropName',
@@ -142,6 +151,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入专业名称',
+          defaultValue:'',
         },
         {
           propName: 'highestEducation',
@@ -167,218 +177,236 @@ export const defaultResumeModule: IResumeModule[] = [
   },
 
   // 校园经历
-  // {
-  //   moduleLabel: '校园经历',
-  //   moduleName: 'campus',
-  //   defaultVisibility: false,
-  //   multiple: true,
-  //   icon: StuImage,
-  //   require: false,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'startTime',
-  //         label: '开始时间',
-  //         required: true,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择开始时间',
-  //       },
-  //       {
-  //         propName: 'endTime',
-  //         label: '结束时间',
-  //         required: true,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择结束时间',
-  //       },
-  //       {
-  //         propName: 'department',
-  //         label: '部门/社团名称',
-  //         required: true,
-  //         type: FormType.input,
-  //         placeholder: '请输入部门/社团名称',
-  //       },
-  //       {
-  //         propName: 'detail',
-  //         label: '部门/社团名称',
-  //         required: true,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写具体经历',
-  //       },
-  //     ],
-  //   ],
-  // },
+  {
+    moduleLabel: '校园经历',
+    moduleName: 'campus',
+    defaultVisibility: false,
+    multiple: true,
+    icon: StuImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: 'startTime',
+          label: '开始时间',
+          required: true,
+          type: FormType.datepicker,
+          placeholder: '请选择开始时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'endTime',
+          label: '结束时间',
+          required: true,
+          type: FormType.datepicker,
+          placeholder: '请选择结束时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'department',
+          label: '部门/社团名称',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入部门/社团名称',
+          defaultValue:'',
+        },
+        {
+          propName: 'detail',
+          label: '部门/社团名称',
+          required: true,
+          type: FormType.richTextEditor,
+          placeholder: '请填写具体经历',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
-  // // 专业技能
-  // {
-  //   moduleLabel: '专业技能',
-  //   moduleName: 'professional',
-  //   defaultVisibility: true,
-  //   multiple: false,
-  //   require: false,
-  //   icon: SkillImage,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'skill',
-  //         label: '',
-  //         required: false,
-  //         disable: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写您的专业技能',
-  //       },
-  //     ],
-  //   ],
-  // },
+  // 专业技能
+  {
+    moduleLabel: '专业技能',
+    moduleName: 'professional',
+    defaultVisibility: true,
+    multiple: false,
+    require: false,
+    icon: SkillImage,
+    list: [
+      [
+        {
+          propName: 'skill',
+          label: '',
+          required: false,
+          disable: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填写您的专业技能',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
-  // // 工作/实习经历
-  // {
-  //   moduleLabel: '工作/实习经历',
-  //   defaultVisibility: true,
-  //   moduleName: 'job',
-  //   multiple: true,
-  //   icon: JobImage,
-  //   require: false,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'entryTime',
-  //         label: '入职时间',
-  //         required: true,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择入职时间',
-  //       },
-  //       {
-  //         propName: 'dimissionTime',
-  //         label: '离职时间',
-  //         required: true,
-  //         disable: false,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择离职时间',
-  //       },
-  //       {
-  //         propName: 'company',
-  //         label: '公司名称',
-  //         required: true,
-  //         disable: false,
-  //         type: FormType.input,
-  //         placeholder: '请输入公司名称',
-  //       },
-  //       {
-  //         propName: 'post',
-  //         label: '职位',
-  //         required: true,
-  //         disable: false,
-  //         type: FormType.input,
-  //         placeholder: '请输入职位',
-  //       },
-  //       {
-  //         propName: 'responsibility',
-  //         label: '岗位职责',
-  //         required: false,
-  //         disable: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写您的岗位职责',
-  //       },
-  //     ],
-  //   ],
-  // },
+  // 工作/实习经历
+  {
+    moduleLabel: '工作/实习经历',
+    defaultVisibility: true,
+    moduleName: 'job',
+    multiple: true,
+    icon: JobImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: 'entryTime',
+          label: '入职时间',
+          required: true,
+          type: FormType.datepicker,
+          placeholder: '请选择入职时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'dimissionTime',
+          label: '离职时间',
+          required: true,
+          disable: false,
+          type: FormType.datepicker,
+          placeholder: '请选择离职时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'company',
+          label: '公司名称',
+          required: true,
+          disable: false,
+          type: FormType.input,
+          placeholder: '请输入公司名称',
+          defaultValue:'',
+        },
+        {
+          propName: 'post',
+          label: '职位',
+          required: true,
+          disable: false,
+          type: FormType.input,
+          placeholder: '请输入职位',
+          defaultValue:'',
+        },
+        {
+          propName: 'responsibility',
+          label: '岗位职责',
+          required: false,
+          disable: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填写您的岗位职责',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
-  // // 项目经历
-  // {
-  //   moduleLabel: '项目经历',
-  //   moduleName: 'project',
-  //   defaultVisibility: false,
-  //   multiple: true,
-  //   icon: ProjectImage,
-  //   require: false,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'company',
-  //         label: '所属公司',
-  //         required: true,
-  //         type: FormType.input,
-  //         placeholder: '请输入项目所属公司',
-  //       },
-  //       {
-  //         propName: 'startTime',
-  //         label: '开始时间',
-  //         required: true,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择项目开始时间',
-  //       },
-  //       {
-  //         propName: 'endTime',
-  //         label: '结束时间',
-  //         required: true,
-  //         type: FormType.datepicker,
-  //         placeholder: '请选择项目结束时间',
-  //       },
-  //       {
-  //         propName: 'describe',
-  //         label: '项目描述',
-  //         required: true,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写项目描述',
-  //       },
-  //       {
-  //         propName: 'framework',
-  //         label: '项目架构',
-  //         required: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写项目架构',
-  //       },
-  //       {
-  //         propName: 'responsibility',
-  //         label: '职责描述',
-  //         required: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填职责描述',
-  //       },
-  //     ],
-  //   ],
-  // },
+  // 项目经历
+  {
+    moduleLabel: '项目经历',
+    moduleName: 'project',
+    defaultVisibility: false,
+    multiple: true,
+    icon: ProjectImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: 'company',
+          label: '所属公司',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入项目所属公司',
+          defaultValue:'',
+        },
+        {
+          propName: 'startTime',
+          label: '开始时间',
+          required: true,
+          type: FormType.datepicker,
+          placeholder: '请选择项目开始时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'endTime',
+          label: '结束时间',
+          required: true,
+          type: FormType.datepicker,
+          placeholder: '请选择项目结束时间',
+          defaultValue:null,
+        },
+        {
+          propName: 'describe',
+          label: '项目描述',
+          required: true,
+          type: FormType.richTextEditor,
+          placeholder: '请填写项目描述',
+          defaultValue:'',
+        },
+        {
+          propName: 'framework',
+          label: '项目架构',
+          required: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填写项目架构',
+          defaultValue:'',
+        },
+        {
+          propName: 'responsibility',
+          label: '职责描述',
+          required: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填职责描述',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
 
-  // // 荣誉奖励
-  // {
-  //   moduleLabel: '荣誉奖励',
-  //   moduleName: 'honour',
-  //   defaultVisibility: false,
-  //   multiple: false,
-  //   icon: HonourImage,
-  //   require: false,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'detail',
-  //         label: '',
-  //         required: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写荣誉奖励',
-  //       },
-  //     ],
-  //   ],
-  // },
+  // 荣誉奖励
+  {
+    moduleLabel: '荣誉奖励',
+    moduleName: 'honour',
+    defaultVisibility: false,
+    multiple: false,
+    icon: HonourImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: 'detail',
+          label: '',
+          required: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填写荣誉奖励',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 
-  // // 自我评价
-  // {
-  //   moduleLabel: '自我评价',
-  //   moduleName: 'evaluate',
-  //   defaultVisibility: true,
-  //   multiple: false,
-  //   icon: SelfImage,
-  //   require: false,
-  //   list: [
-  //     [
-  //       {
-  //         propName: 'detail',
-  //         label: '',
-  //         required: false,
-  //         type: FormType.richTextEditor,
-  //         placeholder: '请填写自我评价',
-  //       },
-  //     ],
-  //   ],
-  // },
+  // 自我评价
+  {
+    moduleLabel: '自我评价',
+    moduleName: 'evaluate',
+    defaultVisibility: true,
+    multiple: false,
+    icon: SelfImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: 'detail',
+          label: '',
+          required: false,
+          type: FormType.richTextEditor,
+          placeholder: '请填写自我评价',
+          defaultValue:'',
+        },
+      ],
+    ],
+  },
 ];

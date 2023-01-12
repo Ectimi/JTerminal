@@ -31,10 +31,10 @@ const baiduCommand: CommandType = {
     console.log('op',options )
     const { _, self, picture } = options;
     const word = _.length > 0 ? _.join(' ') : "";
-    let targetLink = `https://www.baidu.com/s?wd=${word}`;
+    let targetLink = `https://www.baidu.com/s?wd=${encodeURIComponent(word)}`;
     // 搜索图片
     if (picture) {
-      targetLink = `https://image.baidu.com/search/index?tn=baiduimage&word=${word}`;
+      targetLink = `https://image.baidu.com/search/index?tn=baiduimage&word=${encodeURIComponent(word)}`;
     }
     if (self) {
       window.location.href = targetLink;

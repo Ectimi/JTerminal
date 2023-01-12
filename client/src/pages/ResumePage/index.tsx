@@ -9,7 +9,7 @@ const initialFormData = defaultResumeModule.reduce((prev, cur) => {
   cur.list.map((arr) => {
     const obj = {} as any;
     arr.map((subitem) => {
-      obj[subitem.propName] = subitem.defaultValue || '';
+      obj[subitem.propName] = subitem.defaultValue;
     });
     prev[cur.moduleName].push(obj);
   });
