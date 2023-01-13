@@ -1,3 +1,4 @@
+import { memo } from 'react'
 import { Input, TextInput, Select, SelectItem } from '@mantine/core';
 import { DatePicker } from '@mantine/dates';
 import RichTextEditor from '@/components/RichTextEditor';
@@ -12,13 +13,14 @@ export enum FormType {
 
 export interface IFormItem {
   type: FormType;
-  defaultValue: any;
+  value: any;
   label: string;
   placeholder?: string;
   required: boolean;
   disable?: boolean;
 
   selectData?: string[] | SelectItem[];
+  onChange: (value: any) => void;
   onRichTextEditorUpdate?: (htmlText: string) => void;
 }
 
@@ -27,41 +29,53 @@ export function FormRenderer(props: IFormItem) {
     type,
     disable = false,
     selectData = [],
-    defaultValue,
+    value,
+    onChange,
     onRichTextEditorUpdate,
     ...rest
   } = props;
 
   switch (type) {
     case FormType.input:
-      return <TextInput disabled={disable} value={defaultValue} {...rest} />;
+      return (
+        <TextInput
+          {...rest}
+          disabled={disable}
+          value={value}
+          onChange={(e) => {
+            onChange(e.currentTarget.value);
+          }}
+        />
+      );
     case FormType.select:
       return (
         <Select
+          {...rest}
           disabled={disable}
           data={selectData}
-          value={defaultValue}
-          {...rest}
+          value={value}
+          onChange={(value) => onChange(value)}
         />
       );
     case FormType.datepicker:
       return (
         <DatePicker
+          {...rest}
           inputFormat="YYYY-MM-DD"
           labelFormat="YYYY-MM-DD"
           disabled={disable}
-          value={defaultValue}
-          {...rest}
+          value={value}
           locale="zh"
+          onChange={(value) => onChange(value)}
         />
       );
     case FormType.richTextEditor:
       return (
         <Input.Wrapper sx={{ gridColumnStart: 1, gridColumnEnd: 4 }} {...rest}>
           <RichTextEditor
-            defaultValue={defaultValue}
+            value={value}
             placeholder={rest.placeholder || ''}
-            onUpdate={onRichTextEditorUpdate}
+            onUpdate={(value) => onChange(value)}
           />
         </Input.Wrapper>
       );

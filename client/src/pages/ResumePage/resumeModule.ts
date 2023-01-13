@@ -9,12 +9,26 @@ import SelfImage from '@/assets/images/resumeModuleIcon/self.png';
 import SkillImage from '@/assets/images/resumeModuleIcon/skill.png';
 import StuImage from '@/assets/images/resumeModuleIcon/stu.png';
 
-export type IResumeModuleItem = IFormItem & { propName: string };
+export type IResumeModuleItem = Omit<IFormItem, 'onChange'> & {
+  propName: string;
+};
+
+export enum EResumeModuleType {
+  'basic' = 'basic',
+  'education' = 'education',
+  'campus' = 'campus',
+  'professional' = 'professional',
+  'job' = 'job',
+  'project' = 'project',
+  'honour' = 'honour',
+  'evaluate' = 'evaluate',
+  'customer' = 'customer',
+}
 
 export interface IResumeModule {
   moduleLabel: string;
   moduleName: string;
-  defaultVisibility: boolean;
+  visible: boolean;
   multiple: boolean;
   icon: any;
   require: boolean;
@@ -24,9 +38,9 @@ export interface IResumeModule {
 export const defaultResumeModule: IResumeModule[] = [
   // 基本信息
   {
+    moduleName: EResumeModuleType.basic,
     moduleLabel: '基本信息',
-    moduleName: 'basicInfo',
-    defaultVisibility: true,
+    visible: true,
     multiple: false,
     icon: BasicImage,
     require: true,
@@ -38,7 +52,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入姓名',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'age',
@@ -46,7 +60,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入年龄',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'gender',
@@ -54,7 +68,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.select,
           selectData: ['男', '女'],
-          defaultValue: '男',
+          value: '男',
         },
         {
           propName: 'degree',
@@ -72,7 +86,7 @@ export const defaultResumeModule: IResumeModule[] = [
             '博士',
             '其他',
           ],
-          defaultValue: '本科',
+          value: '本科',
         },
         {
           propName: 'tel',
@@ -80,7 +94,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入电话号码',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'politics',
@@ -89,7 +103,7 @@ export const defaultResumeModule: IResumeModule[] = [
           type: FormType.select,
           selectData: ['团员', '党员', '群众', '其他'],
           placeholder: '请选择政治面貌',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'email',
@@ -97,7 +111,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.input,
           placeholder: '请输入邮箱',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'school',
@@ -105,7 +119,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.input,
           placeholder: '请输入毕业院校',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
@@ -113,9 +127,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 教育背景
   {
+    moduleName: EResumeModuleType.education,
     moduleLabel: '教育背景',
-    moduleName: 'education',
-    defaultVisibility: true,
+    visible: true,
     multiple: true,
     icon: EducateImage,
     require: false,
@@ -127,7 +141,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择入学时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'graduationTime',
@@ -135,7 +149,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择毕业时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'schoolpropName',
@@ -143,7 +157,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入学校名称',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'majorpropName',
@@ -151,7 +165,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入专业名称',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'highestEducation',
@@ -170,7 +184,7 @@ export const defaultResumeModule: IResumeModule[] = [
             '其他',
           ],
           placeholder: '请选择学历',
-          defaultValue: '本科'
+          value: '本科',
         },
       ],
     ],
@@ -178,9 +192,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 校园经历
   {
+    moduleName: EResumeModuleType.campus,
     moduleLabel: '校园经历',
-    moduleName: 'campus',
-    defaultVisibility: false,
+    visible: false,
     multiple: true,
     icon: StuImage,
     require: false,
@@ -192,7 +206,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择开始时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'endTime',
@@ -200,7 +214,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择结束时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'department',
@@ -208,7 +222,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入部门/社团名称',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'detail',
@@ -216,7 +230,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.richTextEditor,
           placeholder: '请填写具体经历',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
@@ -224,9 +238,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 专业技能
   {
+    moduleName: EResumeModuleType.professional,
     moduleLabel: '专业技能',
-    moduleName: 'professional',
-    defaultVisibility: true,
+    visible: true,
     multiple: false,
     require: false,
     icon: SkillImage,
@@ -239,7 +253,7 @@ export const defaultResumeModule: IResumeModule[] = [
           disable: false,
           type: FormType.richTextEditor,
           placeholder: '请填写您的专业技能',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
@@ -247,9 +261,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 工作/实习经历
   {
+    moduleName: EResumeModuleType.job,
     moduleLabel: '工作/实习经历',
-    defaultVisibility: true,
-    moduleName: 'job',
+    visible: true,
     multiple: true,
     icon: JobImage,
     require: false,
@@ -261,7 +275,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择入职时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'dimissionTime',
@@ -270,7 +284,7 @@ export const defaultResumeModule: IResumeModule[] = [
           disable: false,
           type: FormType.datepicker,
           placeholder: '请选择离职时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'company',
@@ -279,7 +293,7 @@ export const defaultResumeModule: IResumeModule[] = [
           disable: false,
           type: FormType.input,
           placeholder: '请输入公司名称',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'post',
@@ -288,7 +302,7 @@ export const defaultResumeModule: IResumeModule[] = [
           disable: false,
           type: FormType.input,
           placeholder: '请输入职位',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'responsibility',
@@ -297,7 +311,7 @@ export const defaultResumeModule: IResumeModule[] = [
           disable: false,
           type: FormType.richTextEditor,
           placeholder: '请填写您的岗位职责',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
@@ -305,9 +319,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 项目经历
   {
+    moduleName: EResumeModuleType.project,
     moduleLabel: '项目经历',
-    moduleName: 'project',
-    defaultVisibility: false,
+    visible: false,
     multiple: true,
     icon: ProjectImage,
     require: false,
@@ -319,7 +333,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.input,
           placeholder: '请输入项目所属公司',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'startTime',
@@ -327,7 +341,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择项目开始时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'endTime',
@@ -335,7 +349,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.datepicker,
           placeholder: '请选择项目结束时间',
-          defaultValue:null,
+          value: null,
         },
         {
           propName: 'describe',
@@ -343,7 +357,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.richTextEditor,
           placeholder: '请填写项目描述',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'framework',
@@ -351,7 +365,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.richTextEditor,
           placeholder: '请填写项目架构',
-          defaultValue:'',
+          value: '',
         },
         {
           propName: 'responsibility',
@@ -359,18 +373,17 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.richTextEditor,
           placeholder: '请填职责描述',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
   },
 
-
   // 荣誉奖励
   {
+    moduleName: EResumeModuleType.honour,
     moduleLabel: '荣誉奖励',
-    moduleName: 'honour',
-    defaultVisibility: false,
+    visible: false,
     multiple: false,
     icon: HonourImage,
     require: false,
@@ -382,7 +395,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.richTextEditor,
           placeholder: '请填写荣誉奖励',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],
@@ -390,9 +403,9 @@ export const defaultResumeModule: IResumeModule[] = [
 
   // 自我评价
   {
+    moduleName: EResumeModuleType.evaluate,
     moduleLabel: '自我评价',
-    moduleName: 'evaluate',
-    defaultVisibility: true,
+    visible: true,
     multiple: false,
     icon: SelfImage,
     require: false,
@@ -404,7 +417,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: false,
           type: FormType.richTextEditor,
           placeholder: '请填写自我评价',
-          defaultValue:'',
+          value: '',
         },
       ],
     ],

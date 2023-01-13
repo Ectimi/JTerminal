@@ -1,6 +1,3 @@
-import { useEffect,useRef } from 'react';
-import PubSub from 'pubsub-js';
-import { RESET_RICH_TEXT_EDITOR } from '@/pages/ResumePage/Editor';
 import { RichTextEditor } from '@mantine/tiptap';
 import { useEditor } from '@tiptap/react';
 import Focus from '@tiptap/extension-focus';
@@ -14,15 +11,16 @@ import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 
 import './index.less';
+import { useUpdateEffect } from 'ahooks';
 
 export interface IRichEditor {
-  defaultValue?: string;
+  value?: string;
   placeholder?: string;
   onUpdate?: (htmlText: string) => void;
 }
 
 export default function RichEditor(props: IRichEditor) {
-  const { placeholder = '', defaultValue = '', onUpdate } = props;
+  const { placeholder = '', value = '', onUpdate } = props;
   const editor = useEditor({
     onUpdate({ editor }) {
       typeof onUpdate === 'function' && onUpdate(editor.getHTML());
@@ -44,16 +42,14 @@ export default function RichEditor(props: IRichEditor) {
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
     ],
     autofocus: false,
-    content: defaultValue,
+    content: value,
   });
-  const token = useRef('')
 
-  useEffect(() => {
-    if (!editor || token.current) return;
-    token.current =  PubSub.subscribe(RESET_RICH_TEXT_EDITOR, () => {
-      !editor.isDestroyed && editor?.commands.setContent(defaultValue);
-    });
-  }, [editor,token]);
+  useUpdateEffect(() => {
+    if(value === ''){
+      editor?.commands.setContent(value);
+    }
+  }, [value]);
 
   return (
     <RichTextEditor editor={editor} sx={{ caretColor: '#000' }}>
