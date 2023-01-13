@@ -39,7 +39,7 @@ interface IResumeEditor {
   setResumeData: Updater<IResumeModule[]>;
 }
 
-type TOnChangeHandle = (params: {
+type OnChangeHandle = (params: {
   value: any;
   moduleName: string;
   propName: string;
@@ -62,7 +62,7 @@ export default function ResumeEditor({
   };
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
-  const onChange: TOnChangeHandle = ({
+  const onChange: OnChangeHandle = ({
     value,
     moduleName,
     listIndex = null,
