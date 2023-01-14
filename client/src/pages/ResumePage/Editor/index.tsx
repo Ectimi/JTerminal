@@ -1,4 +1,4 @@
-import { Fragment, useMemo } from 'react';
+import { Fragment, useMemo } from "react";
 import {
   ActionIcon,
   Button,
@@ -13,26 +13,26 @@ import {
   Text,
   Tooltip,
   Paper,
-} from '@mantine/core';
-import { IconCirclePlus, IconCircleMinus } from '@tabler/icons';
+} from "@mantine/core";
+import { IconCirclePlus, IconCircleMinus } from "@tabler/icons";
 import {
   DragDropContext,
   Draggable,
   DropResult,
   OnDragEndResponder,
-} from 'react-beautiful-dnd';
-import { StrictModeDroppable } from '@/components/StrictModeDroppable';
-import { useSafeState } from 'ahooks';
-import { FormRenderer } from '../FormRenderer';
+} from "react-beautiful-dnd";
+import { StrictModeDroppable } from "@/components/StrictModeDroppable";
+import { useSafeState } from "ahooks";
+import { FormRenderer } from "../FormRenderer";
 import {
   defaultResumeModule,
   IResumeModule,
   EResumeModuleType,
-} from '../resumeModule';
-import { Updater } from 'use-immer';
-import cloneDeep from 'lodash/cloneDeep';
-import clsx from 'clsx';
-import './index.less';
+} from "../resumeModule";
+import { Updater } from "use-immer";
+import cloneDeep from "lodash/cloneDeep";
+import clsx from "clsx";
+import "./index.less";
 
 interface IResumeEditor {
   resumeData: IResumeModule[];
@@ -50,15 +50,15 @@ export default function ResumeEditor({
   resumeData,
   setResumeData,
 }: IResumeEditor) {
-  const [hoverMoudleName, setHoverMoudleName] = useSafeState('');
+  const [hoverMoudleName, setHoverMoudleName] = useSafeState("");
 
   const mouseEnterHandle = (moduleName: string) =>
     setHoverMoudleName(moduleName);
 
-  const mouseLeaveHandle = () => setHoverMoudleName('');
+  const mouseLeaveHandle = () => setHoverMoudleName("");
 
   const onSave = () => {
-    console.log('data', resumeData);
+    console.log("data", resumeData);
   };
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
@@ -110,211 +110,197 @@ export default function ResumeEditor({
     setResumeData(rd);
   };
 
-  return useMemo(
-    () => (
-      <div className="ResumeEditor">
-        <Paper className="moduleContainer" shadow="xs" p="sm" radius={4}>
-          <Stack>
-            <Title className="title" order={4}>
-              模板管理
-            </Title>
-            <DragDropContext onDragEnd={onDragEnd}>
-              <StrictModeDroppable droppableId="dropList">
-                {(provided) => (
-                  <>
-                    <div
-                      className="moduleItemList"
-                      ref={provided.innerRef}
-                      {...provided.droppableProps}
-                    >
-                      {resumeData.map(
-                        (
-                          { icon, moduleLabel, moduleName, require, visible },
-                          index
-                        ) => (
-                          <Draggable
-                            key={moduleName}
-                            draggableId={moduleName}
-                            index={index}
-                            isDragDisabled={
-                              moduleName === EResumeModuleType.basic
-                            }
-                          >
-                            {(provided) => (
-                              <Flex
-                                className={clsx(
-                                  'moduleItem',
-                                  moduleName,
-                                  hoverMoudleName === moduleName ? 'hover' : ''
-                                )}
-                                align="center"
-                                justify="space-between"
-                                onMouseEnter={() =>
-                                  mouseEnterHandle(moduleName)
-                                }
-                                onMouseLeave={() => mouseLeaveHandle()}
-                                onDoubleClick={() =>
-                                  document
-                                    .querySelector(`.moduleBox.${moduleName}`)
-                                    ?.scrollIntoView()
-                                }
-                                ref={provided.innerRef}
-                                {...provided.draggableProps}
-                                {...provided.dragHandleProps}
-                              >
-                                <Image
-                                  src={icon}
-                                  width={22}
-                                  height={22}
-                                  radius={11}
-                                />
-                                <Text>
-                                  {moduleLabel === '工作/实习经历'
-                                    ? '工作经历'
-                                    : moduleLabel}
-                                </Text>
-                                <Switch
-                                  sx={{
-                                    '.mantine-Switch-track': {
-                                      cursor: require
-                                        ? 'not-allowed'
-                                        : 'pointer',
-                                    },
-                                  }}
-                                  checked={visible}
-                                  onChange={(event) => {
-                                    if (require) return;
-                                    onChange({
-                                      moduleName,
-                                      propName: 'visible',
-                                      value: event.currentTarget.checked,
-                                    });
-                                  }}
-                                />
-                              </Flex>
-                            )}
-                          </Draggable>
-                        )
-                      )}
-                    </div>
-                    {provided.placeholder}
-                  </>
-                )}
-              </StrictModeDroppable>
-            </DragDropContext>
-          </Stack>
-        </Paper>
-
-        <div className="form">
-          <Paper shadow="xs" p={0} radius={4}>
-            {resumeData.map(
-              ({ moduleLabel, moduleName, multiple, list, visible }, index) =>
-                visible && (
+  return (
+    <div className="ResumeEditor">
+      <Paper className="moduleContainer" shadow="xs" p="sm" radius={4}>
+        <Stack>
+          <Title className="title" order={4}>
+            模板管理
+          </Title>
+          <DragDropContext onDragEnd={onDragEnd}>
+            <StrictModeDroppable droppableId="dropList">
+              {(provided) => (
+                <>
                   <div
-                    key={moduleName}
-                    className={clsx(
-                      'moduleBox',
-                      moduleName,
-                      hoverMoudleName === moduleName ? 'hover' : ''
-                    )}
-                    onMouseEnter={() => mouseEnterHandle(moduleName)}
-                    onMouseLeave={() => mouseLeaveHandle()}
+                    className="moduleItemList"
+                    ref={provided.innerRef}
+                    {...provided.droppableProps}
                   >
-                    <div className="moduleBoxItem">
-                      {index === 0 && <Space h="sm" />}
-
-                      <Divider
-                        my="sm"
-                        label={moduleLabel}
-                        labelPosition="center"
-                        labelProps={{ fz: 'lg', fw: 600 }}
-                      />
-
-                      {list.map((arr, listIndex) => (
-                        <Fragment key={listIndex}>
-                          {multiple && (
+                    {resumeData.map(
+                      (
+                        { icon, moduleLabel, moduleName, require, visible },
+                        index
+                      ) => (
+                        <Draggable
+                          key={moduleName}
+                          draggableId={moduleName}
+                          index={index}
+                          isDragDisabled={
+                            moduleName === EResumeModuleType.basic
+                          }
+                        >
+                          {(provided) => (
                             <Flex
-                              sx={{ width: '100%' }}
-                              justify="space-between"
-                              align="center"
-                            >
-                              <Divider
-                                sx={{ width: '98%' }}
-                                label={'条目' + (listIndex + 1)}
-                                labelProps={{ fz: 'md', fw: 400, c: '#6e3f3f' }}
-                              />
-                              {listIndex > 0 && (
-                                <Tooltip label="删除条目" position="bottom">
-                                  <ActionIcon
-                                    size="lg"
-                                    variant="transparent"
-                                    onClick={() =>
-                                      removeModuleListItem(
-                                        moduleName,
-                                        listIndex
-                                      )
-                                    }
-                                  >
-                                    <IconCircleMinus size={26} />
-                                  </ActionIcon>
-                                </Tooltip>
+                              className={clsx(
+                                "moduleItem",
+                                moduleName,
+                                hoverMoudleName === moduleName ? "hover" : ""
                               )}
-                            </Flex>
-                          )}
-                          <SimpleGrid cols={2} verticalSpacing="sm">
-                            {arr.map(({ type, propName, value, ...rest }) => (
-                              <FormRenderer
-                                {...rest}
-                                key={propName + '_' + listIndex}
-                                type={type}
-                                value={value}
-                                onChange={(value) =>
+                              align="center"
+                              justify="space-between"
+                              onMouseEnter={() => mouseEnterHandle(moduleName)}
+                              onMouseLeave={() => mouseLeaveHandle()}
+                              onDoubleClick={() =>
+                                document
+                                  .querySelector(`.moduleBox.${moduleName}`)
+                                  ?.scrollIntoView()
+                              }
+                              ref={provided.innerRef}
+                              {...provided.draggableProps}
+                              {...provided.dragHandleProps}
+                            >
+                              <Image
+                                src={icon}
+                                width={22}
+                                height={22}
+                                radius={11}
+                              />
+                              <Text>
+                                {moduleLabel === "工作/实习经历"
+                                  ? "工作经历"
+                                  : moduleLabel}
+                              </Text>
+                              <Switch
+                                sx={{
+                                  ".mantine-Switch-track": {
+                                    cursor: require ? "not-allowed" : "pointer",
+                                  },
+                                }}
+                                checked={visible}
+                                onChange={(event) => {
+                                  if (require) return;
                                   onChange({
                                     moduleName,
-                                    listIndex,
-                                    propName,
-                                    value,
-                                  })
-                                }
+                                    propName: "visible",
+                                    value: event.currentTarget.checked,
+                                  });
+                                }}
                               />
-                            ))}
-                          </SimpleGrid>
-                        </Fragment>
-                      ))}
-                    </div>
-
-                    {multiple && (
-                      <Flex justify="center" sx={{ marginTop: '20px' }}>
-                        <Tooltip label="添加新条目" position="bottom">
-                          <ActionIcon
-                            size="lg"
-                            variant="transparent"
-                            onClick={() => addMoudleListItem(moduleName)}
-                          >
-                            <IconCirclePlus size={26} />
-                          </ActionIcon>
-                        </Tooltip>
-                      </Flex>
+                            </Flex>
+                          )}
+                        </Draggable>
+                      )
                     )}
                   </div>
-                )
-            )}
-          </Paper>
-          <Flex align="center" justify="center">
-            <Button
-              className="controlButton reset"
-              color="red"
-              onClick={onReset}
-            >
-              重置
-            </Button>
-            <Button className="controlButton save" onClick={onSave}>
-              保存
-            </Button>
-          </Flex>
-        </div>
+                  {provided.placeholder}
+                </>
+              )}
+            </StrictModeDroppable>
+          </DragDropContext>
+        </Stack>
+      </Paper>
+
+      <div className="form">
+        <Paper shadow="xs" p={0} radius={4}>
+          {resumeData.map(
+            ({ moduleLabel, moduleName, multiple, list, visible }, index) =>
+              visible && (
+                <div
+                  key={moduleName}
+                  className={clsx(
+                    "moduleBox",
+                    moduleName,
+                    hoverMoudleName === moduleName ? "hover" : ""
+                  )}
+                  onMouseEnter={() => mouseEnterHandle(moduleName)}
+                  onMouseLeave={() => mouseLeaveHandle()}
+                >
+                  <div className="moduleBoxItem">
+                    {index === 0 && <Space h="sm" />}
+
+                    <Divider
+                      my="sm"
+                      label={moduleLabel}
+                      labelPosition="center"
+                      labelProps={{ fz: "lg", fw: 600 }}
+                    />
+
+                    {list.map((arr, listIndex) => (
+                      <Fragment key={listIndex}>
+                        {multiple && (
+                          <Flex
+                            sx={{ width: "100%" }}
+                            justify="space-between"
+                            align="center"
+                          >
+                            <Divider
+                              sx={{ width: "98%" }}
+                              label={"条目" + (listIndex + 1)}
+                              labelProps={{ fz: "md", fw: 400, c: "#6e3f3f" }}
+                            />
+                            {listIndex > 0 && (
+                              <Tooltip label="删除条目" position="bottom">
+                                <ActionIcon
+                                  size="lg"
+                                  variant="transparent"
+                                  onClick={() =>
+                                    removeModuleListItem(moduleName, listIndex)
+                                  }
+                                >
+                                  <IconCircleMinus size={26} />
+                                </ActionIcon>
+                              </Tooltip>
+                            )}
+                          </Flex>
+                        )}
+                        <SimpleGrid cols={2} verticalSpacing="sm">
+                          {arr.map(({ type, propName, value, ...rest }) => (
+                            <FormRenderer
+                              {...rest}
+                              key={propName + "_" + listIndex}
+                              type={type}
+                              value={value}
+                              onChange={(value) =>
+                                onChange({
+                                  moduleName,
+                                  listIndex,
+                                  propName,
+                                  value,
+                                })
+                              }
+                            />
+                          ))}
+                        </SimpleGrid>
+                      </Fragment>
+                    ))}
+                  </div>
+
+                  {multiple && (
+                    <Flex justify="center" sx={{ marginTop: "20px" }}>
+                      <Tooltip label="添加新条目" position="bottom">
+                        <ActionIcon
+                          size="lg"
+                          variant="transparent"
+                          onClick={() => addMoudleListItem(moduleName)}
+                        >
+                          <IconCirclePlus size={26} />
+                        </ActionIcon>
+                      </Tooltip>
+                    </Flex>
+                  )}
+                </div>
+              )
+          )}
+        </Paper>
+        <Flex align="center" justify="center">
+          <Button className="controlButton reset" color="red" onClick={onReset}>
+            重置
+          </Button>
+          <Button className="controlButton save" onClick={onSave}>
+            保存
+          </Button>
+        </Flex>
       </div>
-    ),
-    [resumeData, hoverMoudleName]
+    </div>
   );
 }
