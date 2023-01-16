@@ -109,7 +109,7 @@ function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
                     <DimmedOrBlackText text={data.majorName} />
                   </Flex>
                 </Flex>
-                {/* {data.detail && <div className="detail" dangerouslySetInnerHTML={data.detail}></div>} */}
+                {data.detail && <div className="detail" dangerouslySetInnerHTML={{__html:data.detail}}></div>}
               </div>
             );
           })}
