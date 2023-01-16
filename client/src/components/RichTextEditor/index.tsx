@@ -46,13 +46,20 @@ export default function RichEditor(props: IRichEditor) {
   });
 
   useUpdateEffect(() => {
-    if(value === ''){
+    if (value === '') {
       editor?.commands.setContent(value);
     }
   }, [value]);
 
   return (
-    <RichTextEditor editor={editor} sx={{ caretColor: '#000' }}>
+    <RichTextEditor
+      editor={editor}
+      sx={{
+        caretColor: '#000',
+        minHeight: '200px',
+        backgroundColor: '#fff',
+      }}
+    >
       <RichTextEditor.Toolbar sticky stickyOffset={60}>
         <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />

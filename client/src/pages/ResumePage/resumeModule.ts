@@ -25,6 +25,15 @@ export enum EResumeModuleType {
   'customer' = 'customer',
 }
 
+export enum TEducationProps {
+  'startTime' = 'startTime',
+  'endTime' = 'endTime',
+  'schoolName' = 'schoolName',
+  'majorName' = 'majorName',
+  'highestEducation' = 'highestEducation',
+  'detail' = 'detail',
+}
+
 export interface IResumeModule {
   moduleLabel: string;
   moduleName: string;
@@ -63,12 +72,28 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
+          propName: 'nativePlace',
+          label: '籍贯',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入籍贯',
+          value: '',
+        },
+        {
           propName: 'gender',
           label: '性别',
           required: true,
           type: FormType.select,
           selectData: ['男', '女'],
           value: '男',
+        },
+        {
+          propName: 'tel',
+          label: '电话',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入电话号码',
+          value: '',
         },
         {
           propName: 'degree',
@@ -89,23 +114,6 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '本科',
         },
         {
-          propName: 'tel',
-          label: '电话',
-          required: true,
-          type: FormType.input,
-          placeholder: '请输入电话号码',
-          value: '',
-        },
-        {
-          propName: 'politics',
-          label: '政治面貌',
-          required: false,
-          type: FormType.select,
-          selectData: ['团员', '党员', '群众', '其他'],
-          placeholder: '请选择政治面貌',
-          value: '',
-        },
-        {
           propName: 'email',
           label: '邮箱',
           required: false,
@@ -114,13 +122,14 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'school',
-          label: '毕业院校',
+          propName: 'major',
+          label: '专业',
           required: false,
           type: FormType.input,
-          placeholder: '请输入毕业院校',
+          placeholder: '请输入专业',
           value: '',
         },
+       
       ],
     ],
   },
@@ -136,7 +145,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: 'entranceTime',
+          propName: TEducationProps.startTime,
           label: '入学时间',
           required: true,
           type: FormType.datepicker,
@@ -144,7 +153,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'graduationTime',
+          propName: TEducationProps.endTime,
           label: '毕业时间',
           required: true,
           type: FormType.datepicker,
@@ -152,7 +161,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'schoolpropName',
+          propName: TEducationProps.schoolName,
           label: '学校名称',
           required: true,
           type: FormType.input,
@@ -160,7 +169,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'majorpropName',
+          propName: TEducationProps.majorName,
           label: '专业名称',
           required: true,
           type: FormType.input,
@@ -168,7 +177,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'highestEducation',
+          propName: TEducationProps.highestEducation,
           label: '最高学历',
           required: true,
           type: FormType.select,
@@ -185,6 +194,15 @@ export const defaultResumeModule: IResumeModule[] = [
           ],
           placeholder: '请选择学历',
           value: '本科',
+        },
+        {
+          propName: TEducationProps.detail,
+          label: '专业描述',
+          required: false,
+          type: FormType.richTextEditor,
+          placeholder:
+            '可以对所读专业进行简单解释说明，并列出所学课程，以及个人的专业排名。也可以阐述你对这个专业的见解，或者学习经历对自己的影响',
+          value: '',
         },
       ],
     ],
@@ -229,7 +247,8 @@ export const defaultResumeModule: IResumeModule[] = [
           label: '部门/社团名称',
           required: true,
           type: FormType.richTextEditor,
-          placeholder: '请填写具体经历',
+          placeholder:
+            '建议先用一句话来简单介绍学生工作，然后分箱描述个人职责与贡献，尽量做到用词精准，多用数据。也可以谈谈从这段经历中，你学到了哪些技能，得到了哪些成长',
           value: '',
         },
       ],

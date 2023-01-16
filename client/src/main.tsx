@@ -30,6 +30,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               withNormalizeCSS
               theme={{
                 globalStyles: (theme) => ({
+                  div:{
+                    backgroundRepeat:'no-repeat'
+                  },
                   'table,thead,tr,td,th': {
                     color: '#fff',
                   },

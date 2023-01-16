@@ -1,8 +1,10 @@
-import { Image, Paper } from '@mantine/core';
-import { IResumeModule } from '../resumeModule';
-import HeaderImg from '@/assets/images/theme/01/header.png';
-
-import './index.less';
+import { Flex, Image, SimpleGrid, Paper, Text } from '@mantine/core';
+import {
+  IResumeModule,
+  IResumeModuleItem,
+  EResumeModuleType,
+} from '../resumeModule';
+import { BasicThemeResume } from '../Themes';
 
 interface IResumePreview {
   resumeData: IResumeModule[];
@@ -10,11 +12,8 @@ interface IResumePreview {
 
 export default function ResumePreview({ resumeData }: IResumePreview) {
   return (
-    <div className="ResumePreview">
-      <Paper className="paper" shadow="xs" p="sm">
-        {/* <Image src={HeaderImg}/> */}
-        preview
-      </Paper>
-    </div>
+    <Flex className="ResumePreview" justify="center" sx={{ height: '1123px' }}>
+      <BasicThemeResume resumeData={resumeData} />
+    </Flex>
   );
 }
