@@ -39,7 +39,7 @@ export const BasicThemeResume = ({
       <div className="contentBox">
         <div>
           {resumeData.map(({ moduleLabel, moduleName, list }) => (
-            <div className="moduleBox">
+            <div className="moduleBox" key={moduleName}>
               <div className="moduleTitle">
                 <span className="nameText">{moduleLabel}</span>
               </div>
@@ -71,7 +71,7 @@ function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
       return (
         <SimpleGrid className="basicInfoBox" cols={2} spacing="sm">
           {arr.map(({ label, value }) => (
-            <Flex align="center" sx={{ marginTop: '0px' }}>
+            <Flex align="center" sx={{ marginTop: '0px' }} key={label}>
               <Text className="infoLabel">{label}</Text>：
               <DimmedOrBlackText text={value} />
             </Flex>
@@ -83,14 +83,14 @@ function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
       type keys = keyof typeof TEducationProps;
       return (
         <>
-          {list.map((items) => {
+          {list.map((items,index) => {
             const data: { [key in keys]: any } = {} as any;
             items.map(
               ({ propName, value }) => (data[propName as keys] = value)
             );
 
             return (
-              <div className="educationItem">
+              <div className="educationItem" key={index}>
                 <Flex align="center" justify="space-between">
                   <Flex className="timeWrapper" align="center">
                     <div className="circle"></div>
