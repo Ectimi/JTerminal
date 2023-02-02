@@ -12,7 +12,7 @@ interface IResumePreview {
 
 export default function ResumePreview({ resumeData }: IResumePreview) {
   return (
-    <Flex className="ResumePreview" justify="center" sx={{ height: '1123px' }}>
+    <Flex className="ResumePreview" justify="center" sx={{ height: '100%' }}>
       <BasicThemeResume resumeData={resumeData} />
     </Flex>
   );

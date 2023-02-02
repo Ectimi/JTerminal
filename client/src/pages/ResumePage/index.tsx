@@ -14,7 +14,7 @@ export default function ResumePage() {
       <Grid.Col span={6} sx={{ height: '100%' }}>
         <ResumeEditor resumeData={resumeData} setResumeData={setResumeData} />
       </Grid.Col>
-      <Grid.Col span={6} sx={{ height: '100%', overflowY: 'auto' }}>
+      <Grid.Col span={6} sx={{ height: '100%', overflowY: 'hidden' }}>
         <ResumePreview resumeData={resumeData} />
       </Grid.Col>
     </Grid>

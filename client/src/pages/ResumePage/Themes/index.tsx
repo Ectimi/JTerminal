@@ -1,27 +1,62 @@
-import { Flex, Image, Paper, SimpleGrid, Space, Text } from '@mantine/core';
+import { Flex, Image, Paper } from '@mantine/core';
+import { IResumeModule } from '../resumeModule';
+import { ModuleItemRenderer } from './ModuleItemRenderer';
 import {
-  EResumeModuleType,
-  TEducationProps,
-  IResumeModule,
-  IResumeModuleItem,
-} from '../resumeModule';
-import HeaderImg from '@/assets/images/theme/01/header.png';
+  Page,
+  Text,
+  View,
+  Document,
+  StyleSheet,
+  PDFViewer,
+} from '@react-pdf/renderer';
+
 import HatImg from '@/assets/images/theme/01/hat.png';
 import BagImg from '@/assets/images/theme/01/bag.png';
 import PenImg from '@/assets/images/theme/01/pencil.png';
 
 import './index.less';
 
-interface IModuleRenderer {
-  moduleName: string;
-  list: IResumeModuleItem[][];
-}
+const PDFStyles = StyleSheet.create({
+  page: {
+    flexDirection: 'row',
+    backgroundColor: '#E4E4E4',
+  },
+  section: {
+    margin: 10,
+    padding: 10,
+    flexGrow: 1,
+  },
+  moduleBox: {
+    position: 'relative',
+    padding: 20,
+    borderTop: '1 solid #4e7282',
+    borderLeft: '2 solid #4e7282',
+    backgroundColor: '#fff',
+  },
+});
 
 export const BasicThemeResume = ({
   resumeData,
 }: {
   resumeData: IResumeModule[];
 }) => {
+  const Preview = () => (
+    <PDFViewer>
+      <Document>
+        <Page size="A4" style={PDFStyles.page}>
+          {resumeData.map(
+            ({ moduleLabel, moduleName, list, visible }) =>
+              visible && (
+                <View style={PDFStyles.moduleBox} key={moduleName}>
+                  <ModuleItemRenderer moduleName={moduleName} list={list} />
+                </View>
+              )
+          )}
+        </Page>
+      </Document>
+    </PDFViewer>
+  );
+
   return (
     <Paper className="BasicThemeResume" shadow="xs" pt="12px">
       <div className="header">
@@ -37,85 +72,19 @@ export const BasicThemeResume = ({
       </div>
 
       <div className="contentBox">
-        <div>
-          {resumeData.map(({ moduleLabel, moduleName, list }) => (
-            <div className="moduleBox" key={moduleName}>
-              <div className="moduleTitle">
-                <span className="nameText">{moduleLabel}</span>
+        {resumeData.map(
+          ({ moduleLabel, moduleName, list, visible }) =>
+            visible && (
+              <div className="moduleBox" key={moduleName}>
+                <div className="moduleTitle">
+                  <span className="nameText">{moduleLabel}</span>
+                </div>
+                <ModuleItemRenderer moduleName={moduleName} list={list} />
               </div>
-              <ModuleItemRenderer moduleName={moduleName} list={list} />
-            </div>
-          ))}
-        </div>
+            )
+        )}
       </div>
+      <div id="contentBox"></div>
     </Paper>
   );
 };
-
-const DimmedOrBlackText = ({
-  text,
-  className = '',
-}: {
-  text: string;
-  className?: string;
-}) => (
-  <Text className={className} c={text ? 'black' : 'dimmed'}>
-    {text ? text : '未填写'}
-  </Text>
-);
-
-function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
-  switch (moduleName) {
-    case EResumeModuleType.basic:
-      const arr = list[0];
-      return (
-        <SimpleGrid className="basicInfoBox" cols={2} spacing="sm">
-          {arr.map(({ label, value }) => (
-            <Flex align="center" sx={{ marginTop: '0px' }} key={label}>
-              <Text className="infoLabel">{label}</Text>：
-              <DimmedOrBlackText text={value} />
-            </Flex>
-          ))}
-        </SimpleGrid>
-      );
-
-    case EResumeModuleType.education:
-      type keys = keyof typeof TEducationProps;
-      return (
-        <>
-          {list.map((items,index) => {
-            const data: { [key in keys]: any } = {} as any;
-            items.map(
-              ({ propName, value }) => (data[propName as keys] = value)
-            );
-
-            return (
-              <div className="educationItem" key={index}>
-                <Flex align="center" justify="space-between">
-                  <Flex className="timeWrapper" align="center">
-                    <div className="circle"></div>
-                    <Flex className="time" align="center">
-                      <DimmedOrBlackText text={data.startTime} />
-                      <Space w="sm" />
-                      -
-                      <Space w="sm" />
-                      <DimmedOrBlackText text={data.endTime} />
-                    </Flex>
-                  </Flex>
-                  <DimmedOrBlackText text={data.schoolName} />
-                  <Flex align="center">
-                    <DimmedOrBlackText text={data.highestEducation} />
-                    /
-                    <DimmedOrBlackText text={data.majorName} />
-                  </Flex>
-                </Flex>
-                {data.detail && <div className="detail" dangerouslySetInnerHTML={{__html:data.detail}}></div>}
-              </div>
-            );
-          })}
-        </>
-      );
-    default:
-      return <></>;
-  }
-}

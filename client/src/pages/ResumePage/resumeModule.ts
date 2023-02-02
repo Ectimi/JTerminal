@@ -25,7 +25,7 @@ export enum EResumeModuleType {
   'customer' = 'customer',
 }
 
-export enum TEducationProps {
+export enum EEducationProps {
   'startTime' = 'startTime',
   'endTime' = 'endTime',
   'schoolName' = 'schoolName',
@@ -33,6 +33,45 @@ export enum TEducationProps {
   'highestEducation' = 'highestEducation',
   'detail' = 'detail',
 }
+
+export enum ECampusProps {
+  'startTime' = 'startTime',
+  'endTime' = 'endTime',
+  'schoolName' = 'schoolName',
+  'department' = 'department',
+  'detail' = 'detail',
+}
+
+export enum EProfessionalProps {
+  'detail' = 'detail',
+}
+
+export enum EJobProps {
+  'startTime' = 'startTime',
+  'endTime' = 'endTime',
+  'company' = 'company',
+  'post' = 'post',
+  'detail' = 'detail',
+}
+
+export enum EProjectProps{
+  'startTime' = 'startTime',
+  'endTime' = 'endTime',
+  'company' = 'company',
+  'name' = 'name',
+  'describe' = 'describe',
+  'framework' = 'framework',
+  'responsibility' = 'responsibility',
+}
+
+export enum EHonourProps {
+  'detail' = 'detail',
+}
+
+export enum EEvaluateProps {
+  'detail' = 'detail',
+}
+
 
 export interface IResumeModule {
   moduleLabel: string;
@@ -85,7 +124,7 @@ export const defaultResumeModule: IResumeModule[] = [
           required: true,
           type: FormType.select,
           selectData: ['男', '女'],
-          value: '男',
+          value: '',
         },
         {
           propName: 'tel',
@@ -111,7 +150,7 @@ export const defaultResumeModule: IResumeModule[] = [
             '博士',
             '其他',
           ],
-          value: '本科',
+          value: '',
         },
         {
           propName: 'email',
@@ -129,7 +168,6 @@ export const defaultResumeModule: IResumeModule[] = [
           placeholder: '请输入专业',
           value: '',
         },
-       
       ],
     ],
   },
@@ -145,7 +183,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: TEducationProps.startTime,
+          propName: EEducationProps.startTime,
           label: '入学时间',
           required: true,
           type: FormType.datepicker,
@@ -153,7 +191,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: TEducationProps.endTime,
+          propName: EEducationProps.endTime,
           label: '毕业时间',
           required: true,
           type: FormType.datepicker,
@@ -161,7 +199,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: TEducationProps.schoolName,
+          propName: EEducationProps.schoolName,
           label: '学校名称',
           required: true,
           type: FormType.input,
@@ -169,7 +207,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: TEducationProps.majorName,
+          propName: EEducationProps.majorName,
           label: '专业名称',
           required: true,
           type: FormType.input,
@@ -177,7 +215,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: TEducationProps.highestEducation,
+          propName: EEducationProps.highestEducation,
           label: '最高学历',
           required: true,
           type: FormType.select,
@@ -193,10 +231,10 @@ export const defaultResumeModule: IResumeModule[] = [
             '其他',
           ],
           placeholder: '请选择学历',
-          value: '本科',
+          value: '',
         },
         {
-          propName: TEducationProps.detail,
+          propName: EEducationProps.detail,
           label: '专业描述',
           required: false,
           type: FormType.richTextEditor,
@@ -219,7 +257,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: 'startTime',
+          propName: ECampusProps.startTime,
           label: '开始时间',
           required: true,
           type: FormType.datepicker,
@@ -227,7 +265,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'endTime',
+          propName: ECampusProps.endTime,
           label: '结束时间',
           required: true,
           type: FormType.datepicker,
@@ -235,7 +273,15 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'department',
+          propName: ECampusProps.schoolName,
+          label: '学校名称',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入学校名称',
+          value: '',
+        },
+        {
+          propName: ECampusProps.department,
           label: '部门/社团名称',
           required: true,
           type: FormType.input,
@@ -243,8 +289,8 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'detail',
-          label: '部门/社团名称',
+          propName: ECampusProps.detail,
+          label: '具体经历',
           required: true,
           type: FormType.richTextEditor,
           placeholder:
@@ -266,7 +312,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: 'skill',
+          propName: EProfessionalProps.detail,
           label: '',
           required: false,
           disable: false,
@@ -289,7 +335,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: 'entryTime',
+          propName: EJobProps.startTime,
           label: '入职时间',
           required: true,
           type: FormType.datepicker,
@@ -297,7 +343,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'dimissionTime',
+          propName: EJobProps.endTime,
           label: '离职时间',
           required: true,
           disable: false,
@@ -306,7 +352,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'company',
+          propName: EJobProps.company,
           label: '公司名称',
           required: true,
           disable: false,
@@ -315,7 +361,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'post',
+          propName: EJobProps.post,
           label: '职位',
           required: true,
           disable: false,
@@ -324,7 +370,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'responsibility',
+          propName: EJobProps.detail,
           label: '岗位职责',
           required: false,
           disable: false,
@@ -347,7 +393,7 @@ export const defaultResumeModule: IResumeModule[] = [
     list: [
       [
         {
-          propName: 'company',
+          propName: EProjectProps.company,
           label: '所属公司',
           required: true,
           type: FormType.input,
@@ -355,7 +401,15 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'startTime',
+          propName: EProjectProps.name,
+          label: '项目名称',
+          required: true,
+          type: FormType.input,
+          placeholder: '请输入项目名称',
+          value: '',
+        },
+        {
+          propName: EProjectProps.startTime,
           label: '开始时间',
           required: true,
           type: FormType.datepicker,
@@ -363,7 +417,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'endTime',
+          propName: EProjectProps.endTime,
           label: '结束时间',
           required: true,
           type: FormType.datepicker,
@@ -371,7 +425,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: null,
         },
         {
-          propName: 'describe',
+          propName: EProjectProps.describe,
           label: '项目描述',
           required: true,
           type: FormType.richTextEditor,
@@ -379,7 +433,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'framework',
+          propName: EProjectProps.framework,
           label: '项目架构',
           required: false,
           type: FormType.richTextEditor,
@@ -387,7 +441,7 @@ export const defaultResumeModule: IResumeModule[] = [
           value: '',
         },
         {
-          propName: 'responsibility',
+          propName: EProjectProps.responsibility,
           label: '职责描述',
           required: false,
           type: FormType.richTextEditor,

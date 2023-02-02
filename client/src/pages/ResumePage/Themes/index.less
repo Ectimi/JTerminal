@@ -2,6 +2,7 @@
   position: relative;
   height: 100%;
   min-width: 794px;
+  overflow: auto;
 
   .header {
     position: relative;
@@ -35,17 +36,20 @@
   .contentBox {
     position: absolute;
     left: 75px;
-    top: 118px;
+    top: 123px;
     width: calc(100% - 75px - 40px);
     height: calc(100% - 118px);
     padding-top: 40px;
-    border-left: 2px solid #4e7282;
+    background-color: #fff;
+    // border-left: 2px solid #4e7282;
   }
 
   .moduleBox {
     position: relative;
     padding: 20px;
     border-top: 1px solid #4e7282;
+    border-left: 2px solid #4e7282;
+    background-color: #fff;
 
     &:not(:first-of-type) {
       margin-top: 20px;
@@ -95,6 +99,14 @@
           content: '';
         }
       }
+    }
+
+    .circleIcon{
+      width: 8px;
+      height: 8px;
+      margin-right: 8px;
+      border-radius: 50%;
+      background-color: #000;
     }
 
     .basicInfoBox {
