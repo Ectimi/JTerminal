@@ -88,7 +88,7 @@ const GenerateRichTextImg = async (params: {
   return canvas.toDataURL();
 };
 
-export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
+export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
   switch (moduleName) {
     case EResumeModuleType.basic:
       const arr = list[0];
@@ -394,5 +394,8 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
           })}
         </>
       );
+
+    default:
+      return <></>;
   }
 }
