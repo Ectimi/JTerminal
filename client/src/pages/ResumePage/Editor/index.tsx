@@ -39,6 +39,7 @@ import './index.less';
 interface IResumeEditor {
   resumeData: IResumeModule[];
   setResumeData: Updater<IResumeModule[]>;
+  togglePriview:(bool:boolean)=>void;
 }
 
 type OnChangeHandle = (params: {
@@ -64,6 +65,8 @@ export default function ResumeEditor({
   };
 
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
+
+  const onPreview = ()=>{}
 
   const onExportPDF = ()=>{
 
@@ -220,6 +223,9 @@ export default function ResumeEditor({
           </Button>
           <Button className="controlButton save" onClick={onSave}>
             保存
+          </Button>
+          <Button className="controlButton preview" onClick={onPreview}>
+            预览PDF
           </Button>
           <Button className="controlButton export" onClick={onExportPDF}>
             导出PDF
