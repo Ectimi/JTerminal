@@ -155,7 +155,7 @@ export const defaultResumeModule: IResumeModule[] = [
         {
           propName: 'email',
           label: '邮箱',
-          required: false,
+          required: true,
           type: FormType.input,
           placeholder: '请输入邮箱',
           value: '',
@@ -163,7 +163,7 @@ export const defaultResumeModule: IResumeModule[] = [
         {
           propName: 'major',
           label: '专业',
-          required: false,
+          required: true,
           type: FormType.input,
           placeholder: '请输入专业',
           value: '',

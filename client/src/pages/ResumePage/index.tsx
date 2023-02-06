@@ -1,4 +1,4 @@
-import { Grid, Modal } from "@mantine/core";
+import { Container, Grid, Modal } from "@mantine/core";
 import { useSafeState } from "ahooks";
 import { useImmer } from "use-immer";
 import ResumeEditor from "./Editor";
@@ -27,10 +27,14 @@ export default function ResumePage() {
       </Grid>
       <Modal
         opened={visible}
+        padding={0}
+        size='auto'
         withCloseButton={false}
         onClose={() => setVisible(false)}
       >
-        <PDFPreview resumeData={resumeData} />
+        <Container sx={{ width: "835px", height: "1140px",padding:0 }}>
+          <PDFPreview resumeData={resumeData} />
+        </Container>
       </Modal>
     </>
   );
