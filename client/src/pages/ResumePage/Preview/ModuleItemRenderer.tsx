@@ -192,7 +192,7 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) => (data[propName as JobPropsKeys] = value)
             );
             return (
-              <div className="educationItem" key={index}>
+              <div className="jobItem" key={index}>
                 <Flex align="center" justify="space-between">
                   <Flex className="timeWrapper" align="center">
                     <div className="circleIcon"></div>
@@ -234,7 +234,7 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
                 (data[propName as ProjectPropsKeys] = value)
             );
             return (
-              <div className="educationItem" key={index}>
+              <div className="projectItem" key={index}>
                 <Flex align="center">
                   <ListSign />
                   <Text>所属公司：</Text>
@@ -308,7 +308,7 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
                 (data[propName as HonourPropsKeys] = value)
             );
             return (
-              <div className="educationItem" key={index}>
+              <div className="honourItem" key={index}>
                 <RichText placeholder="荣誉奖励描述" htmlText={data.detail} />
               </div>
             );
@@ -327,7 +327,7 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
                 (data[propName as EvaluatePropsKeys] = value)
             );
             return (
-              <div className="educationItem" key={index}>
+              <div className="evaluateItem" key={index}>
                 <RichText placeholder="自我评价描述" htmlText={data.detail} />
               </div>
             );

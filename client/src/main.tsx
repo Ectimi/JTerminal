@@ -9,7 +9,11 @@ import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+export const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
   <React.StrictMode>
     <RecoilRoot>
       <ErrorBoundary>
@@ -30,9 +34,10 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               withNormalizeCSS
               theme={{
                 globalStyles: (theme) => ({
-                  div:{
-                    backgroundRepeat:'no-repeat'
+                  div: {
+                    backgroundRepeat: 'no-repeat',
                   },
+                  p: { padding: 0 },
                   'table,thead,tr,td,th': {
                     color: '#fff',
                   },

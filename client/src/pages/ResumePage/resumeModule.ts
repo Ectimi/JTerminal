@@ -314,7 +314,7 @@ export const defaultResumeModule: IResumeModule[] = [
         {
           propName: EProfessionalProps.detail,
           label: '',
-          required: false,
+          required: true,
           disable: false,
           type: FormType.richTextEditor,
           placeholder: '请填写您的专业技能',
@@ -327,7 +327,7 @@ export const defaultResumeModule: IResumeModule[] = [
   // 工作/实习经历
   {
     moduleName: EResumeModuleType.job,
-    moduleLabel: '工作/实习经历',
+    moduleLabel: '工作经历',
     visible: true,
     multiple: true,
     icon: JobImage,
@@ -465,7 +465,7 @@ export const defaultResumeModule: IResumeModule[] = [
         {
           propName: 'detail',
           label: '',
-          required: false,
+          required: true,
           type: FormType.richTextEditor,
           placeholder: '请填写荣誉奖励',
           value: '',
@@ -478,7 +478,7 @@ export const defaultResumeModule: IResumeModule[] = [
   {
     moduleName: EResumeModuleType.evaluate,
     moduleLabel: '自我评价',
-    visible: true,
+    visible: false,
     multiple: false,
     icon: SelfImage,
     require: false,
@@ -487,7 +487,7 @@ export const defaultResumeModule: IResumeModule[] = [
         {
           propName: 'detail',
           label: '',
-          required: false,
+          required: true,
           type: FormType.richTextEditor,
           placeholder: '请填写自我评价',
           value: '',

@@ -1,7 +1,8 @@
-import { Fragment, useMemo } from "react";
+import { Fragment, useCallback, useMemo } from 'react';
 import {
   ActionIcon,
   Button,
+  Box,
   Divider,
   Flex,
   Image,
@@ -13,28 +14,32 @@ import {
   Text,
   Tooltip,
   Paper,
-} from "@mantine/core";
-import { IconCirclePlus, IconCircleMinus } from "@tabler/icons";
+} from '@mantine/core';
+import { showNotification } from '@mantine/notifications';
+import { IconCirclePlus, IconCircleMinus } from '@tabler/icons';
 import {
   DragDropContext,
   Draggable,
   DropResult,
   OnDragEndResponder,
-} from "react-beautiful-dnd";
-import { StrictModeDroppable } from "@/components/StrictModeDroppable";
-import { useSafeState } from "ahooks";
-import { FormRenderer } from "../FormRenderer";
+} from 'react-beautiful-dnd';
+import { StrictModeDroppable } from '@/components/StrictModeDroppable';
+import { useSafeState } from 'ahooks';
+import { FormRenderer } from '../FormRenderer';
 import {
   defaultResumeModule,
   IResumeModule,
   EResumeModuleType,
-} from "../resumeModule";
-import { Updater } from "use-immer";
-import { isDate } from "@/lib/utils";
-import cloneDeep from "lodash/cloneDeep";
-import clsx from "clsx";
-import dayjs from "dayjs";
-import "./index.less";
+} from '../resumeModule';
+import { pdf } from '@react-pdf/renderer';
+import { PDFDocument } from '../Preview/PDFPreview';
+import { Updater } from 'use-immer';
+import { saveAs } from 'file-saver';
+import { isDate } from '@/lib/utils';
+import cloneDeep from 'lodash/cloneDeep';
+import clsx from 'clsx';
+import dayjs from 'dayjs';
+import './index.less';
 
 interface IResumeEditor {
   resumeData: IResumeModule[];
@@ -49,27 +54,70 @@ type OnChangeHandle = (params: {
   listIndex?: number;
 }) => void;
 
+const validate = (resumeData: IResumeEditor['resumeData']) => {
+  let moduleLable = '';
+  for (let i = 0; i < resumeData.length; i++) {
+    moduleLable = resumeData[i].moduleLabel;
+    const visible = resumeData[i].visible;
+    const list = resumeData[i].list;
+    if (visible) {
+      for (let j = 0; j < list.length; j++) {
+        const arr = list[j];
+        for (let k = 0; k < arr.length; k++) {
+          const item = arr[k];
+          if (item.required && !item.value) {
+            showNotification({
+              color: 'yellow',
+              title: '提示',
+              style: {
+                position: 'fixed',
+                top: '10px',
+                right: '10px',
+                width: '400px',
+              },
+              message: item.label
+                ? `${moduleLable}的${item.label}为必填项`
+                : `${moduleLable}为必填项`,
+            });
+            return false;
+          }
+        }
+      }
+    }
+  }
+  return true;
+};
+
 export default function ResumeEditor({
   resumeData,
   setResumeData,
   togglePriview,
 }: IResumeEditor) {
-  const [hoverMoudleName, setHoverMoudleName] = useSafeState("");
+  const [hoverMoudleName, setHoverMoudleName] = useSafeState('');
 
   const mouseEnterHandle = (moduleName: string) =>
     setHoverMoudleName(moduleName);
 
-  const mouseLeaveHandle = () => setHoverMoudleName("");
+  const mouseLeaveHandle = () => setHoverMoudleName('');
 
   const onSave = () => {
-    console.log("data", resumeData);
+    console.log('data', resumeData);
   };
 
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
-  const onPreview = () => togglePriview(true);
+  const onPreview = () => {
+    if (validate(resumeData)) {
+      togglePriview(true);
+    }
+  };
 
-  const onExportPDF = () => {};
+  const onExportPDF = async () => {
+    if (validate(resumeData)) {
+      const url = await pdf(<PDFDocument resumeData={resumeData} />).toBlob();
+      saveAs(URL.createObjectURL(url), 'resume.pdf');
+    }
+  };
 
   const onChange: OnChangeHandle = ({
     value,
@@ -78,7 +126,7 @@ export default function ResumeEditor({
     propName,
   }) => {
     if (isDate(value)) {
-      value = dayjs(value).format("YYYY-MM-DD");
+      value = dayjs(value).format('YYYY-MM-DD');
     }
     setResumeData((draft) => {
       const module = draft.find((module) => module.moduleName === moduleName);
@@ -154,9 +202,9 @@ export default function ResumeEditor({
                           {(provided) => (
                             <Flex
                               className={clsx(
-                                "moduleItem",
+                                'moduleItem',
                                 moduleName,
-                                hoverMoudleName === moduleName ? "hover" : ""
+                                hoverMoudleName === moduleName ? 'hover' : ''
                               )}
                               align="center"
                               justify="space-between"
@@ -178,14 +226,14 @@ export default function ResumeEditor({
                                 radius={11}
                               />
                               <Text>
-                                {moduleLabel === "工作/实习经历"
-                                  ? "工作经历"
+                                {moduleLabel === '工作/实习经历'
+                                  ? '工作经历'
                                   : moduleLabel}
                               </Text>
                               <Switch
                                 sx={{
-                                  ".mantine-Switch-track": {
-                                    cursor: require ? "not-allowed" : "pointer",
+                                  '.mantine-Switch-track': {
+                                    cursor: require ? 'not-allowed' : 'pointer',
                                   },
                                 }}
                                 checked={visible}
@@ -193,7 +241,7 @@ export default function ResumeEditor({
                                   if (require) return;
                                   onChange({
                                     moduleName,
-                                    propName: "visible",
+                                    propName: 'visible',
                                     value: event.currentTarget.checked,
                                   });
                                 }}
@@ -220,9 +268,9 @@ export default function ResumeEditor({
           <Button className="controlButton reset" color="red" onClick={onReset}>
             重置
           </Button>
-          <Button className="controlButton save" onClick={onSave}>
+          {/* <Button className="controlButton save" onClick={onSave}>
             保存
-          </Button>
+          </Button> */}
           <Button className="controlButton preview" onClick={onPreview}>
             预览PDF
           </Button>
@@ -240,9 +288,9 @@ export default function ResumeEditor({
                 <div
                   key={moduleName}
                   className={clsx(
-                    "moduleBox",
+                    'moduleBox',
                     moduleName,
-                    hoverMoudleName === moduleName ? "hover" : ""
+                    hoverMoudleName === moduleName ? 'hover' : ''
                   )}
                   onMouseEnter={() => mouseEnterHandle(moduleName)}
                   onMouseLeave={() => mouseLeaveHandle()}
@@ -254,21 +302,21 @@ export default function ResumeEditor({
                       my="sm"
                       label={moduleLabel}
                       labelPosition="center"
-                      labelProps={{ fz: "lg", fw: 600 }}
+                      labelProps={{ fz: 'lg', fw: 600 }}
                     />
 
                     {list.map((arr, listIndex) => (
                       <Fragment key={listIndex}>
                         {multiple && (
                           <Flex
-                            sx={{ width: "100%" }}
+                            sx={{ width: '100%' }}
                             justify="space-between"
                             align="center"
                           >
                             <Divider
-                              sx={{ width: "98%" }}
-                              label={"条目" + (listIndex + 1)}
-                              labelProps={{ fz: "md", fw: 400, c: "#6e3f3f" }}
+                              sx={{ width: '98%' }}
+                              label={'条目' + (listIndex + 1)}
+                              labelProps={{ fz: 'md', fw: 400, c: '#6e3f3f' }}
                             />
                             {listIndex > 0 && (
                               <Tooltip label="删除条目" position="bottom">
@@ -289,7 +337,7 @@ export default function ResumeEditor({
                           {arr.map(({ type, propName, value, ...rest }) => (
                             <FormRenderer
                               {...rest}
-                              key={propName + "_" + listIndex}
+                              key={propName + '_' + listIndex}
                               type={type}
                               value={value}
                               onChange={(value) =>
@@ -308,7 +356,7 @@ export default function ResumeEditor({
                   </div>
 
                   {multiple && (
-                    <Flex justify="center" sx={{ marginTop: "20px" }}>
+                    <Flex justify="center" sx={{ marginTop: '20px' }}>
                       <Tooltip label="添加新条目" position="bottom">
                         <ActionIcon
                           size="lg"
