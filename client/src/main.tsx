@@ -38,6 +38,8 @@ root.render(
                     backgroundRepeat: 'no-repeat',
                   },
                   p: { padding: 0 },
+                  ol:{paddingLeft:'14px'},
+                  ul:{paddingLeft:'14px'},
                   'table,thead,tr,td,th': {
                     color: '#fff',
                   },

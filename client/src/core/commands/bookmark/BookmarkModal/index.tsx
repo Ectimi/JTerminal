@@ -11,7 +11,6 @@ import {
 } from '@mantine/core';
 import { IconUpload } from '@tabler/icons';
 import { useForm } from '@mantine/form';
-import { showNotification } from '@mantine/notifications';
 import { useRecoilValue, useRecoilState } from 'recoil';
 import { bookmarksState, IBookmarkItem, userState } from '@/store';
 import { addBookmark, updateBookmark } from '../controller';
@@ -34,19 +33,6 @@ interface IProps {
   formValue: IBookmarkItem;
   onClose: () => void;
 }
-
-export const notify = (type: 'success' | 'error' | 'warn', message: string) => {
-  showNotification({
-    color: type === 'success' ? 'blue' : type === 'error' ? 'red' : 'yellow',
-    message,
-    style: {
-      position: 'fixed',
-      top: '10px',
-      right: '10px',
-      width: '300px',
-    },
-  });
-};
 
 export default function BookmarkModal(props: IProps) {
   const { type, visible, formValue, onClose } = props;

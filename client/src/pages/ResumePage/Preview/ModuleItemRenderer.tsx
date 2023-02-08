@@ -22,12 +22,8 @@ const DimmedOrBlackText = ({
   placeholder = '未填写',
 }: {
   value?: string;
-  placeholder?: string
-}) => (
-  <Text c={value ? 'black' : 'dimmed'}>
-    {value ? value : placeholder}
-  </Text>
-);
+  placeholder?: string;
+}) => <Text c={value ? 'black' : 'dimmed'}>{value ? value : placeholder}</Text>;
 
 const ListSign = () => (
   <Image
@@ -53,6 +49,27 @@ const RichText = (props: { placeholder: string; htmlText: string }) => {
 
 export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
   switch (moduleName) {
+    case EResumeModuleType.profile:
+      const url = list[0][0].value;
+      return (
+        url && (
+          <Image
+            src={url}
+            width={125}
+            height={130}
+            // fit="contain"
+            sx={{
+              position: 'fixed',
+              top: '205px',
+              right: '80px',
+              backgroundColor: '#fafafa',
+              borderRadius: '4px',
+              border: '1px solid #d9d9d9',
+              zIndex:100
+            }}
+          />
+        )
+      );
     case EResumeModuleType.basic:
       const arr = list[0];
       return (

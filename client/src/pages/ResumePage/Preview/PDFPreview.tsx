@@ -9,6 +9,7 @@ import {
   PDFViewer,
   Font,
 } from '@react-pdf/renderer';
+import Html from 'react-pdf-html';
 import { Text as MantineText } from '@mantine/core';
 import {
   EResumeModuleType,
@@ -44,6 +45,7 @@ Font.register({
   family: 'AlibabaPuHuiTi_2_55_Regular',
   src: AlibabaPuHuiTi_2_55_Regular,
 });
+Font.registerHyphenationCallback((word) => [word]);
 
 const styles = StyleSheet.create({
   viewer: {
@@ -57,7 +59,13 @@ const styles = StyleSheet.create({
     width: '100%',
     paddingTop: 12,
     fontFamily: 'AlibabaPuHuiTi_2_55_Regular',
+    fontSize: 13,
+  },
+  html: {
     fontSize: 12,
+    width: 300,
+    padding: 0,
+    margin: 0,
   },
   header: {
     position: 'relative',
@@ -73,13 +81,12 @@ const styles = StyleSheet.create({
     borderRadius: 27.5,
     backgroundColor: '#c19f67',
   },
-  avatar: {
+  profile: {
     position: 'absolute',
-    top: 10,
-    right: 60,
+    top: 30,
+    right: 40,
     width: 80,
     height: 100,
-    backgroundColor: 'red',
   },
   main: {
     position: 'absolute',
@@ -100,31 +107,31 @@ const styles = StyleSheet.create({
   },
   moduleTittleBox: {
     position: 'absolute',
-    top: -17,
+    top: -20,
     left: -14,
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
     paddingLeft: 20,
-    paddingRight: 20,
+    paddingRight: 23,
     backgroundColor: '#5a8599',
   },
   moduleTitleText: {
     color: '#fff',
     letterSpacing: 1,
     fontWeight: 'bold',
-    fontSize:12
+    fontSize: 14,
   },
   moduleTitleImage: {
     position: 'absolute',
     top: 0,
-    left: 80,
-    width: 20,
-    height: 16,
+    left: 102,
+    width: 25,
+    height: 19,
   },
   moduleTitleLeftAngle: {
     position: 'absolute',
-    top: 15,
+    top: 19,
     left: -1,
     borderTop: '4 solid #3c5f6f',
     borderRight: '7 solid #3c5f6f',
@@ -152,7 +159,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#000',
   },
 
-  listSign: { width: 20, height: 20, marginRight: 30 },
+  listSign: { width: 13, height: 12, marginRight: 10 },
   basicInfoGrid: {
     display: 'flex',
     flexDirection: 'row',
@@ -192,7 +199,7 @@ const TextOrNull = ({ value }: { value: string }) =>
   value ? <Text>{value}</Text> : null;
 
 const GenerateRichTextImg = async (params: {
-  className:string;
+  className: string;
   placeholder: string;
   htmlText: string;
 }) => {
@@ -200,6 +207,8 @@ const GenerateRichTextImg = async (params: {
   const { className, placeholder, htmlText } = params;
   const div = document.createElement('div');
   div.id = id;
+
+  console.log('html', htmlText);
 
   const RichText = () =>
     htmlText ? (
@@ -228,8 +237,31 @@ const GenerateRichTextImg = async (params: {
   return canvas.toDataURL('image/png');
 };
 
+const HTMLText = ({ htmlText }: { htmlText: string }) => {
+  return (
+    <Html
+      style={styles.html}
+      stylesheet={{
+        p: {
+          padding: 0,
+          margin: 2,
+          'background-color': 'red',
+        },
+        ul: {
+          marginLeft: -20,
+        },
+      }}
+    >
+      {htmlText}
+    </Html>
+  );
+};
+
 export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
   switch (moduleName) {
+    case EResumeModuleType.profile:
+      const url = list[0][0].value;
+      return url && <Image src={url} style={styles.profile} />;
     case EResumeModuleType.basic:
       const arr = list[0];
       return (
@@ -260,11 +292,7 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as EducationPropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '专业描述',
-              htmlText: data.detail,
-              className:'educationItem'
-            });
+
             return (
               <View key={index}>
                 <View style={styles.flexSpaceBetween}>
@@ -285,8 +313,7 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
                     <TextOrNull value={data.majorName} />
                   </View>
                 </View>
-
-                <Image src={richTextImgUrl} />
+                <HTMLText htmlText={data.detail} key={index} />
               </View>
             );
           })}
@@ -303,11 +330,6 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as CampusPropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '经历描述',
-              htmlText: data.detail,
-              className:'campusItem',
-            });
             return (
               <View key={index}>
                 <View style={styles.flexSpaceBetween}>
@@ -324,7 +346,7 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
                   <TextOrNull value={data.schoolName} />
                   <TextOrNull value={data.department} />
                 </View>
-                <Image src={richTextImgUrl} />
+                <HTMLText htmlText={data.detail} key={index} />
               </View>
             );
           })}
@@ -341,12 +363,8 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as ProfessionalPropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '专业技能描述',
-              htmlText: data.detail,
-              className:'professionalItem'
-            });
-            return <Image src={richTextImgUrl} key={index} />;
+
+            return <HTMLText htmlText={data.detail} key={index} />;
           })}
         </>
       );
@@ -360,11 +378,7 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
             items.map(
               ({ propName, value }) => (data[propName as JobPropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '岗位职责描述',
-              htmlText: data.detail,
-              className:'jobItem'
-            });
+
             return (
               <View key={index}>
                 <View style={styles.flexSpaceBetween}>
@@ -381,7 +395,7 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
                   <TextOrNull value={data.company} />
                   <TextOrNull value={data.post} />
                 </View>
-                <Image src={richTextImgUrl} key={index} />
+                <HTMLText htmlText={data.detail} key={index} />
               </View>
             );
           })}
@@ -398,36 +412,22 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as ProjectPropsKeys] = value)
             );
-            const describeRichTextImgUrl = GenerateRichTextImg({
-              placeholder: '项目描述',
-              htmlText: data.describe,
-              className:'projectItem'
-            });
-            const frameworkRichTextImgUrl = GenerateRichTextImg({
-              placeholder: '项目框架描述',
-              htmlText: data.framework,
-              className:'projectItem'
-            });
-            const responsibilityRichTextImgUrl = GenerateRichTextImg({
-              placeholder: '项目职责描述',
-              htmlText: data.responsibility,
-              className:'projectItem'
-            });
+
             return (
-              <div className="educationItem" key={index}>
+              <View key={index} style={{ marginTop: index !== 0 ? 20 : 0 }}>
                 <View style={styles.flexAlignCenter}>
                   <ListSign />
-                  <Text>所属公司：</Text>
+                  <Text style={{ fontWeight: 900 }}>所属公司：</Text>
                   <TextOrNull value={data.company} />
                 </View>
 
-                <View style={styles.flexItem}>
+                <View style={{ ...styles.flexAlignCenter, marginTop: 8 }}>
                   <ListSign />
                   <Text>项目名称：</Text>
                   <TextOrNull value={data.name} />
                 </View>
 
-                <View style={styles.flexItem}>
+                <View style={{ ...styles.flexAlignCenter, marginTop: 8 }}>
                   <ListSign />
                   <Text>项目时间：</Text>
                   <View style={styles.flexAlignCenter}>
@@ -439,27 +439,27 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
                   </View>
                 </View>
 
-                <View style={styles.flexItem}>
+                <View style={{ ...styles.flexAlignCenter, marginTop: 8 }}>
                   <ListSign />
                   <Text>项目描述：</Text>
                 </View>
 
-                <Image src={describeRichTextImgUrl} />
+                <HTMLText htmlText={data.describe} key={index} />
 
-                <View style={styles.flexItem}>
+                <View style={{ ...styles.flexAlignCenter, marginTop: 8 }}>
                   <ListSign />
                   <Text>项目架构：</Text>
                 </View>
 
-                <Image src={frameworkRichTextImgUrl} />
+                <HTMLText htmlText={data.framework} key={index} />
 
-                <View style={styles.flexItem}>
+                <View style={{ ...styles.flexAlignCenter, marginTop: 8 }}>
                   <ListSign />
                   <Text>项目职责：</Text>
                 </View>
 
-                <Image src={responsibilityRichTextImgUrl} />
-              </div>
+                <HTMLText htmlText={data.responsibility} key={index} />
+              </View>
             );
           })}
         </>
@@ -475,12 +475,8 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as HonourPropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '荣誉奖励描述',
-              htmlText: data.detail,
-              className:'honourItem'
-            });
-            return <Image src={richTextImgUrl} key={index} />;
+
+            return <HTMLText htmlText={data.detail} key={index} />;
           })}
         </>
       );
@@ -495,12 +491,8 @@ export function PDFRenderer({ moduleName, list }: IModuleRenderer) {
               ({ propName, value }) =>
                 (data[propName as EvaluatePropsKeys] = value)
             );
-            const richTextImgUrl = GenerateRichTextImg({
-              placeholder: '自我评价描述',
-              htmlText: data.detail,
-              className:'evaluateItem'
-            });
-            return <Image src={richTextImgUrl} key={index} />;
+
+            return <HTMLText htmlText={data.detail} key={index} />;
           })}
         </>
       );
@@ -531,10 +523,11 @@ export const PDFDocument = ({
         <Image src={PenImg} style={{ ...styles.headerIcon, right: 140 }} />
 
         <View style={styles.main}>
-          <Image src={PenImg} style={styles.avatar} />
-          {data.map(
-            ({ moduleLabel, moduleName, list, visible }, index) =>
-              visible && (
+          {data.map(({ moduleLabel, moduleName, list, visible }, index) =>
+            visible ? (
+              moduleName === EResumeModuleType.profile ? (
+                <PDFRenderer moduleName={moduleName} list={list} />
+              ) : (
                 <View
                   style={{
                     ...styles.moduleBox,
@@ -550,6 +543,7 @@ export const PDFDocument = ({
                   <PDFRenderer moduleName={moduleName} list={list} />
                 </View>
               )
+            ) : null
           )}
         </View>
       </Page>
@@ -567,7 +561,7 @@ export const PDFPreview = ({ resumeData }: { resumeData: IResumeModule[] }) => {
 
   return (
     <PDFViewer style={styles.viewer} showToolbar={false}>
-      <PDFDocument resumeData={resumeData}/>
+      <PDFDocument resumeData={resumeData} />
     </PDFViewer>
   );
 };

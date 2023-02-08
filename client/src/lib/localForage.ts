@@ -3,7 +3,7 @@ import PubSub from 'pubsub-js';
 import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
 import { GetBookmarks, GetLabels } from '@/serve/api';
-import { showNotification } from '@mantine/notifications';
+import { ShowNotification } from '@/lib/notification';
 import { IBookmarkItem, IBookmarkState, ILabel, IUser } from '@/store';
 
 interface ICallback {
@@ -185,8 +185,8 @@ const addUserBookmarks = async (option?: ICallback) => {
     }
   } catch (error: any) {
     option?.fail && option.fail(error);
-    showNotification({
-      color: 'red',
+    ShowNotification({
+      type:'error',
       title: error.name || 'Error',
       message: error.message || 'addUserBookmarks error',
     });
@@ -208,8 +208,8 @@ const addUserLabels = async (option?: ICallback) => {
     }
   } catch (error: any) {
     option?.fail && option.fail(error);
-    showNotification({
-      color: 'red',
+    ShowNotification({
+      type:'error',
       title: error.name || 'Error',
       message: error.message || 'addUserLabels error',
     });

@@ -1,5 +1,13 @@
-import { memo } from 'react'
-import { Input, TextInput, Select, SelectItem } from '@mantine/core';
+import {
+  Box,
+  FileButton,
+  Input,
+  TextInput,
+  Image,
+  Select,
+  SelectItem,
+} from '@mantine/core';
+import { ShowNotification } from '@/lib/notification';
 import { DatePicker } from '@mantine/dates';
 import RichTextEditor from '@/components/RichTextEditor';
 import 'dayjs/locale/zh';
@@ -9,6 +17,7 @@ export enum FormType {
   'select',
   'richTextEditor',
   'datepicker',
+  'imageUpload',
 }
 
 export interface IFormItem {
@@ -24,6 +33,35 @@ export interface IFormItem {
   onRichTextEditorUpdate?: (htmlText: string) => void;
 }
 
+const getBase64 = (file: File): Promise<string> =>
+  new Promise((resolve, reject) => {
+    const reader = new FileReader();
+    reader.readAsDataURL(file);
+    reader.onload = () => resolve(reader.result as string);
+    reader.onerror = (error) => reject(error);
+  });
+
+const beforeUploadValidate = (file: File) => {
+  const acceptFileTypes = ['image/jpeg', 'image/png'];
+  const isJpgOrPng = acceptFileTypes.includes(file.type);
+
+  if (!isJpgOrPng) {
+    ShowNotification({
+      type: 'warn',
+      message: 'You can only upload JPG/PNG file!',
+    });
+  }
+  const isLt4MB = file.size / 1024 / 1024 < 4;
+
+  if (!isLt4MB) {
+    ShowNotification({
+      type: 'warn',
+      message: 'Image must smaller than 32KB!',
+    });
+  }
+  return isJpgOrPng && isLt4MB;
+};
+
 export function FormRenderer(props: IFormItem) {
   const {
     type,
@@ -35,7 +73,57 @@ export function FormRenderer(props: IFormItem) {
     ...rest
   } = props;
 
+  const onFileChange = async (file: File) => {
+    if (beforeUploadValidate(file)) {
+      onChange(await getBase64(file));
+      return true;
+    }
+    return false;
+  };
+
   switch (type) {
+    case FormType.imageUpload:
+      return (
+        <FileButton
+          accept="image/png,image/jpeg"
+          multiple={false}
+          onChange={onFileChange}
+        >
+          {(props) => (
+            <Box
+              {...props}
+              component="div"
+              sx={{
+                display: 'flex',
+                flexDirection: 'column',
+                alignItems: 'center',
+                justifyContent: 'center',
+                width: '125px',
+                height: '130px',
+                backgroundColor: '#fafafa',
+                borderRadius: '4px',
+                border: '1px solid #d9d9d9',
+                color: 'grey',
+                cursor: 'pointer',
+              }}
+            >
+              {value ? (
+                <Image
+                  src={value}
+                  width={125}
+                  height={130}
+                  // fit="contain"
+                />
+              ) : (
+                <>
+                  <div>照</div>
+                  <div>片</div>
+                </>
+              )}
+            </Box>
+          )}
+        </FileButton>
+      );
     case FormType.input:
       return (
         <TextInput

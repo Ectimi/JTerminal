@@ -7,21 +7,8 @@ import {
 import { localforage, LocalForageKeys } from '@/lib/localForage';
 import { IBookmarkItem, IUser } from '@/store';
 import { IBookmarkModalFormData } from './BookmarkModal';
-import { showNotification } from '@mantine/notifications';
-import { nanoid } from 'nanoid';
-
-export const notify = (type: 'success' | 'error' | 'warn', message: string) => {
-  showNotification({
-    color: type === 'success' ? 'blue' : type === 'error' ? 'red' : 'yellow',
-    message,
-    style: {
-      position: 'fixed',
-      top: '10px',
-      right: '10px',
-      width: '300px',
-    },
-  });
-};
+import { ShowNotification } from '@/lib/notification';
+import { nanoid } from 'nanoid';;
 
 export async function addBookmark(
   data: IBookmarkModalFormData,
@@ -39,10 +26,10 @@ export async function addBookmark(
       const res = await AddBookmarkItem(formData);
       if (res.success) {
         localforage.setItem(LocalForageKeys.USER_BOOKMARKS, res.data);
-        notify('success', '添加成功');
+        ShowNotification({ message: '添加成功' });
         typeof callback === 'function' && callback();
       } else {
-        notify('error', res.message);
+        ShowNotification({ type: 'error', message: res.message });
       }
     } else {
       const local_bookmarks = (await localforage.getItem(
@@ -50,7 +37,7 @@ export async function addBookmark(
       )) as IBookmarkItem[];
 
       if (local_bookmarks.some((bookmark) => bookmark.name === data.name)) {
-        notify('warn', '该书签名已存在');
+        ShowNotification({ type: 'warn', message: '该书签名已存在' });
         return;
       }
 
@@ -58,11 +45,15 @@ export async function addBookmark(
         ...local_bookmarks,
         { ...data, id: nanoid() },
       ]);
-      notify('success', '添加成功');
+      ShowNotification({ message: '添加成功' });
+
       typeof callback === 'function' && callback();
     }
   } catch (error: any) {
-    notify('error', error.message ? error.message : '添加书签遇到未知错误');
+    ShowNotification({
+      type: 'error',
+      message: error.message ? error.message : '添加书签遇到未知错误',
+    });
   }
 }
 
@@ -99,10 +90,10 @@ export async function updateBookmark(
           LocalForageKeys.USER_BOOKMARKS,
           user_bookmarks
         );
-        notify('success', '更新成功');
+        ShowNotification({ message: '更新成功' });
         typeof callback === 'function' && callback();
       } else {
-        notify('error', res.message);
+        ShowNotification({ type: 'error', message: res.message });
       }
     } else {
       const local_bookmarks = (await localforage.getItem(
@@ -122,11 +113,14 @@ export async function updateBookmark(
         LocalForageKeys.LOCAL_BOOKMARKS,
         local_bookmarks
       );
-      notify('success', '更新成功');
+      ShowNotification({ message: '更新成功' });
       typeof callback === 'function' && callback();
     }
   } catch (error: any) {
-    notify('error', error.message ? error.message : '更新书签遇到未知错误');
+    ShowNotification({
+      type: 'error',
+      message: error.message ? error.message : '更新书签遇到未知错误',
+    });
   }
 }
 
@@ -137,9 +131,12 @@ export async function deleteBookmark(bookmark_id: any) {
       const res = await DeleteBookmarkItem(bookmark_id);
       if (res.success) {
         localforage.setItem(LocalForageKeys.USER_BOOKMARKS, res.data);
-        notify('success', '删除成功');
+        ShowNotification({ message: '删除成功' });
       } else {
-        notify('error', res.message || '删除出错了');
+        ShowNotification({
+          type: 'error',
+          message: res.message || '删除出错了',
+        });
       }
     } else {
       const local_bookmarks = (await localforage.getItem(
@@ -152,10 +149,13 @@ export async function deleteBookmark(bookmark_id: any) {
         }
       }
       localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, local_bookmarks);
-      notify('success', '删除成功');
+      ShowNotification({ message: '删除成功' });
     }
   } catch (error: any) {
-    notify('error', error.message ? error.message : '删除书签遇到未知错误');
+    ShowNotification({
+      type: 'error',
+      message: error.message ? error.message : '删除书签遇到未知错误',
+    });
   }
 }
 
@@ -192,6 +192,9 @@ export async function stickyBookmark(bookmark: IBookmarkItem) {
       localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, local_bookmarks);
     }
   } catch (error: any) {
-    notify('error', error.message ? error.message : '标记书签遇到未知错误');
+    ShowNotification({
+      type: 'error',
+      message: error.message ? error.message : '标记书签遇到未知错误',
+    });
   }
 }

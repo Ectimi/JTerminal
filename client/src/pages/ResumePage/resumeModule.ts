@@ -14,6 +14,7 @@ export type IResumeModuleItem = Omit<IFormItem, 'onChange'> & {
 };
 
 export enum EResumeModuleType {
+  'profile' = 'profile',
   'basic' = 'basic',
   'education' = 'education',
   'campus' = 'campus',
@@ -54,7 +55,7 @@ export enum EJobProps {
   'detail' = 'detail',
 }
 
-export enum EProjectProps{
+export enum EProjectProps {
   'startTime' = 'startTime',
   'endTime' = 'endTime',
   'company' = 'company',
@@ -72,7 +73,6 @@ export enum EEvaluateProps {
   'detail' = 'detail',
 }
 
-
 export interface IResumeModule {
   moduleLabel: string;
   moduleName: string;
@@ -84,6 +84,26 @@ export interface IResumeModule {
 }
 
 export const defaultResumeModule: IResumeModule[] = [
+  {
+    moduleName: EResumeModuleType.profile,
+    moduleLabel: '个人照片',
+    visible: true,
+    multiple: false,
+    icon: PhotoImage,
+    require: false,
+    list: [
+      [
+        {
+          propName: '个人照片',
+          label: '',
+          required: true,
+          type: FormType.imageUpload,
+          placeholder: '照片',
+          value: '',
+        },
+      ]
+    ],
+  },
   // 基本信息
   {
     moduleName: EResumeModuleType.basic,

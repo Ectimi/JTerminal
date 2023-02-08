@@ -9,9 +9,11 @@ import Underline from '@tiptap/extension-underline';
 import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
+import Paragraph from '@tiptap/extension-paragraph';
 
 import './index.less';
 import { useUpdateEffect } from 'ahooks';
+
 
 export interface IRichEditor {
   value?: string;
@@ -40,6 +42,11 @@ export default function RichEditor(props: IRichEditor) {
       SubScript,
       Highlight,
       TextAlign.configure({ types: ['heading', 'paragraph'] }),
+      Paragraph.configure({
+        HTMLAttributes: {
+          class: 'richTextParagraph',
+        },
+      })
     ],
     autofocus: false,
     content: value,

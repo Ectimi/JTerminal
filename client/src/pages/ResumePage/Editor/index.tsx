@@ -15,7 +15,7 @@ import {
   Tooltip,
   Paper,
 } from '@mantine/core';
-import { showNotification } from '@mantine/notifications';
+import { ShowNotification } from '@/lib/notification';
 import { IconCirclePlus, IconCircleMinus } from '@tabler/icons';
 import {
   DragDropContext,
@@ -66,13 +66,10 @@ const validate = (resumeData: IResumeEditor['resumeData']) => {
         for (let k = 0; k < arr.length; k++) {
           const item = arr[k];
           if (item.required && !item.value) {
-            showNotification({
-              color: 'yellow',
+            ShowNotification({
+              type: 'warn',
               title: '提示',
               style: {
-                position: 'fixed',
-                top: '10px',
-                right: '10px',
                 width: '400px',
               },
               message: item.label
@@ -107,9 +104,10 @@ export default function ResumeEditor({
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
   const onPreview = () => {
-    if (validate(resumeData)) {
-      togglePriview(true);
-    }
+    // if (validate(resumeData)) {
+    //   togglePriview(true);
+    // }
+    togglePriview(true);
   };
 
   const onExportPDF = async () => {
@@ -196,7 +194,8 @@ export default function ResumeEditor({
                           draggableId={moduleName}
                           index={index}
                           isDragDisabled={
-                            moduleName === EResumeModuleType.basic
+                            moduleName === EResumeModuleType.basic ||
+                            moduleName === EResumeModuleType.profile
                           }
                         >
                           {(provided) => (

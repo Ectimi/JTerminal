@@ -5,14 +5,14 @@ import {
   TextInput,
   Title,
   useMantineTheme,
-} from "@mantine/core";
-import { useForm } from "@mantine/form";
-import { showNotification } from "@mantine/notifications";
-import { useRecoilValue, useRecoilState } from "recoil";
-import { bookmarksState, IBookmarkItem, userState } from "@/store";
-import { AddLabel } from "@/serve/api";
-import { LocalForageKeys, localforage } from "@/lib/localForage";
-import "./index.less";
+} from '@mantine/core';
+import { useForm } from '@mantine/form';
+import { ShowNotification } from '@/lib/notification';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { bookmarksState, IBookmarkItem, userState } from '@/store';
+import { AddLabel } from '@/serve/api';
+import { LocalForageKeys, localforage } from '@/lib/localForage';
+import './index.less';
 
 interface IFormData {
   label: string;
@@ -32,11 +32,11 @@ export default function LabelModal(props: IProps) {
 
   const form = useForm({
     initialValues: {
-      label: "",
+      label: '',
     },
 
     validate: {
-      label: (value) => (!!value ? null : "名称不能为空"),
+      label: (value) => (!!value ? null : '名称不能为空'),
     },
   });
 
@@ -46,7 +46,7 @@ export default function LabelModal(props: IProps) {
   };
 
   const onSubmit = async (data: IFormData) => {
-    console.log("submit", data);
+    console.log('submit', data);
     try {
       if (user) {
         const res = await AddLabel(data.label);
@@ -55,40 +55,21 @@ export default function LabelModal(props: IProps) {
             ...cur,
             labels: res.data,
           }));
-          showNotification({
-            color: "blue",
-            message: "添加成功",
-            style: {
-              position: "fixed",
-              top: "10px",
-              right: "10px",
-              width: "300px",
-            },
+          ShowNotification({
+            message: '添加成功',
           });
           closeModal();
         } else {
-          showNotification({
-            color: "red",
+          ShowNotification({
+            type: 'error',
             message: res.message,
-            style: {
-              position: "fixed",
-              top: "10px",
-              right: "10px",
-              width: "300px",
-            },
           });
         }
       } else {
         if (labels.some((label) => label.label === data.label)) {
-          showNotification({
-            color: "yellow",
-            message: "该标签名已存在",
-            style: {
-              position: "fixed",
-              top: "10px",
-              right: "10px",
-              width: "300px",
-            },
+          ShowNotification({
+            type: 'warn',
+            message: '该标签名已存在',
           });
           return;
         }
@@ -99,29 +80,16 @@ export default function LabelModal(props: IProps) {
           ...loacl_labels,
           data,
         ]);
-        showNotification({
-          color: "blue",
-          message: "添加成功",
-          style: {
-            position: "fixed",
-            top: "10px",
-            right: "10px",
-            width: "300px",
-          },
+        ShowNotification({
+          message: '添加成功',
         });
         closeModal();
       }
     } catch (error: any) {
-      showNotification({
-        color: "red",
-        title: error.name ? error.name : "Error",
-        message: error.message ? error.message : "添加标 签遇到未知错误",
-        style: {
-          position: "fixed",
-          top: "10px",
-          right: "10px",
-          width: "300px",
-        },
+      ShowNotification({
+        type: 'error',
+        title: error.name ? error.name : 'Error',
+        message: error.message ? error.message : '添加标 签遇到未知错误',
       });
     }
   };
@@ -135,7 +103,7 @@ export default function LabelModal(props: IProps) {
       centered
       size="60%"
       overlayColor={
-        theme.colorScheme === "dark"
+        theme.colorScheme === 'dark'
           ? theme.colors.dark[9]
           : theme.colors.gray[2]
       }
@@ -149,7 +117,7 @@ export default function LabelModal(props: IProps) {
     >
       <form onSubmit={form.onSubmit(onSubmit)} className="bookmark-modal-form">
         <TextInput
-          {...form.getInputProps("label")}
+          {...form.getInputProps('label')}
           placeholder="请输入标签名"
           label="名称"
           withAsterisk
