@@ -40,3 +40,24 @@ export const genUid = (length = 20) => {
 };
 genUid.soup_ =
   '!#$%()*+,-./:;=?@[]^_`{|}~ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+
+export const getByteLength = (str: string) => {
+  let length = 0;
+  for (let i = 0; i < str.length; i++) {
+    if (str[i].charCodeAt(0) > 255) {
+      length += 2;
+    } else {
+      length++;
+    }
+  }
+  return length;
+};
+
+export const getFontWidth = (font: string) => {
+  const canvas = document.createElement('canvas');
+  const context = canvas.getContext('2d')!;
+
+  font && (context.font = font);
+  const metrics = context.measureText(font);
+  return metrics.width;
+};

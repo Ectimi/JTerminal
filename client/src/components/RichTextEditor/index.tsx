@@ -10,6 +10,8 @@ import TextAlign from '@tiptap/extension-text-align';
 import Superscript from '@tiptap/extension-superscript';
 import SubScript from '@tiptap/extension-subscript';
 import Paragraph from '@tiptap/extension-paragraph';
+import BulletList from '@tiptap/extension-bullet-list'
+import OrderedList from '@tiptap/extension-ordered-list';
 
 import './index.less';
 import { useUpdateEffect } from 'ahooks';
@@ -46,7 +48,17 @@ export default function RichEditor(props: IRichEditor) {
         HTMLAttributes: {
           class: 'richTextParagraph',
         },
-      })
+      }),
+      BulletList.configure({
+        HTMLAttributes: {
+          class: 'bulletList',
+        },
+      }),
+      OrderedList.configure({
+        HTMLAttributes: {
+          class: 'orderedList',
+        },
+      }),
     ],
     autofocus: false,
     content: value,

@@ -59,9 +59,9 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
             height={130}
             // fit="contain"
             sx={{
-              position: 'fixed',
-              top: '205px',
-              right: '80px',
+              position: 'absolute',
+              top: '90px',
+              right: '20px',
               backgroundColor: '#fafafa',
               borderRadius: '4px',
               border: '1px solid #d9d9d9',
@@ -74,7 +74,7 @@ export function ModuleItemRenderer({ moduleName, list }: IModuleRenderer) {
       const arr = list[0];
       return (
         <SimpleGrid className="basicInfoBox" cols={2} spacing="sm">
-          {arr.map(({ label, value }) => (
+          {arr.map(({ label, value },index) => (
             <Flex align="center" sx={{ marginTop: '0px' }} key={label}>
               <Text className="infoLabel">{label}</Text>：
               <DimmedOrBlackText value={value} />

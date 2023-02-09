@@ -32,9 +32,9 @@ export default function ResumePreview({ resumeData }: IResumePreview) {
           {resumeData.map(({ moduleLabel, moduleName, list, visible }) =>
             visible ? (
               moduleName === EResumeModuleType.profile ? (
-                <ModuleItemRenderer moduleName={moduleName} list={list} />
+                <ModuleItemRenderer moduleName={moduleName} list={list} key={moduleName} />
               ) : (
-                <div className="moduleBox" key={moduleName}>
+                <div className="moduleBox" key={moduleName} >
                   <div className="moduleTitle">
                     <span className="nameText">{moduleLabel}</span>
                   </div>
