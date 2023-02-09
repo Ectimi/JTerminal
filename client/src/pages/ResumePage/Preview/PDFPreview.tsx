@@ -1,4 +1,5 @@
-import { renderToString } from 'react-dom/server';
+import React, { cloneElement, createElement } from "react";
+import { renderToString } from "react-dom/server";
 import {
   Image,
   Page,
@@ -8,10 +9,10 @@ import {
   StyleSheet,
   PDFViewer,
   Font,
-} from '@react-pdf/renderer';
-import { Style } from '@react-pdf/types';
-import Html from 'react-pdf-html';
-import { Text as MantineText } from '@mantine/core';
+} from "@react-pdf/renderer";
+import { Style } from "@react-pdf/types";
+import Html from "react-pdf-html";
+import { Text as MantineText } from "@mantine/core";
 import {
   EResumeModuleType,
   EEducationProps,
@@ -23,25 +24,25 @@ import {
   EEvaluateProps,
   IResumeModuleItem,
   IResumeModule,
-} from '../resumeModule';
-import html2canvas from 'html2canvas';
-import cloneDeep from 'lodash/cloneDeep';
-import { genUid, getByteLength, getFontWidth } from '@/lib/utils';
+} from "../resumeModule";
+import html2canvas from "html2canvas";
+import cloneDeep from "lodash/cloneDeep";
+import { genUid, getByteLength, getFontWidth } from "@/lib/utils";
 
-import ListSignImg from '@/assets/images/theme/01/list_sign.png';
+import ListSignImg from "@/assets/images/theme/01/list_sign.png";
 
-import AlibabaPuHuiTi_2_35_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_35_Thin.ttf';
-import AlibabaPuHuiTi_2_45_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_45_Light.ttf';
-import AlibabaPuHuiTi_2_55_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_55_Regular.ttf';
-import AlibabaPuHuiTi_2_65_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_65_Medium.ttf';
-import AlibabaPuHuiTi_2_75_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_75_SemiBold.ttf';
-import AlibabaPuHuiTi_2_85_Regular from '@/assets/fonts/AlibabaPuHuiTi_2_85_Bold.ttf';
+import AlibabaPuHuiTi_2_35_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_35_Thin.ttf";
+import AlibabaPuHuiTi_2_45_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_45_Light.ttf";
+import AlibabaPuHuiTi_2_55_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_55_Regular.ttf";
+import AlibabaPuHuiTi_2_65_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_65_Medium.ttf";
+import AlibabaPuHuiTi_2_75_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_75_SemiBold.ttf";
+import AlibabaPuHuiTi_2_85_Regular from "@/assets/fonts/AlibabaPuHuiTi_2_85_Bold.ttf";
 
-import HeaderBg from '@/assets/images/theme/01/header.png';
-import HatImg from '@/assets/images/theme/01/hat.png';
-import BagImg from '@/assets/images/theme/01/bag.png';
-import PenImg from '@/assets/images/theme/01/pencil.png';
-import TitleSign from '@/assets/images/theme/01/title2.png';
+import HeaderBg from "@/assets/images/theme/01/header.png";
+import HatImg from "@/assets/images/theme/01/hat.png";
+import BagImg from "@/assets/images/theme/01/bag.png";
+import PenImg from "@/assets/images/theme/01/pencil.png";
+import TitleSign from "@/assets/images/theme/01/title2.png";
 
 interface IModuleRenderer {
   moduleName: string;
@@ -49,7 +50,7 @@ interface IModuleRenderer {
 }
 
 Font.register({
-  family: 'AlibabaPuHuiTi',
+  family: "AlibabaPuHuiTi",
   fonts: [
     {
       src: AlibabaPuHuiTi_2_35_Regular,
@@ -81,35 +82,35 @@ Font.registerHyphenationCallback((word) => [word]);
 
 const styles = StyleSheet.create({
   viewer: {
-    width: '100%',
-    height: '100%',
+    width: "100%",
+    height: "100%",
     padding: 0,
   },
   page: {
     // flexDirection: 'row',
-    backgroundColor: '#fff',
-    width: '100%',
+    backgroundColor: "#fff",
+    width: "100%",
     paddingTop: 12,
-    fontFamily: 'AlibabaPuHuiTi',
+    fontFamily: "AlibabaPuHuiTi",
     fontSize: 12,
-    fontWeight: 400,
+    fontWeight: 500,
   },
   header: {
-    position: 'relative',
-    width: '100%',
+    position: "relative",
+    width: "100%",
     height: 76,
   },
   headerIcon: {
-    position: 'absolute',
+    position: "absolute",
     top: 20,
     width: 35,
     height: 35,
     padding: 5,
     borderRadius: 27.5,
-    backgroundColor: '#c19f67',
+    backgroundColor: "#c19f67",
   },
   profile: {
-    position: 'absolute',
+    position: "absolute",
     top: 30,
     right: 40,
     width: 80,
@@ -119,103 +120,103 @@ const styles = StyleSheet.create({
     // position: 'absolute',
     left: 0,
     // top: 120,
-    width: '100%',
-    padding: '0 30 0 30',
+    width: "100%",
+    padding: "0 30 0 30",
     zIndex: 1,
   },
   moduleBox: {
-    position: 'relative',
-    width: '100%',
-    padding: '10 20',
-    borderTop: '1 solid #4e7282',
-    borderLeft: '1.6 solid #4e7282',
+    position: "relative",
+    width: "100%",
+    padding: "10 20",
+    borderTop: "1 solid #4e7282",
+    borderLeft: "1.6 solid #4e7282",
     // backgroundColor: '#fff',
     zIndex: 1,
   },
   moduleTittleBox: {
-    position: 'absolute',
+    position: "absolute",
     top: -20,
     left: -14,
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     paddingLeft: 20,
     paddingRight: 23,
-    backgroundColor: '#5a8599',
+    backgroundColor: "#5a8599",
   },
   moduleTitleText: {
-    color: '#fff',
+    color: "#fff",
     letterSpacing: 1,
     fontWeight: 500,
     fontSize: 14,
   },
   moduleTitleImage: {
-    position: 'absolute',
+    position: "absolute",
     top: 0,
     left: 102,
     width: 25,
     height: 19,
   },
   moduleTitleLeftAngle: {
-    position: 'absolute',
+    position: "absolute",
     top: 19,
     left: -1,
-    borderTop: '4 solid #3c5f6f',
-    borderRight: '7 solid #3c5f6f',
-    borderBottom: '4 solid #fff',
-    borderLeft: '7 solid #fff',
+    borderTop: "4 solid #3c5f6f",
+    borderRight: "7 solid #3c5f6f",
+    borderBottom: "4 solid #fff",
+    borderLeft: "7 solid #fff",
   },
   space: { width: 6, height: 0 },
   regular: { fontWeight: 500 },
   flexAlignCenter: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    alignItems: "center",
     // justifyContent: "flex-start",
   },
   flexSpaceBetween: {
-    display: 'flex',
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
+    display: "flex",
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
   circleIcon: {
     width: 8,
     height: 8,
     borderRadius: 4,
     marginRight: 6,
-    backgroundColor: '#000',
+    backgroundColor: "#000",
   },
 
   listSign: { width: 8, height: 7, marginRight: 10 },
   basicInfoGrid: {
-    display: 'flex',
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-between',
+    display: "flex",
+    flexDirection: "row",
+    flexWrap: "wrap",
+    justifyContent: "space-between",
     gap: 3,
     width: 520,
   },
-  infoLabel: { flex: '0 0 auto', width: 70, letterSpacing: 10 },
-  flexItem: { display: 'flex', alignItems: 'center', marginTop: 10 },
+  infoLabel: { flex: "0 0 auto", width: 70, letterSpacing: 10 },
+  flexItem: { display: "flex", alignItems: "center", marginTop: 10 },
 });
 
 const DimmedOrBlackText = ({
-  value = '',
-  placeholder = '未填写',
-  type = 'pdf',
+  value = "",
+  placeholder = "未填写",
+  type = "pdf",
 }: {
   value?: string;
   placeholder?: string;
   type?: string;
 }) => {
   const styles = StyleSheet.create({
-    text: { color: value ? 'black' : 'dimmed' },
+    text: { color: value ? "black" : "dimmed" },
   });
-  return type === 'pdf' ? (
+  return type === "pdf" ? (
     <Text style={styles.text}>{value ? value : placeholder}</Text>
   ) : (
-    <MantineText c={value ? 'black' : 'dimmed'}>
+    <MantineText c={value ? "black" : "dimmed"}>
       {value ? value : placeholder}
     </MantineText>
   );
@@ -231,12 +232,12 @@ const GenerateRichTextImg = async (params: {
   placeholder: string;
   htmlText: string;
 }) => {
-  const id = '@@__RichText__Temp__' + genUid(10);
+  const id = "@@__RichText__Temp__" + genUid(10);
   const { className, placeholder, htmlText } = params;
-  const div = document.createElement('div');
+  const div = document.createElement("div");
   div.id = id;
 
-  console.log('html', htmlText);
+  console.log("html", htmlText);
 
   const RichText = () =>
     htmlText ? (
@@ -253,8 +254,8 @@ const GenerateRichTextImg = async (params: {
     .querySelector(`.moduleBox .${className}`)!
     .getBoundingClientRect().width;
   const height = div.getBoundingClientRect().height;
-  div.style.fontSize = fontSize + 'px';
-  div.style.width = width + 'px';
+  div.style.fontSize = fontSize + "px";
+  div.style.width = width + "px";
 
   const canvas = await html2canvas(document.getElementById(id)!, {
     width,
@@ -262,108 +263,78 @@ const GenerateRichTextImg = async (params: {
   });
   div.remove();
 
-  return canvas.toDataURL('image/png');
+  return canvas.toDataURL("image/png");
 };
 
-const sliceStringByWidth = (originString:string,width:number)=>{
-  if(getFontWidth(originString)<=width) return [originString];
-  const res = []
-  let text = ''
-  for(let i=0;i<originString.length;i++){
-    text += originString[i]
-    if(getFontWidth(text)>=width){
+const sliceStringByWidth = (originString: string, width: number) => {
+  if (getFontWidth(originString) <= width) return [originString];
+  const res = [];
+  let text = "";
+  for (let i = 0; i < originString.length; i++) {
+    text += originString[i];
+    if (getFontWidth(text) >= width) {
       res.push(text);
-      text = ''
+      text = "";
     }
   }
-  const str = text.substring(text.indexOf(res.join('')),text.length-1)
-  if(str){
-    res.push(str)
+  const str = text.substring(text.indexOf(res.join("")), text.length);
+  if (str) {
+    res.push(str);
   }
   return res;
-}
+};
+
 const HTMLText = ({ htmlText }: { htmlText: string }) => {
-  console.log('html', htmlText);
-  const maxWidth = 500
+  let finalText = "";
+  const maxWidth = 400;
   const htmlStyle: Style = {
-    display: 'flex',
+    display: "flex",
     fontSize: 12,
     padding: 0,
     margin: 0,
   };
+  const styleSheet: Record<string, React.CSSProperties> = {
+    p: {
+      padding: 0,
+      margin: 0,
+    },
+  };
 
-  const texts:string[] = []
-  const div = document.createElement('div')
-  div.innerHTML = htmlText
-  const paragraphs = div.querySelectorAll('p')
-  paragraphs.forEach(p=>{
-    const text = p.innerText
-    texts.push(...sliceStringByWidth(text,maxWidth))
-  })
-  console.log('texts',texts)
+  const texts: string[] = [];
+  const div = document.createElement("div");
+  div.innerHTML = htmlText;
+  const paragraphs = div.querySelectorAll("p");
+  paragraphs.forEach((p,) => {
+    const text = p.innerText;
+    const strs = sliceStringByWidth(text, maxWidth);
+    strs.map((str) => `<p>${str}</p>`);
+    texts.push(`<li style="padding-bottom:5px;padding-top:5px;">${ strs.map((str) => `<p>${str}</p>`).join('')}</li>`);
+  });
+  texts.forEach((text) => (finalText += text));
 
-
+  if (htmlText.startsWith("<ol")) {
+    finalText = `<ol>` + finalText + "</ol>";
+  } else if (htmlText.startsWith("<ul")) {
+    finalText = `<ul>` + finalText + "</ul>";
+  }
   return (
     <View style={{ width: 500, marginTop: 0 }}>
       <Html
         style={htmlStyle}
-        stylesheet={{
-          p: {
-            padding: 0,
-            margin: 1,
-          },
-          ul: {
-            padding: 0,
-            marginLeft: -20,
-          },
-          ol: {
-            padding: 0,
-            marginLeft: -20,
-          },
-        }}
+        stylesheet={styleSheet}
         renderers={{
-          ul: ({ children }) => (
-            <View style={{ width: 500, marginTop: 0 }}>{children}</View>
-          ),
           ol: ({ children }) => (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                width: 500,
-                marginTop: 0,
-              }}
-            >
-              {children}
-            </View>
+            <View style={{ marginLeft: -15 }}>{children}</View>
           ),
-          li: ({ children }) => (
-            <View style={{ width: 500, marginTop: 0 }} debug>
-              {children}
-            </View>
+          ul: ({ children }) => (
+            <View style={{ marginLeft: -15 }}>{children}</View>
           ),
-          p: ({ children }) => (
-            <View
-              style={{
-                display: 'flex',
-                flexDirection: 'row',
-                flexWrap: 'wrap',
-                width: 500,
-                marginTop: 0,
-              }}
-            >
-              <Text
-                style={{ flex: 1, color: 'red', textOverflow: 'ellipsis' }}
-                debug
-              >
-                {children}
-              </Text>
-            </View>
-          ),
+          p: ({ children }) => {
+            return <Text>{children}</Text>;
+          },
         }}
       >
-        {htmlText}
+        {finalText}
       </Html>
     </View>
   );
@@ -629,7 +600,7 @@ export const PDFDocument = ({
   const data = cloneDeep(resumeData);
   data.forEach(({ list }) => {
     list.forEach((arr) =>
-      arr.forEach((item) => (item.value = item.value ? item.value : ' '))
+      arr.forEach((item) => (item.value = item.value ? item.value : " "))
     );
   });
 
@@ -686,7 +657,7 @@ export const PDFPreview = ({ resumeData }: { resumeData: IResumeModule[] }) => {
   const data = cloneDeep(resumeData);
   data.forEach(({ list }) => {
     list.forEach((arr) =>
-      arr.forEach((item) => (item.value = item.value ? item.value : ' '))
+      arr.forEach((item) => (item.value = item.value ? item.value : " "))
     );
   });
 

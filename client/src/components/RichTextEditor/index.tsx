@@ -80,7 +80,7 @@ export default function RichEditor(props: IRichEditor) {
       }}
     >
       <RichTextEditor.Toolbar sticky stickyOffset={60}>
-        <RichTextEditor.ControlsGroup>
+        {/* <RichTextEditor.ControlsGroup>
           <RichTextEditor.Bold />
           <RichTextEditor.Italic />
           <RichTextEditor.Underline />
@@ -88,35 +88,35 @@ export default function RichEditor(props: IRichEditor) {
           <RichTextEditor.ClearFormatting />
           <RichTextEditor.Highlight />
           <RichTextEditor.Code />
-        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.ControlsGroup> */}
 
-        <RichTextEditor.ControlsGroup>
+        {/* <RichTextEditor.ControlsGroup>
           <RichTextEditor.H1 />
           <RichTextEditor.H2 />
           <RichTextEditor.H3 />
           <RichTextEditor.H4 />
-        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.ControlsGroup> */}
 
         <RichTextEditor.ControlsGroup>
-          <RichTextEditor.Blockquote />
-          <RichTextEditor.Hr />
+          {/* <RichTextEditor.Blockquote /> */}
+          {/* <RichTextEditor.Hr /> */}
           <RichTextEditor.BulletList />
           <RichTextEditor.OrderedList />
-          <RichTextEditor.Subscript />
-          <RichTextEditor.Superscript />
+          {/* <RichTextEditor.Subscript />
+          <RichTextEditor.Superscript /> */}
         </RichTextEditor.ControlsGroup>
 
-        <RichTextEditor.ControlsGroup>
+        {/* <RichTextEditor.ControlsGroup>
           <RichTextEditor.Link />
           <RichTextEditor.Unlink />
-        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.ControlsGroup> */}
 
-        <RichTextEditor.ControlsGroup>
+        {/* <RichTextEditor.ControlsGroup>
           <RichTextEditor.AlignLeft />
           <RichTextEditor.AlignCenter />
           <RichTextEditor.AlignJustify />
           <RichTextEditor.AlignRight />
-        </RichTextEditor.ControlsGroup>
+        </RichTextEditor.ControlsGroup> */}
       </RichTextEditor.Toolbar>
 
       <RichTextEditor.Content />
