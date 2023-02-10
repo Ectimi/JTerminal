@@ -1,6 +1,10 @@
+import { Suspense, lazy } from 'react';
 import { Route, RouteObject, Routes } from 'react-router-dom';
 import TerminalPage from '@/pages/TerminalPage';
-import ResumePage from '@/pages/ResumePage';
+import { Loader } from '@mantine/core';
+// import ResumePage from '@/pages/ResumePage';
+
+const ResumePage = await lazy(() => import('@/pages/ResumePage'));
 
 const routes: RouteObject[] = [
   {
@@ -9,7 +13,22 @@ const routes: RouteObject[] = [
   },
   {
     path: '/resume',
-    element: <ResumePage />,
+    element: (
+      <Suspense
+        fallback={
+          <Loader
+            sx={{
+              position: 'fixed',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%,-50%)',
+            }}
+          />
+        }
+      >
+        <ResumePage />
+      </Suspense>
+    ),
   },
 ];
 
@@ -17,7 +36,7 @@ export default function AppRoutes() {
   return (
     <Routes>
       {routes.map((route) => (
-        <Route path={route.path} element={route.element} key={route.path}/>
+        <Route path={route.path} element={route.element} key={route.path} />
       ))}
     </Routes>
   );
