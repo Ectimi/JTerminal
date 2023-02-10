@@ -45,6 +45,7 @@ interface IResumeEditor {
   resumeData: IResumeModule[];
   setResumeData: Updater<IResumeModule[]>;
   togglePriview: (bool: boolean) => void;
+  toggleLoading: (bool: boolean) => void;
 }
 
 type OnChangeHandle = (params: {
@@ -89,6 +90,7 @@ export default function ResumeEditor({
   resumeData,
   setResumeData,
   togglePriview,
+  toggleLoading,
 }: IResumeEditor) {
   const [hoverMoudleName, setHoverMoudleName] = useSafeState('');
 
@@ -104,10 +106,17 @@ export default function ResumeEditor({
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
   const onPreview = () => {
-    // if (validate(resumeData)) {
-    //   togglePriview(true);
-    // }
-    togglePriview(true);
+    if (!validate(resumeData)) {
+      toggleLoading(true)
+      togglePriview(true);
+      let timer = setInterval(()=>{
+        if(document.querySelector('.pdf-viewer')){
+          toggleLoading(false)
+          clearInterval(timer)
+        }
+      },200)
+    }
+    // togglePriview(true);
   };
 
   const onExportPDF = async () => {

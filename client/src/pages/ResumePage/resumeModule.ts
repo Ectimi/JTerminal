@@ -87,7 +87,7 @@ export const defaultResumeModule: IResumeModule[] = [
   {
     moduleName: EResumeModuleType.profile,
     moduleLabel: '个人照片',
-    visible: true,
+    visible: false,
     multiple: false,
     icon: PhotoImage,
     require: false,
