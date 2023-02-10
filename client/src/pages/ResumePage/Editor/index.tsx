@@ -116,7 +116,14 @@ export default function ResumeEditor({
         }
       },200)
     }
+    // toggleLoading(true)
     // togglePriview(true);
+    // let timer = setInterval(()=>{
+    //   if(document.querySelector('.pdf-viewer')){
+    //     toggleLoading(false)
+    //     clearInterval(timer)
+    //   }
+    // },200)
   };
 
   const onExportPDF = async () => {

@@ -306,12 +306,15 @@ const HTMLText = ({ htmlText }: { htmlText: string }) => {
     const text = p.innerText;
     if (text.trim()) {
       const strs = sliceStringByWidth(text, maxWidth);
-      strs.map((str) => `<p>${str}</p>`);
-      texts.push(
-        `<li style="padding-bottom:1px;padding-top:1px;">${strs
-          .map((str) => `<p>${str}</p>`)
-          .join('')}</li>`
-      );
+      if (htmlText.startsWith('<ol') || htmlText.startsWith('<ul')) {
+        texts.push(
+          `<li style="padding-bottom:1px;padding-top:1px;">${strs
+            .map((str) => `<p>${str}</p>`)
+            .join('')}</li>`
+        );
+      } else {
+        texts.push(strs.map((str) => `<p>${str}</p>`).join(''));
+      }
     }
   });
   texts.forEach((text) => (finalText += text));
@@ -660,7 +663,7 @@ export const PDFPreview = ({ resumeData }: { resumeData: IResumeModule[] }) => {
   });
 
   return (
-    <PDFViewer className='pdf-viewer' style={styles.viewer} showToolbar={false}>
+    <PDFViewer className="pdf-viewer" style={styles.viewer} showToolbar={false}>
       <PDFDocument resumeData={resumeData} />
     </PDFViewer>
   );
