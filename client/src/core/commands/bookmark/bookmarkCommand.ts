@@ -7,11 +7,11 @@ const bookmarkCommand: CommandType = {
   desc: '查看书签',
   alias: ['list'],
   params: [
-    {
-      key: 'subCommand',
-      desc: '子命令',
-      required: false,
-    },
+    // {
+    //   key: 'subCommand',
+    //   desc: '子命令',
+    //   required: false,
+    // },
   ],
   options: [],
   async action(options, terminal) {

@@ -17,6 +17,9 @@ export const getUsageStr = (
     str = parentCommand.func + ' ';
   }
   str += command.func;
+  if(command.alias && command.alias.length>0){
+    str += ' ' + `(alias: ${command.alias.join(' , ')})`
+  }
   if (command.params && command.params.length > 0) {
     const paramsStrList: string[] = command.params.map((param) => {
       let word = param.key;
