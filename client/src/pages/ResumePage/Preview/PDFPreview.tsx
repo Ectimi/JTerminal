@@ -118,9 +118,6 @@ const styles = StyleSheet.create({
     height: 100,
   },
   main: {
-    // position: 'absolute',
-    left: 0,
-    // top: 120,
     width: '100%',
     padding: '0 30 0 30',
     zIndex: 1,
@@ -625,7 +622,7 @@ export const PDFDocument = ({
     <Document>
       <Page size="A4" style={styles.page} wrap={true}>
         <Header />
-        <View style={{ ...styles.main, top: 0 }}>
+        <View style={styles.main}>
           {data.map(({ moduleLabel, moduleName, list, visible }, index) =>
             visible ? (
               moduleName === EResumeModuleType.profile ? (

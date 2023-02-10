@@ -106,7 +106,7 @@ export default function ResumeEditor({
   const onReset = () => setResumeData(cloneDeep(defaultResumeModule));
 
   const onPreview = () => {
-    if (!validate(resumeData)) {
+    if (validate(resumeData)) {
       toggleLoading(true)
       togglePriview(true);
       let timer = setInterval(()=>{
