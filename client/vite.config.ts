@@ -8,7 +8,9 @@ import * as path from 'path';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [react()],
+  plugins: [
+    react(),
+  ],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -63,6 +65,7 @@ export default defineConfig({
     },
   },
   build: {
+    target:['edge90','chrome90','firefox90','safari15'],
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin

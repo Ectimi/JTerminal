@@ -2,7 +2,6 @@ import { Suspense, lazy } from 'react';
 import { Route, RouteObject, Routes } from 'react-router-dom';
 import TerminalPage from '@/pages/TerminalPage';
 import { Loader } from '@mantine/core';
-// import ResumePage from '@/pages/ResumePage';
 
 const ResumePage = await lazy(() => import('@/pages/ResumePage'));
 
