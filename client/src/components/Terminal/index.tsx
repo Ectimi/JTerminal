@@ -16,7 +16,7 @@ import {
   viewportComponentListState,
   viewportVisibleState,
 } from '@/store';
-import { GetSearchSuggest } from '@/serve/api';
+import { GetSearchSuggest,SearchSuggestController } from '@/serve/api';
 import useHistory from './useHistory';
 import searchCommand from '@/core/commands/search/searchCommand';
 import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
@@ -161,6 +161,9 @@ function Terminal() {
 
   // 按下 enter 时，会先走 submit，再走这里
   useKeyPress('enter', () => {
+    if(SearchSuggestController){
+      SearchSuggestController.abort()
+    }
     setInputTips([]);
     excuteCommand();
   });
@@ -243,6 +246,9 @@ function Terminal() {
       }
       const searchWord = getSearchWord();
       if (searchWord) {
+        if(SearchSuggestController){
+          SearchSuggestController.abort()
+        }
         GetSearchSuggest(searchWord).then((res) => {
           if (res.success) {
             setInputTips(
@@ -252,6 +258,8 @@ function Terminal() {
               }))
             );
           }
+        }).catch(err=>{
+          console.log('err==>',err)
         });
       } else {
         setInputTips([]);

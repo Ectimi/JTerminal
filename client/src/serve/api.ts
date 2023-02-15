@@ -1,3 +1,4 @@
+import axios from 'axios';
 import request from '../lib/request';
 import { IResponse } from './type';
 
@@ -5,6 +6,8 @@ type TUser = {
   username: string;
   password: string;
 };
+
+export let SearchSuggestController:AbortController | null = null;
 
 export function Login(user: TUser): Promise<IResponse> {
   return request('/login', {
@@ -73,9 +76,12 @@ export function GetLabels(): Promise<IResponse> {
 }
 
 export function GetSearchSuggest(word: string): Promise<IResponse> {
+  SearchSuggestController = null;
+  SearchSuggestController = new AbortController();
   return request('./suggest', {
     method: 'get',
     params: { word },
+    signal:SearchSuggestController.signal
   });
 }
 

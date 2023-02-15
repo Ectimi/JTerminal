@@ -28,7 +28,6 @@ const baiduCommand: CommandType = {
     },
   ],
   action(options, terminal) {
-    console.log('op',options )
     const { _, self, picture } = options;
     const word = _.length > 0 ? _.join(' ') : "";
     let targetLink = `https://www.baidu.com/s?wd=${encodeURIComponent(word)}`;
