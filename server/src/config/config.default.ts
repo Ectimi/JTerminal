@@ -8,7 +8,7 @@ export default {
   // use for cookie sign key, should change to your own and keep security
   keys: '1655965284545_4300',
   koa: {
-    port: 7001,
+    port: 7801,
   },
   jwt: {
     secret: fs.readFileSync(
