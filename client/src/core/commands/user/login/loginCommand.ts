@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { Login } from '@/serve/user';
+import { Login } from '@/serve/api';
 import {
   localforage,
   LocalForageKeys,
@@ -40,7 +40,6 @@ const loginCommand: CommandType = {
           await localforage.setItem(LocalForageKeys.USER, data.data.user);
           await addUserBookmarks();
           await addUserLabels();
-          terminal.updateState('login')
         } else {
           terminal.writeErrorOutput(data.message || '登陆错误');
         }

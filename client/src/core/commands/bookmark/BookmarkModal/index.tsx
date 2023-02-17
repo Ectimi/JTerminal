@@ -11,35 +11,34 @@ import {
 } from '@mantine/core';
 import { IconUpload } from '@tabler/icons';
 import { useForm } from '@mantine/form';
-import { useRecoilValue } from 'recoil';
-import { bookmarksState } from '@/store';
+import { useRecoilValue, useRecoilState } from 'recoil';
+import { bookmarksState, IBookmarkItem, userState } from '@/store';
+import { addBookmark, updateBookmark } from '../controller';
 import './index.less';
+import { useUpdateEffect } from 'ahooks';
 
-interface IFormData {
+export type TBookmarkModalType = 'add' | 'edit';
+
+export interface IBookmarkModalFormData {
   name: string;
-  link: string;
+  url: string;
   label: string;
   icon: string;
-  desc: string;
+  description: string;
 }
 
 interface IProps {
+  type: TBookmarkModalType;
   visible: boolean;
-  formValue?: IFormData;
+  formValue: IBookmarkItem;
   onClose: () => void;
 }
 
-const initialValues: IFormData = {
-  name: '',
-  link: '',
-  label: '',
-  icon: '',
-  desc: '',
-};
-
 export default function BookmarkModal(props: IProps) {
-  const { visible, formValue = initialValues, onClose } = props;
-  const { labels } = useRecoilValue(bookmarksState);
+  const { type, visible, formValue, onClose } = props;
+  const user = useRecoilValue(userState);
+  const [{ bookmarks, labels }, setBookmarkState] =
+    useRecoilState(bookmarksState);
   const theme = useMantineTheme();
 
   const form = useForm({
@@ -47,18 +46,31 @@ export default function BookmarkModal(props: IProps) {
 
     validate: {
       name: (value) => (!!value ? null : '名称不能为空'),
-      link: (value) => (!!value ? null : '链接不能为空'),
+      url: (value) => (!!value ? null : '链接不能为空'),
       label: (value) => (!!value ? null : '分类不能为空'),
     },
   });
 
-  const onSubmit = (formData: IFormData) => {
-    console.log('submit', formData);
+  useUpdateEffect(() => {
+    form.setValues(formValue);
+  }, [formValue]);
+
+  const closeModal = () => {
+    onClose();
+    form.reset();
+  };
+
+  const onSubmit = async (data: IBookmarkModalFormData) => {
+    if (type === 'add') {
+      addBookmark(data, closeModal);
+    } else {
+      updateBookmark(formValue, data, closeModal);
+    }
   };
 
   return (
     <Modal
-      onClose={onClose}
+      onClose={closeModal}
       opened={visible}
       closeOnClickOutside={false}
       withCloseButton={false}
@@ -74,7 +86,13 @@ export default function BookmarkModal(props: IProps) {
       transition="fade"
       transitionDuration={400}
       transitionTimingFunction="ease"
-      title={<Title order={5}>添加书签</Title>}
+      title={
+        type === 'add' ? (
+          <Title order={5}>添加书签</Title>
+        ) : (
+          <Title order={5}>编辑书签</Title>
+        )
+      }
       target=".viewport-view"
     >
       <form onSubmit={form.onSubmit(onSubmit)} className="bookmark-modal-form">
@@ -86,7 +104,7 @@ export default function BookmarkModal(props: IProps) {
           data-autofocus
         />
         <TextInput
-          {...form.getInputProps('link')}
+          {...form.getInputProps('url')}
           placeholder="请输入书签链接"
           label="链接"
           withAsterisk
@@ -98,22 +116,30 @@ export default function BookmarkModal(props: IProps) {
           data={labels.map((label) => label.label)}
           withAsterisk
         />
-       <FileInput
-            {...form.getInputProps('icon')}
-            label="图标"
-            placeholder="请上传图片"
-            icon={<IconUpload size={14} />}
-            accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
-          />
+        <FileInput
+          {...form.getInputProps('icon')}
+          label="图标"
+          placeholder={user ? '请上传图片' : '登陆后才能上传图片'}
+          icon={<IconUpload size={14} />}
+          accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
+          disabled={!user}
+        />
         <Textarea
-          {...form.getInputProps('desc')}
+          {...form.getInputProps('description')}
           placeholder="请输入书签描述"
           label="描述"
           sx={{ caretColor: '#000' }}
         />
         <Flex justify="center" align="center">
           <Button type="submit">确定</Button>
-          <Button color="gray" sx={{ marginLeft: 50 }} onClick={onClose}>
+          <Button
+            color="gray"
+            sx={{ marginLeft: 50 }}
+            onClick={() => {
+              closeModal();
+              form.reset();
+            }}
+          >
             取消
           </Button>
         </Flex>

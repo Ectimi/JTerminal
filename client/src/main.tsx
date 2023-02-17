@@ -4,11 +4,16 @@ import { HashRouter } from 'react-router-dom';
 import { RecoilRoot } from 'recoil';
 import { MantineProvider, Loader } from '@mantine/core';
 import { NotificationsProvider } from '@mantine/notifications';
+import { ModalsProvider } from '@mantine/modals';
 import ErrorBoundary from './components/ErrorBoundary';
 import App from './App';
 import './index.css';
 
-ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
+export const root = ReactDOM.createRoot(
+  document.getElementById('root') as HTMLElement
+);
+
+root.render(
   <React.StrictMode>
     <RecoilRoot>
       <ErrorBoundary>
@@ -29,6 +34,12 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               withNormalizeCSS
               theme={{
                 globalStyles: (theme) => ({
+                  div: {
+                    backgroundRepeat: 'no-repeat',
+                  },
+                  p: { padding: 0 },
+                  ol:{paddingLeft:'14px'},
+                  ul:{paddingLeft:'14px'},
                   'table,thead,tr,td,th': {
                     color: '#fff',
                   },
@@ -39,7 +50,9 @@ ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(
               }}
             >
               <NotificationsProvider>
-                <App />
+                <ModalsProvider labels={{ confirm: '确认', cancel: '取消' }}>
+                  <App />
+                </ModalsProvider>
               </NotificationsProvider>
             </MantineProvider>
           </HashRouter>

@@ -3,7 +3,7 @@ import { CommandType } from "../../command";
 const bilibiliCommand: CommandType = {
   func: "bilibili",
   name: "bilibili 搜索",
-  alias: ["bzhan", "bili"],
+  alias: ["bz", "bili"],
   params: [
     {
       key: "word",

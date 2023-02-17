@@ -3,17 +3,20 @@ import { localforage, LocalForageKeys } from '@/lib/localForage';
 import DEFAULT_BOOKMARKS from '@/config/default_bookmark';
 import DEFAULT_LABELS from '@/config/default_labels';
 import uniqBy from 'lodash/uniqBy';
+import PubSub from 'pubsub-js';
 
 interface IState {
   showViewport: boolean;
 }
 
 export interface IBookmarkItem {
+  id: string | number;
   name: string;
   url: string;
   icon: string;
   label: string;
   description: string;
+  sticky: string | number;
 }
 
 export interface ILabel {
@@ -27,7 +30,7 @@ export interface IBookmarkState {
 }
 
 export interface IUser {
-  id: number;
+  id: any;
   setting: any;
   username: string;
 }
@@ -47,7 +50,6 @@ const userState = atom<IUser | null>({
         const user =
           (await localforage.getItem<IUser>(LocalForageKeys.USER)) || null;
 
-        console.log('get user', user);
         setSelf(user);
       };
       loadPersisted();
@@ -55,6 +57,10 @@ const userState = atom<IUser | null>({
       if (trigger === 'get') {
         loadPersisted();
       }
+
+      PubSub.subscribe(LocalForageKeys.USER, (name: any, data: any) => {
+        setSelf(data.value);
+      });
     },
   ],
 });
@@ -91,21 +97,34 @@ const bookmarksState = atom<IBookmarkState>({
             (await localforage.getItem(LocalForageKeys.LOCAL_BOOKMARKS)) || [];
           const local_labels: ILabel[] =
             (await localforage.getItem(LocalForageKeys.LOCAL_LABELS)) || [];
-          if (local_bookmarks.length && local_labels.length) {
-            setSelf({
-              bookmarks: uniqBy(
-                [...local_bookmarks, ...DEFAULT_BOOKMARKS],
-                'name'
-              ),
-              labels: uniqBy([...local_labels, ...DEFAULT_LABELS], 'label'),
-            });
-          }
+
+          setSelf({
+            bookmarks: uniqBy(
+              [...local_bookmarks, ...DEFAULT_BOOKMARKS],
+              'name'
+            ),
+            labels: uniqBy([...local_labels, ...DEFAULT_LABELS], 'label'),
+          });
         }
       };
       loadPersisted();
+
       if (trigger === 'get') {
         loadPersisted();
       }
+
+      [
+        LocalForageKeys.TOKEN,
+        LocalForageKeys.USER_BOOKMARKS,
+        LocalForageKeys.USER_LABELS,
+        LocalForageKeys.LOCAL_BOOKMARKS,
+        LocalForageKeys.LOCAL_LABELS,
+      ].forEach((key) => {
+        PubSub.subscribe(key, (name: any, data: any) => {
+          setSelf(data.value);
+          // console.log('sub name==>', data, name);
+        });
+      });
     },
   ],
 });

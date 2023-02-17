@@ -16,7 +16,7 @@ const getCommand = (text: string, parentCommand?: CommandType): CommandType => {
     commands = parentCommand.subCommands;
   }
   const command = commands[func];
-  console.log('getCommand = ', command);
+ 
   return command;
 };
 
@@ -44,7 +44,7 @@ const doParse = (
     }
   });
   const parsedOptions = getopts(args, options);
-  console.log("parsedOptions = ", parsedOptions);
+ 
   return parsedOptions;
 };
 

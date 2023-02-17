@@ -31,3 +31,4 @@ client/deploy_config.json
 .DS_Store
 
 node_modules
+dist.zip

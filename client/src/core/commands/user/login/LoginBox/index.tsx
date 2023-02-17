@@ -1,4 +1,4 @@
-import { useContext, useEffect, Fragment } from 'react';
+import { useEffect, Fragment } from 'react';
 import { useRequest, useSafeState } from 'ahooks';
 import { useForm } from '@mantine/form';
 import {
@@ -18,13 +18,13 @@ import {
 } from '@/lib/localForage';
 import { useRecoilValue } from 'recoil';
 import { userState } from '@/store';
-import { Login } from '@/serve/user';
-import { TerminalContext } from '@/components/Terminal';
+import { useTerminal } from '@/components/Terminal/useTerminal';
+import { Login } from '@/serve/api';
 import TerminalInnerWrapper from '@/components/TerminalnnerWrapper';
 import './index.less';
 
 export default function LoginBox() {
-  const terminal = useContext(TerminalContext) as JTerminal.TerminalType;
+  const terminal = useTerminal();
   const user = useRecoilValue(userState);
   const [status, setStatus] = useSafeState('unlogin');
 
@@ -58,7 +58,6 @@ export default function LoginBox() {
         await localforage.setItem(LocalForageKeys.USER, data.data.user);
         await addUserBookmarks();
         await addUserLabels();
-        terminal.updateState('login');
       } else {
         terminal.writeErrorOutput(data.message || '出错了');
       }

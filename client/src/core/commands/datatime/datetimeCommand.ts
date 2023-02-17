@@ -2,7 +2,7 @@ import { CommandType } from "../../command";
 
 const datetimeCommand: CommandType = {
   func: "datetime",
-  name: "清屏",
+  name: "显示时间",
   desc:'获取当前时间',
   alias: ['date','time'],
   params: [],
