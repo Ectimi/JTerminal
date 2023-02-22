@@ -11,6 +11,7 @@ import bookmarkCommand from './commands/bookmark/bookmarkCommand';
 import pingCommand from './commands/ping/pingCommand';
 import resumeCommand from './commands/resume/resumeCommand';
 import codeCommand from './commands/code/codeCommand';
+import blogCommand from './commands/blog/blogCommand';
 
 const commandList: CommandType[] = [
   ...searchCommand,
@@ -24,7 +25,8 @@ const commandList: CommandType[] = [
   bookmarkCommand,
   pingCommand,
   resumeCommand,
-  codeCommand
+  codeCommand,
+  blogCommand
 ];
 
 const commandMap: Record<string, CommandType> = {};
