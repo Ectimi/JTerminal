@@ -7,7 +7,7 @@ const blogCommand: CommandType = {
   params: [],
   options: [],
   action(options, terminal) {
-    window.location.href = 'https://vercel-blog-seven-gamma.vercel.app/';
+    window.open('https://vercel-blog-seven-gamma.vercel.app/')
   },
 };
 
