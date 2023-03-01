@@ -1,14 +1,17 @@
 import {
+  AddLabel,
   AddBookmarkItem,
   UpdateBookmarkItem,
   DeleteBookmarkItem,
   Sticky,
 } from '@/serve/api';
 import { localforage, LocalForageKeys } from '@/lib/localForage';
-import { IBookmarkItem, IUser } from '@/store';
+import { IBookmarkItem, ILabel, IUser } from '@/store';
 import { IBookmarkModalFormData } from './BookmarkModal';
 import { ShowNotification } from '@/lib/notification';
-import { nanoid } from 'nanoid';;
+import { nanoid } from 'nanoid';
+import { ILabelFormData } from './LabelModal';
+;
 
 export async function addBookmark(
   data: IBookmarkModalFormData,
@@ -195,6 +198,49 @@ export async function stickyBookmark(bookmark: IBookmarkItem) {
     ShowNotification({
       type: 'error',
       message: error.message ? error.message : '标记书签遇到未知错误',
+    });
+  }
+}
+
+
+export async function addLabel(
+  data: ILabelFormData,
+  callback?: () => void
+) {
+  try {
+    const user = (await localforage.getItem(LocalForageKeys.USER)) as IUser;
+
+    if (user) {
+      const res = await AddLabel(data.label);
+      if (res.success) {
+        localforage.setItem(LocalForageKeys.USER_LABELS, res.data);
+        ShowNotification({ message: '添加成功' });
+        typeof callback === 'function' && callback();
+      } else {
+        ShowNotification({ type: 'error', message: res.message });
+      }
+    } else {
+      const local_labels = (await localforage.getItem(
+        LocalForageKeys.LOCAL_LABELS
+      )) as ILabel[];
+
+      if (local_labels.some((item) => item.label === data.label)) {
+        ShowNotification({ type: 'warn', message: '该标签名已存在' });
+        return;
+      }
+
+      await localforage.setItem(LocalForageKeys.LOCAL_LABELS, [
+        ...local_labels,
+        { ...data, id: nanoid() },
+      ]);
+      ShowNotification({ message: '添加成功' });
+
+      typeof callback === 'function' && callback();
+    }
+  } catch (error: any) {
+    ShowNotification({
+      type: 'error',
+      message: error.message ? error.message : '添加标签遇到未知错误',
     });
   }
 }

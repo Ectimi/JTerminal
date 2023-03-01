@@ -12,9 +12,10 @@ import { useRecoilValue, useRecoilState } from 'recoil';
 import { bookmarksState, IBookmarkItem, userState } from '@/store';
 import { AddLabel } from '@/serve/api';
 import { LocalForageKeys, localforage } from '@/lib/localForage';
+import { addLabel } from '../controller';
 import './index.less';
 
-interface IFormData {
+export interface ILabelFormData {
   label: string;
 }
 
@@ -45,53 +46,8 @@ export default function LabelModal(props: IProps) {
     form.reset();
   };
 
-  const onSubmit = async (data: IFormData) => {
-    console.log('submit', data);
-    try {
-      if (user) {
-        const res = await AddLabel(data.label);
-        if (res.success) {
-          setBookmarkState((cur) => ({
-            ...cur,
-            labels: res.data,
-          }));
-          ShowNotification({
-            message: '添加成功',
-          });
-          closeModal();
-        } else {
-          ShowNotification({
-            type: 'error',
-            message: res.message,
-          });
-        }
-      } else {
-        if (labels.some((label) => label.label === data.label)) {
-          ShowNotification({
-            type: 'warn',
-            message: '该标签名已存在',
-          });
-          return;
-        }
-        const loacl_labels = (await localforage.getItem(
-          LocalForageKeys.LOCAL_LABELS
-        )) as IBookmarkItem[];
-        await localforage.setItem(LocalForageKeys.LOCAL_LABELS, [
-          ...loacl_labels,
-          data,
-        ]);
-        ShowNotification({
-          message: '添加成功',
-        });
-        closeModal();
-      }
-    } catch (error: any) {
-      ShowNotification({
-        type: 'error',
-        title: error.name ? error.name : 'Error',
-        message: error.message ? error.message : '添加标 签遇到未知错误',
-      });
-    }
+  const onSubmit = async (data: ILabelFormData) => {
+    addLabel(data, closeModal);
   };
 
   return (

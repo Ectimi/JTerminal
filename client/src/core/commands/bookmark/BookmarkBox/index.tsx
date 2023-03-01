@@ -114,10 +114,12 @@ export default function BookmarkBox() {
 
   useEffect(() => {
     const obj: Record<string, IBookmarkItem[]> = { 常用: [] };
+    console.log('labels',labels)
     labels.forEach((label) => {
       obj[label.label] = [];
     });
     bookmarks.forEach((bookmark) => {
+      if(!obj[bookmark.label]) return;
       obj[bookmark.label].push(bookmark);
       if (Number(bookmark.sticky) === 1) {
         obj['常用'].push(bookmark);
@@ -177,7 +179,7 @@ export default function BookmarkBox() {
             className="bookmark-wrapper"
           >
             <Flex
-              justify="flex-start"
+              justify="space-between"
               align="center"
               direction="row"
               wrap="wrap"
@@ -226,7 +228,7 @@ export default function BookmarkBox() {
                       {bookmark.description || '暂无简介'}
                     </Text>
                   </Card>
-                  <Space w="xl" />
+                  {/* <Space w="xl" /> */}
                 </Fragment>
               ))}
 
