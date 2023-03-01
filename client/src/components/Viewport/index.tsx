@@ -20,7 +20,7 @@ function Viewport() {
         onTabChange={(value: string) => setActiveTab(value)}
       >
         <Tabs.List className='component-tablist'>
-          {componentList.map(({ componentName }) => (
+          {/* {componentList.map(({ componentName }) => (
             <Tabs.Tab
               value={componentName}
               key={componentName}
@@ -38,7 +38,7 @@ function Viewport() {
                 {componentName}
               </Badge>
             </Tabs.Tab>
-          ))}
+          ))} */}
         </Tabs.List>
         {componentList.map(({ component, componentName }) => (
           <Tabs.Panel value={componentName} pt="xs" key={componentName} className="component-tabpanel">

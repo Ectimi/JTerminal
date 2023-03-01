@@ -222,7 +222,7 @@ export default function BookmarkBox() {
                       />
                       <Text className="name">{bookmark.name}</Text>
                     </div>
-                    <Text className="desc">
+                    <Text className="desc" title={bookmark.description}>
                       {bookmark.description || '暂无简介'}
                     </Text>
                   </Card>

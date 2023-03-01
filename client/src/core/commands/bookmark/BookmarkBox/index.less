@@ -26,7 +26,8 @@
 
     .bookmark-item {
       position: relative;
-      width: 300px;
+      width: 290px;
+      height: 110px;
       margin-top: 15px;
       cursor: pointer;
 
@@ -48,6 +49,12 @@
       }
 
       .desc {
+        display: -webkit-box;
+        height: 44px;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        -webkit-box-orient: vertical;
+        -webkit-line-clamp: 2;
         font-size: 14px;
         color: grey;
       }

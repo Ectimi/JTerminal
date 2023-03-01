@@ -32,7 +32,7 @@ function TerminalPage() {
         {(styles) => (
           <div
             className="viewport-container"
-            style={{ ...styles, width: visible ? '830px' : 0 }}
+            style={{ ...styles, width: visible ? '781px' : 0 }}
           >
             <Viewport />
           </div>
@@ -48,7 +48,7 @@ function TerminalPage() {
             <img
               src={visible ? collapse : expandSvg}
               className="switch-button"
-              style={{ ...styles, right: visible ? '830px' : 0 }}
+              style={{ ...styles, right: visible ? '781px' : 0 }}
               onClick={() => {
                 visible ? setVisible(false) : setVisible(true);
               }}

@@ -1,0 +1,26 @@
+.viewport-view {
+  height: 100%;
+  background-color: #fff;
+}
+.viewport-view .compoent-tab {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+.viewport-view .compoent-tab .mantine-Tabs-panel {
+  flex: 1;
+  padding-bottom: 20px;
+}
+.viewport-view .compoent-tab .component-tablist {
+  flex: 0 0 auto;
+}
+.viewport-view .compoent-tab .component-tablist .component-tab-item {
+  padding: 0;
+  background-color: transparent;
+}
+.viewport-view .compoent-tab .component-tablist .component-tab-item:hover {
+  background-color: transparent;
+}
+.viewport-view .compoent-tab .component-tabpanel {
+  height: calc(100% - 41px);
+}
