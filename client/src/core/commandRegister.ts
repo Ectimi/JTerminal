@@ -1,3 +1,5 @@
+import { localforage, LocalForageKeys } from '@/lib/localForage';
+import { IUser } from '@/store';
 import { CommandType } from './command';
 import searchCommand from './commands/search/searchCommand';
 import helpCommand from './commands/terminal/help/helpCommand';
@@ -13,29 +15,42 @@ import resumeCommand from './commands/resume/resumeCommand';
 import codeCommand from './commands/code/codeCommand';
 import blogCommand from './commands/blog/blogCommand';
 
-const commandList: CommandType[] = [
-  ...searchCommand,
-  helpCommand,
-  clearCommand,
-  datetimeCommand,
-  gotoCommand,
-  loginCommand,
-  logoutCommand,
-  registerCommand,
-  bookmarkCommand,
-  pingCommand,
-  resumeCommand,
-  codeCommand,
-  blogCommand
-];
+const getCommand = async (): Promise<{
+  commandList: CommandType[];
+  commandMap: Record<string, CommandType>;
+}> => {
+  const user = (await localforage.getItem(LocalForageKeys.USER)) as IUser;
 
-const commandMap: Record<string, CommandType> = {};
+  const commandList: CommandType[] = [
+    ...searchCommand,
+    helpCommand,
+    clearCommand,
+    datetimeCommand,
+    gotoCommand,
+    loginCommand,
+    logoutCommand,
+    registerCommand,
+    bookmarkCommand,
+    pingCommand,
+    resumeCommand,
+  ];
 
-commandList.forEach((command) => {
-  commandMap[command.func] = command;
-  command.alias?.forEach((name) => {
-    commandMap[name] = command;
+  const specificCommandList = [codeCommand, blogCommand];
+
+  if (user && user.username === 'J') {
+    commandList.push(...specificCommandList);
+  }
+
+  const commandMap: Record<string, CommandType> = {};
+
+  commandList.forEach((command) => {
+    commandMap[command.func] = command;
+    command.alias?.forEach((name) => {
+      commandMap[name] = command;
+    });
   });
-});
 
-export { commandList, commandMap };
+  return { commandList, commandMap };
+};
+
+export { getCommand };

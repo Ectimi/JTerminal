@@ -1,5 +1,5 @@
 import { CommandType } from '../../../command';
-import { commandList, commandMap } from '../../../commandRegister';
+import { getCommand } from '../../../commandRegister';
 
 const helpCommand: CommandType = {
   func: 'help',
@@ -16,11 +16,12 @@ const helpCommand: CommandType = {
   options: [],
   async action(options, terminal, parentCommand) {
     const { _ } = options;
+    const { commandMap } = await getCommand();
     if (_.length === 0) {
       const HelpComponent = await import('./HelpBox');
       terminal.writeComponentOutput({
         type: 'component',
-        component: HelpComponent.default(),
+        component: HelpComponent.default,
         componentName: 'helpBox',
       });
       return;

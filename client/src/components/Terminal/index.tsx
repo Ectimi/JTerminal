@@ -16,11 +16,11 @@ import {
   viewportComponentListState,
   viewportVisibleState,
 } from '@/store';
-import { GetSearchSuggest,SearchSuggestController } from '@/serve/api';
+import { GetSearchSuggest, SearchSuggestController } from '@/serve/api';
 import useHistory from './useHistory';
 import searchCommand from '@/core/commands/search/searchCommand';
 import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
-import { commandList } from '@/core/commandRegister';
+import { getCommand } from '@/core/commandRegister';
 import { commandExecute } from '@/core/commandExecutor';
 import { initLocalforage } from '@/lib/localForage';
 import { registerShortcuts } from './shortcuts';
@@ -133,13 +133,10 @@ function Terminal() {
   const { list: inputList, push: addInputList } =
     useDynamicList<JTerminal.CommandOutputType>([]);
 
-  const {
-    commandHistoryPos,
-    setCommandHistoryPos,
-    showNextCommand,
-    showPrevCommand,
-    listCommandHistory,
-  } = useHistory(inputList, setInputText);
+  const { setCommandHistoryPos, showNextCommand, showPrevCommand } = useHistory(
+    inputList,
+    setInputText
+  );
 
   const [inputTips, setInputTips] = useSafeState<any[]>([]);
 
@@ -161,8 +158,8 @@ function Terminal() {
 
   // 按下 enter 时，会先走 submit，再走这里
   useKeyPress('enter', () => {
-    if(SearchSuggestController){
-      SearchSuggestController.abort()
+    if (SearchSuggestController) {
+      SearchSuggestController.abort();
     }
     setInputTips([]);
     excuteCommand();
@@ -219,7 +216,8 @@ function Terminal() {
     registerShortcuts(TerminalProvider);
   }, [viewportComponentsList]);
 
-  useUpdateEffect(() => {
+  useAsyncEffect(async () => {
+    const { commandList } = await getCommand();
     const text = inputText.trimStart().replace(/\s+/g, ' ').split(' ');
     let word = text[0].toLocaleLowerCase();
 
@@ -246,21 +244,23 @@ function Terminal() {
       }
       const searchWord = getSearchWord();
       if (searchWord) {
-        if(SearchSuggestController){
-          SearchSuggestController.abort()
+        if (SearchSuggestController) {
+          SearchSuggestController.abort();
         }
-        GetSearchSuggest(searchWord).then((res) => {
-          if (res.success) {
-            setInputTips(
-              res.data.map((value: string) => ({
-                value,
-                name: value,
-              }))
-            );
-          }
-        }).catch(err=>{
-          console.log('err==>',err)
-        });
+        GetSearchSuggest(searchWord)
+          .then((res) => {
+            if (res.success) {
+              setInputTips(
+                res.data.map((value: string) => ({
+                  value,
+                  name: value,
+                }))
+              );
+            }
+          })
+          .catch((err) => {
+            console.log('err==>', err);
+          });
       } else {
         setInputTips([]);
       }
@@ -474,7 +474,6 @@ function Terminal() {
       ...cur,
     ]);
   };
-
 
   const TerminalProvider: TerminalType = {
     clear,

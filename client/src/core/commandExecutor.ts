@@ -1,8 +1,12 @@
-import getopts, { ParsedOptions } from "getopts";
-import { CommandType,CommandOption } from './command';
-import { commandMap } from './commandRegister';
+import getopts, { ParsedOptions } from 'getopts';
+import { CommandType, CommandOption } from './command';
+import { getCommand as getCommandMap } from './commandRegister';
 
-const getCommand = (text: string, parentCommand?: CommandType): CommandType => {
+const getCommand = async (
+  text: string,
+  parentCommand?: CommandType
+): Promise<CommandType> => {
+  const { commandMap } = await getCommandMap();
   let func = text.split(' ', 1)[0];
   // 大小写无关
   func = func.toLowerCase();
@@ -16,7 +20,7 @@ const getCommand = (text: string, parentCommand?: CommandType): CommandType => {
     commands = parentCommand.subCommands;
   }
   const command = commands[func];
- 
+
   return command;
 };
 
@@ -25,7 +29,7 @@ const doParse = (
   commandOptions: CommandOption[]
 ): getopts.ParsedOptions => {
   // 过滤掉关键词
-  const args: string[] = text.split(" ").slice(1);
+  const args: string[] = text.split(' ').slice(1);
   // 转换
   const options: getopts.Options = {
     alias: {},
@@ -44,11 +48,11 @@ const doParse = (
     }
   });
   const parsedOptions = getopts(args, options);
- 
+
   return parsedOptions;
 };
 
-export const commandExecute = async  (
+export const commandExecute = async (
   text: string,
   terminal: JTerminal.TerminalType,
   parentCommand?: CommandType
@@ -59,7 +63,7 @@ export const commandExecute = async  (
     return;
   }
   // 解析文本，得到命令
-  const command: CommandType = getCommand(text, parentCommand);
+  const command: CommandType = await getCommand(text, parentCommand);
   if (!command) {
     terminal.writeErrorOutput('找不到该命令');
     return;
