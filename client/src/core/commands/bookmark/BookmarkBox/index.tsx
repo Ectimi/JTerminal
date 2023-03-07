@@ -114,7 +114,6 @@ export default function BookmarkBox() {
 
   useEffect(() => {
     const obj: Record<string, IBookmarkItem[]> = { 常用: [] };
-    console.log('labels',labels)
     labels.forEach((label) => {
       obj[label.label] = [];
     });

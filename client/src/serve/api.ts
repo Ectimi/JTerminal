@@ -7,7 +7,7 @@ type TUser = {
   password: string;
 };
 
-export let SearchSuggestController:AbortController | null = null;
+export let SearchSuggestController: AbortController | null = null;
 
 export function Login(user: TUser): Promise<IResponse> {
   return request('/login', {
@@ -20,6 +20,13 @@ export function Register(user: TUser): Promise<IResponse> {
   return request('/register', {
     method: 'post',
     data: user,
+  });
+}
+
+export function GetUserInfo(data: { id: number }): Promise<IResponse> {
+  return request('/getUserInfo', {
+    method: 'post',
+    data,
   });
 }
 
@@ -81,7 +88,7 @@ export function GetSearchSuggest(word: string): Promise<IResponse> {
   return request('./suggest', {
     method: 'get',
     params: { word },
-    signal:SearchSuggestController.signal
+    signal: SearchSuggestController.signal,
   });
 }
 
