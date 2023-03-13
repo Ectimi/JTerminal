@@ -5,7 +5,7 @@ import Terminal from '@/components/Terminal';
 import Viewport from '@/components/Viewport';
 import expandSvg from '@/assets/images/expand.svg';
 import collapse from '@/assets/images/collapse.svg';
-import './index.less'
+import './index.less';
 
 const scaleX = {
   in: { opacity: 1, transform: 'scaleX(1)' },
@@ -13,48 +13,35 @@ const scaleX = {
   common: { transformOrigin: '100% 100%' },
   transitionProperty: 'transform, opacity',
 };
-const slide = {
-  in: { opacity: 1, right: '840px' },
-  out: { opacity: 0, right: 0 },
-  transitionProperty: 'right, opacity',
-};
 
 function TerminalPage() {
   const [visible, setVisible] = useRecoilState(viewportVisibleState);
   const viewportComponentList = useRecoilValue(viewportComponentListState);
 
   return (
-    <div className='terminal-page'>
+    <div className="terminal-page">
       <div className="terminal-container">
         <Terminal />
       </div>
-      <Transition mounted={visible} transition={scaleX} duration={200}>
+      <Transition mounted={visible} transition={scaleX} duration={200} timingFunction="linear">
         {(styles) => (
           <div
             className="viewport-container"
-            style={{ ...styles, width: visible ? '750px' : 0 }}
+            style={{ ...styles, width: '750px' }}
           >
             <Viewport />
           </div>
         )}
       </Transition>
       {viewportComponentList.length ? (
-        <Transition
-          mounted={viewportComponentList.length > 0}
-          transition={slide}
-          duration={200}
-        >
-          {(styles) => (
-            <img
-              src={visible ? collapse : expandSvg}
-              className="switch-button"
-              style={{ ...styles, right: visible ? '750px' : 0 }}
-              onClick={() => {
-                visible ? setVisible(false) : setVisible(true);
-              }}
-            />
-          )}
-        </Transition>
+        <img
+        src={visible ? collapse : expandSvg}
+        className="switch-button"
+        style={{transform:`translateX(${visible?'-750px':0})`}}
+        onClick={() => {
+          visible ? setVisible(false) : setVisible(true);
+        }}
+      />
       ) : null}
     </div>
   );

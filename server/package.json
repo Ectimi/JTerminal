@@ -17,6 +17,8 @@
     "@midwayjs/static-file": "^3.3.9",
     "@midwayjs/upload": "^3.3.12",
     "@midwayjs/validate": "^3.0.0",
+    "@types/fs-extra": "^11.0.1",
+    "fs-extra": "^11.1.0",
     "mysql": "^2.18.1",
     "passport": "^0.5.3",
     "passport-jwt": "^4.0.0"

@@ -27,6 +27,8 @@ import mysqlConfig from '../mysql/config';
 import { getIpAddress } from '../utils';
 import { IControllerReturn } from '../interface';
 import { UserService } from '../service/user.service';
+import { resolve } from 'path';
+import { removeSync } from 'fs-extra';
 
 @Controller('/bookmark')
 export class APIController {
@@ -300,7 +302,12 @@ export class APIController {
   async deleteBookmarkItem(
     @Body() bookmarkItem: BookmarkItemOnlyIdDTO
   ): Promise<IControllerReturn> {
+    const bookmark = await this.bookmarkService.getUserBookmarkItem({
+      id: bookmarkItem.id,
+    });
+    const iconUrl = resolve(__dirname, `../../${bookmark[0].icon}`);
     await this.bookmarkService.deleteUserBookmarkItem(bookmarkItem);
+    await removeSync(iconUrl);
     return this.getBookmark();
   }
 

@@ -84,7 +84,7 @@ export async function updateBookmark(
           if (user_bookmarks[i].id === res.data.id) {
             user_bookmarks[i] = {
               ...original,
-              ...data,
+              ...res.data,
             };
             break;
           }
