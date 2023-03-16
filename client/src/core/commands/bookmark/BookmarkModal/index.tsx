@@ -121,7 +121,7 @@ export default function BookmarkModal(props: IProps) {
           label="图标"
           placeholder={user ? '请上传图片' : '登陆后才能上传图片'}
           icon={<IconUpload size={14} />}
-          accept="image/png,image/jpeg,image/jpg,image/gif,image/ico"
+          accept="image/png,image/jpeg,image/jpg,image/gif,image/ico,image/webp"
           disabled={!user}
         />
         <Textarea
