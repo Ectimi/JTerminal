@@ -22,7 +22,11 @@ import searchCommand from '@/core/commands/search/searchCommand';
 import { getUsageStr } from '@/core/commands/terminal/help/helpUtils';
 import { getCommand } from '@/core/commandRegister';
 import { commandExecute } from '@/core/commandExecutor';
-import { initLocalforage } from '@/lib/localForage';
+import {
+  LocalForageKeys,
+  initLocalforage,
+  localforage,
+} from '@/lib/localForage';
 import { registerShortcuts } from './shortcuts';
 import TerminalRow from './TerminalRow';
 import Datetime from '../Datetime';
@@ -110,6 +114,7 @@ const getInputTips = (word: string, originData: any[], filterKey: string) => {
 };
 
 function Terminal() {
+  const terminalBackgroundRef = useRef<HTMLDivElement | null>(null);
   const [user, setUser] = useRecoilState(userState);
   const setViewportVisible = useSetRecoilState(viewportVisibleState);
   const [viewportComponentsList, setViewportComponentsList] = useRecoilState(
@@ -210,6 +215,11 @@ function Terminal() {
   useAsyncEffect(async () => {
     initLocalforage();
     registerShortcuts(TerminalProvider);
+    if (terminalBackgroundRef.current) {
+      setBackgroundImage(
+        (await localforage.getItem(LocalForageKeys.BACKGROUND_IMAGE)) || ''
+      );
+    }
   }, []);
 
   useUpdateEffect(() => {
@@ -475,6 +485,18 @@ function Terminal() {
     ]);
   };
 
+  const setBackgroundImage: TerminalType['setBackgroundImage'] = (
+    url: string
+  ) => {
+    if (!terminalBackgroundRef.current) return;
+    if (url !== '') {
+      terminalBackgroundRef.current.style.backgroundImage = `url(${url})`;
+    } else {
+      terminalBackgroundRef.current.style.backgroundImage = 'none';
+    }
+    localforage.setItem(LocalForageKeys.BACKGROUND_IMAGE, url);
+  };
+
   const TerminalProvider: TerminalType = {
     clear,
     focusInput,
@@ -493,46 +515,53 @@ function Terminal() {
     removeOutput,
     excuteCommand,
     shortcutExcuteCommand,
+    setBackgroundImage,
   };
 
   return (
     <TerminalContext.Provider value={TerminalProvider}>
-      <div className="terminal-view">
-        {outputList.map((output, index) => (
+      <>
+        <div
+          className="terminal-view-background"
+          ref={terminalBackgroundRef}
+        ></div>
+        <div className="terminal-view">
+          {outputList.map((output, index) => (
+            <TerminalRow
+              key={
+                (output.componentName && output.componentName + index) || index
+              }
+              user={user}
+              {...output}
+            />
+          ))}
           <TerminalRow
-            key={
-              (output.componentName && output.componentName + index) || index
-            }
             user={user}
-            {...output}
+            type="component"
+            component={
+              <Group>
+                <div>[{user ? user.username : 'local'}]# </div>
+                <Autocomplete
+                  ref={ref}
+                  data={inputTips}
+                  autoFocus
+                  value={inputText}
+                  itemComponent={AutoCompleteItem}
+                  filter={() => true}
+                  onChange={onInputChange}
+                  onDropdownClose={() => {
+                    setInputTips([]);
+                  }}
+                  onItemSubmit={(item) => onItemSubmit(item)}
+                />
+              </Group>
+            }
           />
-        ))}
-        <TerminalRow
-          user={user}
-          type="component"
-          component={
-            <Group>
-              <div>[{user ? user.username : 'local'}]# </div>
-              <Autocomplete
-                ref={ref}
-                data={inputTips}
-                autoFocus
-                value={inputText}
-                itemComponent={AutoCompleteItem}
-                filter={() => true}
-                onChange={onInputChange}
-                onDropdownClose={() => {
-                  setInputTips([]);
-                }}
-                onItemSubmit={(item) => onItemSubmit(item)}
-              />
-            </Group>
-          }
-        />
-        {mode === 'query' ? (
-          <div className="mode-text">当前为书签检索模式</div>
-        ) : null}
-      </div>
+          {mode === 'query' ? (
+            <div className="mode-text">当前为书签检索模式</div>
+          ) : null}
+        </div>
+      </>
     </TerminalContext.Provider>
   );
 }

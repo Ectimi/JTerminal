@@ -31,20 +31,20 @@ export function GetUserInfo(data: { id: number }): Promise<IResponse> {
 }
 
 export function GetBookmarks(): Promise<IResponse> {
-  return request('./bookmarks', {
+  return request('/bookmarks', {
     method: 'post',
   });
 }
 
 export function AddBookmarkItem(formData: any): Promise<IResponse> {
-  return request('./addBookmark', {
+  return request('/addBookmark', {
     method: 'post',
     data: formData,
   });
 }
 
 export function UpdateBookmarkItem(formData: any): Promise<IResponse> {
-  return request('./updateBookmark', {
+  return request('/updateBookmark', {
     method: 'post',
     data: formData,
   });
@@ -70,14 +70,14 @@ export function Sticky(param: {
 }
 
 export function AddLabel(label: string): Promise<IResponse> {
-  return request('./addLabel', {
+  return request('/addLabel', {
     method: 'post',
     data: { label },
   });
 }
 
 export function GetLabels(): Promise<IResponse> {
-  return request('./labels', {
+  return request('/labels', {
     method: 'post',
   });
 }
@@ -85,13 +85,13 @@ export function GetLabels(): Promise<IResponse> {
 export function GetSearchSuggest(word: string): Promise<IResponse> {
   SearchSuggestController = null;
   SearchSuggestController = new AbortController();
-  return request('./suggest', {
+  return request('/suggest', {
     method: 'get',
     params: { word },
     signal: SearchSuggestController.signal,
   });
 }
 
-export function GetWallpaper(): any {
-  return request('https://source.unsplash.com/random');
+export function RandomWallpaper(): Promise<IResponse> {
+  return request('/randomImage');
 }

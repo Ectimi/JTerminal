@@ -1,29 +1,20 @@
-.terminal-row{
-    margin-top: 5px;
-    padding-left: 10px;
-    font-size: 16px;
-    font-family:'Courier New', Courier, monospace;
-    color: #fff;
+.terminal-row {
+  margin-top: 5px;
+  padding-left: 10px;
+  font-size: 16px;
+  font-family: 'Courier New', Courier, monospace;
+  color: #fff;
+  mix-blend-mode: difference;
 
-    .command-input{
-        flex: 1;
-        font-weight: 400;
-        color: #fff;
-        caret-color: #fff;
-        border: none;
-        outline: none;
-        background-color: transparent;
-    }
+  .info {
+    color: var(--terminal-row-info-color, rgb(34, 139, 230));
+  }
 
-    .info{
-        color: rgb(34, 139, 230);
-    }
+  .success {
+    color: var(--terminal-row-success-color, #5ef27f);
+  }
 
-    .success{
-        color: #5ef27f;
-    }
-
-    .error{
-        color: #e75f59;
-    }
+  .error {
+    color: var(--terminal-row-error-color, #e75f59);
+  }
 }

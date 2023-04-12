@@ -20,6 +20,7 @@ const LocalForageKeys = {
   LOCAL_LABELS: 'LOCAL_LABELS',
   USER_BOOKMARKS: 'USER_BOOKMARKS',
   USER_LABELS: 'USER_LABELS',
+  BACKGROUND_IMAGE: 'BACKGROUND_IMAGE',
 };
 
 const PubSubkeys = {
@@ -153,10 +154,15 @@ const clearLocalforage = async () => {
 const initLocalforage = async () => {
   const local_bookmarks = (await localforage.getItem(
     LocalForageKeys.LOCAL_BOOKMARKS
-  ) as any[]);
-  const local_labels = (await localforage.getItem(LocalForageKeys.LOCAL_LABELS) as any[]);
+  )) as any[];
+  const local_labels = (await localforage.getItem(
+    LocalForageKeys.LOCAL_LABELS
+  )) as any[];
   if (!local_bookmarks.length) {
-    await localforage.setItem(LocalForageKeys.LOCAL_BOOKMARKS, DEFAULT_BOOKMARKS);
+    await localforage.setItem(
+      LocalForageKeys.LOCAL_BOOKMARKS,
+      DEFAULT_BOOKMARKS
+    );
   }
   if (!local_labels.length) {
     await localforage.setItem(LocalForageKeys.LOCAL_LABELS, DEFAULT_LABELS);
@@ -186,7 +192,7 @@ const addUserBookmarks = async (option?: ICallback) => {
   } catch (error: any) {
     option?.fail && option.fail(error);
     ShowNotification({
-      type:'error',
+      type: 'error',
       title: error.name || 'Error',
       message: error.message || 'addUserBookmarks error',
     });
@@ -209,7 +215,7 @@ const addUserLabels = async (option?: ICallback) => {
   } catch (error: any) {
     option?.fail && option.fail(error);
     ShowNotification({
-      type:'error',
+      type: 'error',
       title: error.name || 'Error',
       message: error.message || 'addUserLabels error',
     });

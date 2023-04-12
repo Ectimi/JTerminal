@@ -87,5 +87,7 @@ declare namespace JTerminal {
     excuteCommand: (commandStr?: string) => void;
 
     shortcutExcuteCommand: (commandStr?: string) => void;
+
+    setBackgroundImage: (url: string) => void;
   };
 }

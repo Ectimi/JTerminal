@@ -14,6 +14,7 @@ import pingCommand from './commands/ping/pingCommand';
 import resumeCommand from './commands/resume/resumeCommand';
 import codeCommand from './commands/code/codeCommand';
 import blogCommand from './commands/blog/blogCommand';
+import backgroundCommand from './commands/background/backgroundCommand';
 
 const getCommand = async (): Promise<{
   commandList: CommandType[];
@@ -33,6 +34,7 @@ const getCommand = async (): Promise<{
     bookmarkCommand,
     pingCommand,
     resumeCommand,
+    backgroundCommand,
   ];
 
   const specificCommandList = [codeCommand, blogCommand];
