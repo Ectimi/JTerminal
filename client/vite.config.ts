@@ -5,12 +5,12 @@ import { NodeModulesPolyfillPlugin } from '@esbuild-plugins/node-modules-polyfil
 import rollupNodePolyFill from 'rollup-plugin-node-polyfills';
 import * as path from 'path';
 
+const Timestamp = new Date().getTime();
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: './',
-  plugins: [
-    react(),
-  ],
+  plugins: [react()],
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
@@ -65,13 +65,18 @@ export default defineConfig({
     },
   },
   build: {
-    target:['edge90','chrome90','firefox90','safari15'],
+    target: ['edge90', 'chrome90', 'firefox90', 'safari15'],
     rollupOptions: {
       plugins: [
         // Enable rollup polyfills plugin
         // used during production bundling
         rollupNodePolyFill(),
       ],
+      output: {
+        chunkFileNames: `static/js/[name].[hash]${Timestamp}.js`,
+        entryFileNames: `static/js/[name].[hash]${Timestamp}.js`,
+        assetFileNames: `static/[ext]/[name].[hash]${Timestamp}.[ext]`,
+      },
     },
   },
   // server:{
