@@ -12,8 +12,21 @@ const backgroundCommand: CommandType = {
       required: false,
     },
   ],
-  options: [],
+  options: [
+    {
+      key: 'reset',
+      desc: '重置背景',
+      alias: ['r'],
+      type: 'boolean',
+      defaultValue: false,
+    },
+  ],
   action(options, terminal) {
+    const { _, reset } = options;
+    if(reset){
+      terminal.setBackgroundImage('');
+      return;
+    }
     RandomWallpaper()
       .then((data: any) => {
         terminal.setBackgroundImage(data.data.imgurl);
