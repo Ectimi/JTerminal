@@ -23,7 +23,12 @@ const backgroundCommand: CommandType = {
   ],
   action(options, terminal) {
     const { _, reset } = options;
-    if(reset){
+    const link = _[0];
+    if (link) {
+      terminal.setBackgroundImage(link);
+      return;
+    }
+    if (reset) {
       terminal.setBackgroundImage('');
       return;
     }

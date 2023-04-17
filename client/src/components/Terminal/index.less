@@ -19,49 +19,69 @@
   padding-bottom: 300px;
   overflow-y: auto;
 
-  .mantine-Autocomplete-root {
-    flex: 1;
-  }
-
-  .mantine-Autocomplete-input {
-    padding-left: 0;
-    font-size: 16px;
-    font-weight: 400;
-    color: var(--terminal-row-input-color, #fff);
-    caret-color: var(--terminal-row-input-caret-color, #fff);
-    border: none;
-    outline: none;
-    background-color: transparent;
-    font-family: 'Courier New', Courier, monospace;
-  }
-
-  .mantine-Autocomplete-dropdown {
-    width: 500px !important;
-    left: 65px !important;
-    background-color: transparent;
-    border: none;
-  }
-
-  .mantine-Autocomplete-item {
-    background-color: transparent;
+  .command-input-group {
     display: flex;
-    .tip-name {
-      min-width: 100px;
-      color: var(--terminal-row-tip-name-color, rgb(209, 209, 209));
-    }
+    width: 100%;
+    .input-box {
+      flex: 1;
+      position: relative;
+      height: 36px;
 
-    .tip-desc {
-      color: var(--terminal-row-tip-desc-color, rgb(143, 140, 140));
-    }
-
-    &[data-hovered='true'] {
-      .tip-name {
-        min-width: 100px;
-        color: var(--terminal-row-tip-name-hover-color, green);
+      .real-show-input-text {
+        position: absolute;
+        width: 100%;
+        height: 36px;
+        line-height: 36px;
+        color: var(--terminal-row-input-color, #fff);
       }
 
-      .tip-desc {
-        color: var(--terminal-row-tip-desc-hover-color, rgb(7, 73, 7));
+      .mantine-Autocomplete-root {
+        // position: absolute;
+        width: 100%;
+      }
+
+      .mantine-Autocomplete-input {
+        padding-left: 0;
+        font-size: 16px;
+        font-weight: 400;
+        // color: var(--terminal-row-input-color, #fff);
+        color: rgba(0, 0, 0, 0);
+        caret-color: var(--terminal-row-input-caret-color, #fff);
+        border: none;
+        outline: none;
+        background-color: transparent;
+        font-family: 'Courier New', Courier, monospace;
+      }
+
+      .mantine-Autocomplete-dropdown {
+        width: 500px !important;
+        left: 0px !important;
+        background-color: transparent;
+        border: none;
+      }
+
+      .mantine-Autocomplete-item {
+        background-color: transparent;
+        display: flex;
+        .tip-name {
+          min-width: 100px;
+          color: var(--terminal-row-tip-name-color, rgb(209, 209, 209));
+        }
+
+        .tip-desc {
+          color: var(--terminal-row-tip-desc-color, rgb(143, 140, 140));
+        }
+
+        &[data-hovered='true'] {
+          .tip-name {
+            min-width: 100px;
+            color: var(--terminal-row-tip-name-hover-color, green);
+          }
+
+          .tip-desc {
+            color: var(--terminal-row-tip-desc-hover-color, rgb(7, 73, 7));
+          }
+        }
       }
     }
   }

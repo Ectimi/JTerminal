@@ -28,7 +28,7 @@ import {
   localforage,
 } from '@/lib/localForage';
 import { registerShortcuts } from './shortcuts';
-import TerminalRow from './TerminalRow';
+import TerminalRow, { FormatCommandOutputLine } from './TerminalRow';
 import Datetime from '../Datetime';
 import './index.less';
 
@@ -272,6 +272,9 @@ function Terminal() {
             // console.log('err==>', err);
           });
       } else {
+        if (SearchSuggestController) {
+          SearchSuggestController.abort();
+        }
         setInputTips([]);
       }
     }
@@ -539,21 +542,28 @@ function Terminal() {
             user={user}
             type="component"
             component={
-              <Group>
-                <div>[{user ? user.username : 'local'}]# </div>
-                <Autocomplete
-                  ref={ref}
-                  data={inputTips}
-                  autoFocus
-                  value={inputText}
-                  itemComponent={AutoCompleteItem}
-                  filter={() => true}
-                  onChange={onInputChange}
-                  onDropdownClose={() => {
-                    setInputTips([]);
-                  }}
-                  onItemSubmit={(item) => onItemSubmit(item)}
-                />
+              <Group className="command-input-group">
+                <div className="username">
+                  [{user ? user.username : 'local'}]#{' '}
+                </div>
+                <div className="input-box">
+                  <div className="real-show-input-text">
+                    <FormatCommandOutputLine text={inputText} />
+                  </div>
+                  <Autocomplete
+                    ref={ref}
+                    data={inputTips}
+                    autoFocus
+                    value={inputText}
+                    itemComponent={AutoCompleteItem}
+                    filter={() => true}
+                    onChange={onInputChange}
+                    onDropdownClose={() => {
+                      setInputTips([]);
+                    }}
+                    onItemSubmit={(item) => onItemSubmit(item)}
+                  />
+                </div>
               </Group>
             }
           />
