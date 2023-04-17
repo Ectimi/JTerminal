@@ -1,6 +1,9 @@
 import getopts, { ParsedOptions } from 'getopts';
 import { CommandType, CommandOption } from './command';
 import { getCommand as getCommandMap } from './commandRegister';
+import searchCommand from './commands/search/searchCommand';
+
+console.log('search', searchCommand);
 
 const getCommand = async (
   text: string,
@@ -37,6 +40,29 @@ const doParse = (
     string: [],
     boolean: [],
   };
+  /**
+   * 正常情况下，如果输入的搜索词带有 -/-- 符号，会被getOpts进行参数处理，
+   * 从而不能正常搜索，这里为统一为所有搜索命令添加 -i 参数，如果带有 -i，
+   * 则让getOpts忽略处理带有-/-- 符号的搜索词，以直接搜索
+   */
+  const commandName = text.split(' ')[0];
+  const allSearchCommandNames: string[] = [];
+  const ignoreOption = '-i';
+  searchCommand.forEach((command) => {
+    allSearchCommandNames.push(command.func);
+    if (command.alias) {
+      command.alias.forEach((alia) => {
+        allSearchCommandNames.push(alia);
+      });
+    }
+  });
+  if (allSearchCommandNames.includes(commandName)) {
+    if (args.includes(ignoreOption)) {
+      args.splice(args.indexOf(ignoreOption), 1);
+      args.unshift('--');
+    }
+  }
+
   commandOptions.forEach((commandOption) => {
     const { alias, key, type, defaultValue } = commandOption;
     if (alias && options.alias) {
