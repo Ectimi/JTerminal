@@ -16,12 +16,12 @@ server: 服务端代码，用来简单地实现登录功能和标签的curd（�
 
 > 输入 “'” 进入书签检索模式
 
-### 命令
+### 命令（基本每个命令都会简短的别名，输入命令的时候有提示，也可以通过help命令查看）
 1. login 登录 
 2. logout 退出登录
 3. register 注册
 4. bookmark 打开书签列表
 5. background 随机背景图片
-6. search 搜索，默认使用百度，其他搜索命令有 baidu,google,zhihu等，用法及参数请输入help查看
+6. search 搜索（别名：s），默认使用百度，其他搜索命令有 baidu,google,zhihu等，用法及别名及参数请输入help查看
 7. goto 网页跳转
 8. resume 跳转到简历编辑页面
