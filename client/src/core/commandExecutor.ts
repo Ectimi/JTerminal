@@ -3,8 +3,6 @@ import { CommandType, CommandOption } from './command';
 import { getCommand as getCommandMap } from './commandRegister';
 import searchCommand from './commands/search/searchCommand';
 
-console.log('search', searchCommand);
-
 const getCommand = async (
   text: string,
   parentCommand?: CommandType

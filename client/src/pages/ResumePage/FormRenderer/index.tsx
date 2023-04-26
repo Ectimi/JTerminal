@@ -1,3 +1,4 @@
+import { memo } from 'react';
 import {
   Box,
   FileButton,
@@ -62,7 +63,7 @@ const beforeUploadValidate = (file: File) => {
   return isJpgOrPng && isLt4MB;
 };
 
-export function FormRenderer(props: IFormItem) {
+const FormRenderer = memo((props: IFormItem) => {
   const {
     type,
     disable = false,
@@ -152,7 +153,7 @@ export function FormRenderer(props: IFormItem) {
           inputFormat="YYYY-MM-DD"
           labelFormat="YYYY-MM-DD"
           disabled={disable}
-          value={value}
+          value={value ? new Date(value) : null}
           locale="zh"
           onChange={(value) => onChange(value)}
         />
@@ -170,4 +171,6 @@ export function FormRenderer(props: IFormItem) {
     default:
       return <></>;
   }
-}
+});
+
+export { FormRenderer };

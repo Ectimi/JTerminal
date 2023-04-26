@@ -1,8 +1,7 @@
-import { Fragment, useCallback, useMemo } from 'react';
+import { Fragment } from 'react';
 import {
   ActionIcon,
   Button,
-  Box,
   Divider,
   Flex,
   Image,
@@ -107,14 +106,14 @@ export default function ResumeEditor({
 
   const onPreview = () => {
     if (validate(resumeData)) {
-      toggleLoading(true)
+      toggleLoading(true);
       togglePriview(true);
-      let timer = setInterval(()=>{
-        if(document.querySelector('.pdf-viewer')){
-          toggleLoading(false)
-          clearInterval(timer)
+      let timer = setInterval(() => {
+        if (document.querySelector('.pdf-viewer')) {
+          toggleLoading(false);
+          clearInterval(timer);
         }
-      },200)
+      }, 200);
     }
     // toggleLoading(true)
     // togglePriview(true);
