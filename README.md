@@ -3,6 +3,10 @@ client: 客户端代码
 
 server: 服务端代码，用来简单地实现登录功能和标签的curd（由于代码是由之前的一个项目基础上进行修改的，所以代码可能有点丑）
 
+## 技术栈
+client: react + ts + Matine(ui框架) + React Recoil(状态管理)
+server: midwayjs
+
 ### terminal使用方法
 > 输入help查看所有命令，
 
@@ -16,7 +20,8 @@ server: 服务端代码，用来简单地实现登录功能和标签的curd（�
 
 > 输入 “'” 进入书签检索模式
 
-### 命令（基本每个命令都会简短的别名，输入命令的时候有提示，也可以通过help命令查看）
+### terminal命令
+基本每个命令都会简短的别名，输入命令的时候有提示，也可以通过help命令查看
 1. login 登录 
 2. logout 退出登录
 3. register 注册
