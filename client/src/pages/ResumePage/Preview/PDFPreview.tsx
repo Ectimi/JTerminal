@@ -282,7 +282,6 @@ const sliceStringByWidth = (originString: string, width: number) => {
 };
 
 const HTMLText = ({ htmlText }: { htmlText: string }) => {
-  console.log('html', htmlText);
   let finalText = '';
   const maxWidth = 400;
   const htmlStyle: Style = {

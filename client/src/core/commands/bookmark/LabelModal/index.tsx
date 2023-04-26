@@ -81,10 +81,9 @@ export default function LabelModal(props: IProps) {
         />
 
         <Flex justify="center" align="center">
-          <Button type="submit">确定</Button>
           <Button
             color="gray"
-            sx={{ marginLeft: 50 }}
+            sx={{ marginRight: 50 }}
             onClick={() => {
               closeModal();
               form.reset();
@@ -92,6 +91,8 @@ export default function LabelModal(props: IProps) {
           >
             取消
           </Button>
+
+          <Button type="submit">确定</Button>
         </Flex>
       </form>
     </Modal>
