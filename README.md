@@ -1,10 +1,10 @@
 ## 一个命令行风格的浏览器主页
 client: 客户端代码
 
-server: 服务端代码，用来简单地实现登录功能和标签的curd（由于代码是由之前的一个项目基础上进行修改的，所以代码可能有点丑）
+server: 服务端代码，用来简单地实现登录功能和标签的curd（由于代码结构是用的旧项目的，很多地方也只是复制粘贴，没有优化，所以代码可能有点丑）
 
 ## 技术栈
-client: react + ts + Matine(ui框架) + React Recoil(状态管理)
+client: [react](https://react.dev/) + [typesscript](https://www.typescriptlang.org/) + [Matine](https://mantine.dev/)(UI框架) + [React Recoil](https://recoiljs.org/)(状态管理) + [localforage](http://localforage.docschina.org/)(数据持久化)
 
 server: midwayjs
 
