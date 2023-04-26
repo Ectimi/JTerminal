@@ -7,7 +7,7 @@ const resumeCommand: CommandType = {
   params: [],
   options: [],
   action(options, terminal) {
-    window.location.href = window.location.origin + '/#/resume';
+    window.location.href = window.location.href + '#/resume';
   },
 };
 
