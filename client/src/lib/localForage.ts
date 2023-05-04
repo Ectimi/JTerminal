@@ -152,12 +152,13 @@ const clearLocalforage = async () => {
 };
 
 const initLocalforage = async () => {
-  const local_bookmarks = (await localforage.getItem(
+  const local_bookmarks = ((await localforage.getItem(
     LocalForageKeys.LOCAL_BOOKMARKS
-  )) as any[];
-  const local_labels = (await localforage.getItem(
+  )) || []) as any[];
+  const local_labels = ((await localforage.getItem(
     LocalForageKeys.LOCAL_LABELS
-  )) as any[];
+  )) || []) as any[];
+
   if (!local_bookmarks.length) {
     await localforage.setItem(
       LocalForageKeys.LOCAL_BOOKMARKS,
